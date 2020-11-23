@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<form>
+	<input type="hidden" id="unitaireS" name="unitaireS" value = "<%= unitaire %>"> <!-- app -->
+	<input type="hidden" id="integrationS" name="integrationS" value =  "<%= integration %>">
+	<input type="hidden" id="monteeS" name="monteeS" value =  "<%= montee %>">
+	<input type="hidden" id="specifiqueS" name="specifiqueS" value =  "<%= specifique %>">
+</form>
+
+	<!--<p><b>TYPE DE TEST</b></p>-->
+	<div id="bar-type" style="height: 200px; float:right; margint-right:50px;"></div>
+
+<div class="col-md-1"></div>
+
+<script type="text/javascript" src="js/raphael-min.js"></script>
+<script type="text/javascript" src="js/morris-min.js"></script>
+<script>
+	//alert($("#unitaireS").val())
+	
+	var unitaire = $("#unitaireS").val(); // test
+	var integration = $("#integrationS").val();
+	var montee = $("#monteeS").val();
+	var specifique = $("#specifiqueS").val();
+
+	/*var dataUpdate = [                
+		 {label: "Unitaire", value: unitaire},   //&#233;
+		 {label: "Integration", value: integration},
+		 {label: "Montee en charge", value: montee},
+		 {label: "Specifique", value: specifique}
+		];
+	
+	var barApp = Morris.Donut({
+		element: 'bar-type',
+		data: dataUpdate,
+		 colors: [
+		'#31985E',
+		'#57BD83',
+		'#80DBA8'
+	  ],
+		//resize: true
+	 });
+	barApp.setData(dataUpdate);*/
+	
+	
+	var barApp = Morris.Bar({
+		element: 'bar-type',
+		data: [
+			{y: 'Unitaire', a: unitaire},
+			{y: 'Intégration', a: integration},
+			{y: 'Montée', a: montee},
+			{y: 'Spécifique', a: specifique}
+		],
+		xkey: 'y',
+		ykeys: ['a'],
+		labels: ['Nombre']
+	});
+	
+</script>

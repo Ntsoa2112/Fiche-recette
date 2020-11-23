@@ -1,0 +1,21 @@
+<div class="form-group">
+	<div class="col-lg-1">
+	  <h4 style="color: black">Dossier: </h4>
+	</div>
+	<div class="col-lg-2">
+	  <select class="form-control" tabindex="-1" id="dossierDash" name="typeTest"  onchange="getval(this);" placeholder = "Dossier">
+		<option value="1">Dossier</option>
+	  </select>
+	</div>
+	<div class="col-lg-1">
+	  <h4 style="color: black">  Application: </h4>
+	</div>
+	<div class="col-xs-2">
+	  <select class="form-control" tabindex="-1" id="applicationDash" name="typeTest" placeholder = "Application" onchange="onChangeApp();">
+		<option value="1">Application</option>
+	  </select>
+	</div>
+	<div class="col-xs-2">
+		<a href="#" onclick= "onClickNewApp();" class="col-md-12 col-sm-12 col-xs-12"><i class="fa fa-plus fa-3x"></i>(Nouvelle application)</a>
+	</div>
+</div>

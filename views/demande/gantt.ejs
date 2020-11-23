@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <title>Fiche Recette</title>
+  <meta name="generator" content="Bootply" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/styles.css" rel="stylesheet">
+  <link href="fonts/css/font-awesome.css" rel="stylesheet">
+  <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+  <script type="text/javascript" src="js/paging.js"></script>
+
+  <link rel="stylesheet" href="css/bootstrap-duration-picker.css">
+  
+  <link rel="stylesheet" href="css/jquery.ganttView.css">
+
+  <style>
+    a.disabled {
+      color: gray;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body onload="">
+<!-- HEADER -->
+<% include ../header.ejs %>
+<!-- /HEADER -->
+
+<!-- Main -->
+<div class="container-fluid">
+  <div class="row">
+    <div id="menuCenter">
+    
+      <div class="row"> <!-- CONTAINER -->
+        <div class="">
+          <div class="page-title">
+            <div class="title_left">
+              <h2>
+                Fiche recette
+                <small>
+					GANTT (Projets en cours)
+                </small>
+              </h2>
+            </div>
+          </div>
+
+
+          <div class="row">
+
+
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="x_panel">
+                <div class="x_content">
+					
+				  </br>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+				  
+					<div id="ganttChart"></div>
+					
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </br>
+        </br>
+        </br>
+        <!-- Notifications -->
+        <% include ../notifications.ejs %>   <!-- include menu à gauche -->
+        <!-- /Notifications -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- /Main -->
+<center><% include ../footer.ejs %></center>
+<script src="/js/base.min.js"></script>
+<script src="/js/jquery-1.12.4.js"></script>
+<script src="/js/project.min.js"></script>
+<script src="/js/bootbox.min.js"></script>
+
+<!--<script src="/js/jquery.min.js"></script>-->
+<script src="js/bootstrap.min.js"></script>
+<script src="js/scripts.js"></script>
+<script src="js/bootstrap-datepicker.js"></script>
+
+<script type="text/javascript" src="js/raphael-min.js"></script>
+<script type="text/javascript" src="js/morris-min.js"></script>
+
+<script type="text/javascript" src="js/bootstrap-duration-picker-debug.js"></script>
+
+<!-- DOSSIER ETAPE APPLICATION -->
+<script src="js/dossierEtapeApp.js"></script>
+
+<!-- GANTT   <script src="js/jquery.fn.gantt.min.js"></script> -->
+<script src="js/jquery.ganttView.js"></script>
+<script src="js/date.js"></script>
+<script src="js/data.js"></script>
+
+<!--DATATABLE-->
+		<script src="/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+		<script src="/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+		<script src="/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/buttons.flash.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/buttons.html5.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/buttons.print.min.js"></script>
+		<script src="/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+		<script src="/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+		<script src="/vendors/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+		<script src="/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
+		<script src="/vendors/datatables.net-scroller/js/datatables.scroller.min.js"></script>
+		<script src="/vendors/jszip/dist/jszip.min.js"></script>
+		<script src="/vendors/pdfmake/build/pdfmake.min.js"></script>
+		<script src="/vendors/pdfmake/build/vfs_fonts.js"></script>
+<!--FIN DATATABLE-->
+
+<!---------------------------------------FONCTION TABLE EXPORT ------------------------------->
+
+<script language="javascript">
+	//afficher Gantt
+	$(function () {
+		$.ajax({
+		  type: "GET",
+		  url: "/AfficherDataGantt",
+
+		  success: function(msg){
+			var data = JSON.parse(msg);
+			//alert(data);
+			
+			var mapData = new Map();
+			var lastID = 0;
+			var mapPers = new Map();
+			
+			data.forEach(function (projet) {
+				if(lastID!=Number(projet.id_personne_dev)){
+				  mapPers = new Map();
+				  lastID = Number(projet.id_personne_dev);
+				  mapData[projet.id_personne_dev] = mapPers;
+				}
+				mapPers[projet.id_demande] = projet;
+			});
+			
+			var mapDataFinal = new Map();
+			var id_temp = 0;
+			Object.keys(mapData).forEach(function(key) {
+				var temp = mapData[key];
+				Object.keys(temp).forEach(function(key2) {
+					if(id_temp!=Number(temp[key2].id_personne_dev)){
+					  id_temp = temp[key2].id_personne_dev;
+					  mapDataFinal[temp[key2].appelation] = mapData[key];
+					}
+				});
+			});
+			
+			var dataArray = [];
+			var i = 1;
+			Object.keys(mapDataFinal).forEach(function(key) {
+				var seriesData = [];
+				var mapDataFinal2 = mapDataFinal[key]; //key = id_personne_dev
+				
+				if(key !== "Mirah")
+				{
+					var nom_dossier = "";
+					Object.keys(mapDataFinal2).forEach(function(key2) {
+						var temp = mapDataFinal2[key2]; //key = id_demande
+						
+						//date start et end
+						var deb = temp.date_demande.toString();
+						var debut = deb.substring(0,10);
+						var fin = temp.delai;
+						
+						var debutSplit = debut.split("-");
+						var finSplit = fin.split("-");
+						
+						var demande = { name: temp.num_dossier, start: new Date(Number(debutSplit[0]),Number(debutSplit[1])-1,Number(debutSplit[2])-1), end: new Date(Number(finSplit[0]),Number(finSplit[1])-1,Number(finSplit[2])-1) }; //, color: "#f0f0f0"
+						seriesData.push(demande);
+					});
+				}
+				var nameData = key;
+				dataArray.push({id: i, name: nameData, series: seriesData});
+				i = i+1;
+			});
+			
+			//$("#testData").val(JSON.stringify(dataArray));
+			//alert(JSON.stringify(dataArray));
+			
+			//CREATE GANTT
+			$("#ganttChart").ganttView({ 
+				data: dataArray,
+				slideWidth: 1450,
+				height: 3000,
+				behavior: {
+					onClick: function (data) { 
+						
+					},
+					onResize: function (data) { 
+						
+					},
+					onDrag: function (data) { 
+						
+					}
+				}
+			});
+			
+		  },
+		  error: function (error) {
+		  }
+		});
+	});
+	
+</script>
+ 
+</body>
+</html>

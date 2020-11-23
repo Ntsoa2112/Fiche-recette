@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Utilisatreurs</title>
+    <meta charset="UTF-8">
+  </head>
+  <body>
+  <h1>Utilisateurs</h1>
+  <ul>
+    <% users.forEach(function(user){ %>
+    <li>
+      <h3><%= user.matricule %></h3>
+    </li>
+    <% }); %>
+  </ul>
+  </body>
+</html>

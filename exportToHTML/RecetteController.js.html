@@ -1,0 +1,127 @@
+<html>
+<head>
+<title>RecetteController.js</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: rgb(0,0,0); font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); font-style: italic; }
+.s1 { color: rgb(128,128,128); font-weight: bold; font-style: italic; }
+.s2 { }
+.s3 { color: rgb(0,0,128); font-weight: bold; }
+.s4 { color: rgb(0,128,0); font-weight: bold; }
+.s5 { color: rgb(0,0,255); }
+</style>
+</head>
+<BODY BGCOLOR="#ffffff">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#C0C0C0" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+RecetteController.js</FONT>
+</center></TD></TR></TABLE>
+<pre>
+
+<span class="s0">/** 
+ * RecetteController 
+ * 
+ * </span><span class="s1">@description </span><span class="s0">:: Server-side logic for managing recettes 
+ * </span><span class="s1">@help        </span><span class="s0">:: See http://sailsjs.org/#!/documentation/concepts/Controllersfg 
+ */</span><span class="s2"> 
+ 
+module.exports = { 
+  </span><span class="s0">//_________________________________________________debut FIND RECETTE</span><span class="s2"> 
+  </span><span class="s0">//fonction qui retourne la liste de touS les recettes</span><span class="s2"> 
+  findRecette: </span><span class="s3">function</span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+ 
+    </span><span class="s3">else</span><span class="s2"> 
+    { 
+      Recette.find({}, </span><span class="s3">function</span><span class="s2">(err, found){ 
+        </span><span class="s3">if</span><span class="s2">(err){ 
+          console.log(err); 
+        } 
+        console.log(found); 
+        res.view( </span><span class="s4">'recette/listeRecette'</span><span class="s2">, {recettes: found} );  </span><span class="s0">//redirection vers accueil avec la liste des applications</span><span class="s2"> 
+      }); 
+    } 
+  }, 
+  findRecetteT: </span><span class="s3">function</span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+ 
+    </span><span class="s3">else</span><span class="s2"> 
+    { 
+      Recette.find({}, </span><span class="s3">function</span><span class="s2">(err, found){ 
+        </span><span class="s3">if</span><span class="s2">(err){ 
+          console.log(err); 
+        } 
+        console.log(found); 
+        res.view( </span><span class="s4">'testeur/listeRecetteTesteur'</span><span class="s2">, {recettes: found} );  </span><span class="s0">//redirection vers accueil avec la liste des applications</span><span class="s2"> 
+      }); 
+    } 
+  }, 
+  </span><span class="s0">//_________________________________________________fin FIND RECETTE</span><span class="s2"> 
+ 
+  </span><span class="s0">//____________________________________________debut fonctionn CREATE</span><span class="s2"> 
+  </span><span class="s0">//fonction pour creer un recette</span><span class="s2"> 
+  createRecette: </span><span class="s3">function </span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">var </span><span class="s2">titre = req.param(</span><span class="s4">'titre_recette'</span><span class="s2">,</span><span class="s3">null</span><span class="s2">); 
+    </span><span class="s3">var </span><span class="s2">etape = req.param(</span><span class="s4">'etape_recette'</span><span class="s2">,</span><span class="s3">null</span><span class="s2">); 
+    </span><span class="s3">var </span><span class="s2">resultatAttendu = req.param(</span><span class="s4">'resultat_attendu'</span><span class="s2">,</span><span class="s3">null</span><span class="s2">); 
+    </span><span class="s3">var </span><span class="s2">resultatObtenu = req.param(</span><span class="s4">'resultat_obtenu'</span><span class="s2">,</span><span class="s3">null</span><span class="s2">); 
+    </span><span class="s3">var </span><span class="s2">status = req.param(</span><span class="s4">'status_recette'</span><span class="s2">,</span><span class="s3">null</span><span class="s2">); 
+ 
+    </span><span class="s3">var </span><span class="s2">stat = </span><span class="s3">true</span><span class="s2">; 
+    </span><span class="s3">if</span><span class="s2">(status = </span><span class="s5">2</span><span class="s2">) 
+    { 
+      stat = </span><span class="s3">false</span><span class="s2">; 
+    } 
+ 
+    </span><span class="s3">if</span><span class="s2">(req.method == </span><span class="s4">'POST' </span><span class="s2">&amp;&amp;  titre != </span><span class="s3">null </span><span class="s2">&amp;&amp; etape!= </span><span class="s3">null </span><span class="s2">&amp;&amp; resultatAttendu != </span><span class="s3">null </span><span class="s2">&amp;&amp; resultatObtenu != </span><span class="s3">null </span><span class="s2">&amp;&amp; status != </span><span class="s3">null</span><span class="s2">) 
+    { 
+      Recette.create({titre_recette:titre,etape_recette:etape,resultat_attendu:resultatAttendu,resultat_obtenu:resultatObtenu,status_recette:stat}).exec(</span><span class="s3">function</span><span class="s2">(err,model) 
+      { 
+        </span><span class="s3">if </span><span class="s2">(err) { 
+ 
+          console.log(err); 
+        } 
+        </span><span class="s3">else</span><span class="s2"> 
+        { 
+          res.redirect(</span><span class="s4">'accueil'</span><span class="s2">); 
+        } 
+ 
+      }); 
+    } 
+    </span><span class="s3">else</span><span class="s2"> 
+    { 
+      res.view( </span><span class="s4">'recette/ajoutRecette'</span><span class="s2">); 
+    } 
+  }, 
+  </span><span class="s0">//____________________________________________fin fonction CREATE</span><span class="s2"> 
+ 
+  </span><span class="s0">//____________________________________________debut fonctionn FIND BY ID</span><span class="s2"> 
+  </span><span class="s0">//fonction qui recherche une recette  par son id et qui retourne une recette</span><span class="s2"> 
+  findRecetteById: </span><span class="s3">function</span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">var </span><span class="s2">id=req.param(</span><span class="s4">'id'</span><span class="s2">,</span><span class="s3">null</span><span class="s2">); </span><span class="s0">//id application</span><span class="s2"> 
+    Recette.findOne(id).exec(</span><span class="s3">function </span><span class="s2">(err, finn) 
+    { 
+      </span><span class="s3">if </span><span class="s2">(err) 
+      { 
+        </span><span class="s3">return </span><span class="s2">res.negotiate(err); 
+      } 
+      </span><span class="s3">if </span><span class="s2">(!id) 
+      { 
+        </span><span class="s3">return </span><span class="s2">res.notFound(</span><span class="s4">'Could not find sorry.'</span><span class="s2">); 
+      } 
+      res.view( </span><span class="s4">'recette/detailRecette'</span><span class="s2">, {recettes: finn} ); 
+ 
+    }); 
+  }, 
+  </span><span class="s0">//____________________________________________fin fonctionn FIND BY ID</span><span class="s2"> 
+}; 
+ 
+</span></pre>
+</body>
+</html>

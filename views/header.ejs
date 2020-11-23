@@ -1,0 +1,362 @@
+<!-- header -->
+
+
+<div id="top-nav" class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid  col-lg-12">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button><img src="images/bg.png" style="height:40px; padding-top:10px;"/>
+
+
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li class="hidden">
+                  <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#"><i class="fa fa-info-circle"></i> Notifications <span class="badge bg-red-gradient"> 3 </span></a>
+                  <ul id="g-account-menu" class="dropdown-menu" role="menu">
+                    <li><a href="#"><i class="fa fa-comment"></i> 1. blablba..</a></li>
+                    <li><a href="#"><i class="fa fa-comment"></i> 2. Hello, admin..</a></li>
+                    <li><a href="#"><i class="fa fa-comment"></i> <strong> ...</strong></a></li>
+                  </ul>
+                </li>
+
+				<%
+				if(req.session.droit == 0){
+				%>
+					<li class="">
+					  <a href="/dashboard"><i class="fa fa-dashboard" style="color:#07fb1a"></i> Tableau de bord</a>
+					</li>
+					<li class="">
+					  <a href="/accueil"><i class="fa fa-cube" style="color:#b302ba"></i> Applications</a>
+					</li>
+					<li class="">
+					  <a href="/listeTest"><i class="fa fa-briefcase" style="color:#df7d03"></i> Tests</a>
+					</li>
+						<li class="">
+						  <a href="/listeDossier"><i class="fa fa-folder-open" style="color:#b4a402"></i> Dossiers</a>
+						</li>
+						<li class="  ">
+						  <a href="/demandeIntervention"><i class="fa fa-plus"  style="color:#0da2fb"></i> Demande</a>
+						</li>
+						<li class="  ">
+						  <a href="/AfficherEtatGlobal"><i class="fa fa-check"  style="color:#04FDD7"></i> Etat global</a>
+						</li>
+
+					  <!--<a href="/dashboard"><i class="fa fa-dashboard fa-2x"></i> Tableau de bord</a>
+
+
+					  <a href="/accueil"><i class="fa fa-cube fa-3x"></i> Applications</a>
+
+					<li class="">
+					  <a href="/listeTest"><i class="fa fa-briefcase fa-lg"></i> Tests</a>
+					</li>
+					<li class="">
+					  <a href="/listeDossier"><i class="fa fa-folder-open fa-lg"></i> Dossiers</a>
+					</li>
+
+					<li class=" hidden">
+					  <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#"><i class="fa fa-list fa-lg"></i> Recettes <span class="caret"></span></a>
+					  <ul id="g-account-menu" class="dropdown-menu" role="menu">
+						 <li><a href="/listeRecette"><i class="fa fa-caret-right"></i> Liste des recettes</a></li>
+					  </ul>
+					</li>-->
+
+				<%}
+				
+				else{
+
+				%>
+
+				<li class="">
+				  <a href="/dashboard"><i class="fa fa-dashboard" style="color:#07fb1a"></i> TDB</a>
+				</li>
+				<li class="">
+				  <a href="/accueil"><i class="fa fa-cube" style="color:#b302ba"></i> Applications</a>
+				</li>
+				<li class="">
+				  <a href="/listeTest"><i class="fa fa-briefcase" style="color:#df7d03"></i> Tests</a>
+				</li>
+					<li class="">
+					  <a href="/listeDossier"><i class="fa fa-folder-open" style="color:#b4a402"></i> Dossiers</a>
+					</li>
+					<li class="  ">
+					  <a href="/demandeIntervention"><i class="fa fa-plus"  style="color:#0da2fb"></i> Demande</a>
+					</li>
+					<li class="  ">
+					  <a href="/AfficherListeTachePris"><i class="fa fa-asterisk"  style="color:red"></i> Gestion sous-tâche</a>
+					</li>
+					
+					<li class="  ">
+					  <a href="/AfficherEtatGlobal"><i class="fa fa-check"  style="color:#04FDD7"></i> Etat global</a>
+					</li>
+					
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown"> <i class="fa fa-file-excel-o"></i> Export <b class="caret"></b></a>
+						<ul id="g-account-menu" class="dropdown-menu" role="menu">
+							<li><a href="/ExportDossier"><i class="fa fa-file-excel-o"></i> CR Dossiers</a></li>
+							<li><a href="/Export"><i class="fa fa-file-excel-o"></i> CR Applications</a></li>
+							<li><a href="/CRmois" id ="deconnex" name="deconnex" ><i class="fa fa-file-excel-o"></i> CR Mois</a></li>
+							<li><a href="/ProcessusDev" id ="deconnex" name="deconnex" ><i class="fa fa-file-excel-o"></i> Processus DEV</a></li>
+						</ul>
+					</li>
+					
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown"> <i class="fa fa-bar-chart" style="color:yellow"></i> GANTT <b class="caret"></b></a>
+						<ul id="g-account-menu" class="dropdown-menu" role="menu">
+							<li><a href="/Gantt" id ="deconnex" name="deconnex" ><i class="fa fa-bar-chart"></i> GANTT Dev</a></li>
+							<li><a href="/GanttDossier" id ="deconnex" name="deconnex" ><i class="fa fa-bar-chart"></i> GANTT Dossier</a></li>
+							<li><a href="/GanttApplication" id ="deconnex" name="deconnex" ><i class="fa fa-bar-chart"></i> GANTT Application</a></li>
+						</ul>
+					</li>
+					
+					<li class=" hidden ">
+					  <a href="/Reporting"><i class="fa fa-area-chart"  style="color:#F7BE81"></i> Reporting</a>
+					</li>
+					
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown"> <i class="fa fa-user" style="color:#49DC94"></i> Dev <b class="caret"></b></a>
+						<ul id="g-account-menu" class="dropdown-menu" role="menu">
+							<li><a href="/competenceDev"><i class="fa fa-star" style="color:yellow"></i> Compétences Dev</a></li>
+							<li><a href="/gestionCompetence" id ="deconnex" name="deconnex" ><i class="fa fa-cogs" ></i> Gestion Technologie</a></li>
+							<li><a href="/gestionCompetenceDev" id ="deconnex" name="deconnex" ><i class="fa fa-cogs" ></i> Gestion Technique</a></li>
+						</ul>
+					</li>
+					
+					<li class="">
+					  <a href="/listeAdministrateur"><i class="fa fa-wrench" style="color:#b4a402"></i> Administration</a>
+					</li>
+
+				<%}
+				%>
+
+				<%
+					var disableNbNotification = "";
+					if(req.session.nbNotification == 0)
+					{
+						disableNbNotification = "hidden";
+					}
+				%>
+
+				<!--<li class="">
+				  <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#"><i class="fa fa-info-circle "  style="color:#fafb2b"></i> Notifications <span class="badge bg-red-gradient <%= disableNbNotification %>"> <div id="nombre_notification2" class ="<%= disableNbNotification %>"><%=req.session.nbNotification %></div> </span></a> 
+				  <ul id="liste_notification_ul" class="dropdown-menu" role="menu" style="width:230px;max-height: 230px;overflow: hidden;overflow-y: auto;">
+					<% req.session.listNotification.forEach(function(notif){ %>
+						<li value="<%= notif.id_notification %>"><a href="#" id="notificationM" name="notificationM" ><i class="fa fa-comment"></i> <%= notif.notification %> </a></li>
+					<% }); %>
+
+					<div id="notification"></div>
+				  </ul>
+				</li>-->
+
+
+
+                <li class="dropdown">
+                   <!-- <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#"><i class="fa fa-user fa-lg"></i> <%=req.session.nom%> <span class="caret"></span></a> -->
+
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown"> <%=req.session.nom%><b class="caret"></b></a>
+
+                    <ul id="g-account-menu" class="dropdown-menu" role="menu">
+                        <li><a href="/profil"><i class="fa fa-user"></i> Ma page</a></li>
+                        <!-- <li><a href="#modalDisconnect" data-toggle="modal" data-backdrop="static"><i class="fa fa-lock"></i> Se déconnecter</a></li> -->
+                        <li><a href="#" id ="deconnex" name="deconnex" onclick="deconnex()" ><i class="fa fa-lock"></i> Se déconnecter</a></li>
+                    </ul>
+                </li>
+              <li class="">
+                <img src="data:image/png;base64, <%= req.session.image %>" class="img-circle" alt="Photo" style="width: 50px; height: 50px"/>
+              </li>
+            </ul>
+        </div>
+    </div>
+    <!-- /container -->
+</div>
+
+<div id="notificat"></div>
+<%
+
+%>
+<input type="text"  class="hidden" id="lst_affectation_dossier" value="<%=req.session.arrayAffectationDossier%>" />  <!-- /session de la liste des dossiers affecté à l'utilisateur -->
+<input type="text"  class="hidden" id="nombre_notification" value="<%=req.session.nbNotification%>" />  <!-- /session nombre notiffication affecté à l'utilisateur -->
+
+<!-- SOCKET ================================================================================================================================ -->
+
+			<!-- include du js socket sails :p -->
+		<script src="js/sails.io.js"></script>
+		<script type="text/javascript">
+			//get host name
+			var host = window.location.hostname;
+			//alert("HOSTNAME  "+host);
+			io.sails.url = "http://"+host+":1337";
+		</script>
+		<script>
+			//alert('test');
+			/*var nbNotification = $('#nombre_notification').val();
+			alert(nbNotification);*/
+
+			io.socket.on("notif", function  (msg) {
+
+				//alert(data);
+				var idDossier = msg.id_dossier;
+				//alert("id_dossier  "+idDossier);
+				var strArray = $('#lst_affectation_dossier').val();
+
+				var currentNbNotif = msg.nb_notif;
+
+
+				var lstDossier = JSON.parse(strArray);
+				//lstDossier =
+
+
+				if (lstDossier.indexOf(idDossier) >= 0 ){
+					//alert("dossier > = 0");
+					//$('#notification').innerHTML += '<li><a href="#"><i class="fa fa-comment"></i> '+msg.notif_content+' </a></li>';
+
+					//alert("notification ++");
+
+					//$('#notification').innerHTML += '<li><a href="#"><i class="fa fa-comment"></i> '+msg.notif_content+' </a></li>';
+					document.getElementById('notification').innerHTML += '<li><a href="#"><i class="fa fa-comment"></i> '+msg.notif_content+' </a></li>';
+					document.getElementById('nombre_notification2').innerHTML = currentNbNotif;
+
+					msg.request.session.nbNotif = currentNbNotif;
+
+
+					//alert(JSON.stringify(data));
+					//var currentNbNotif = Number($('#notification_val').innerHTML);
+
+					//$('#nombre_notification2').innerHTML = currentNbNotif ++;
+				}
+
+			});
+		</script>
+
+
+		<script class="cssdeck" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+		<script>
+			$(function(){
+			  //element cache
+			  var $nnAlert = $('.nn-alert-container');
+
+			  //.on instead of .click for live binding
+			  $nnAlert.on('click', '.nn-alert', function(){
+				 hideAlert($(this));
+			  });
+
+			  function bindAnimationEnd(){
+				//listen to animation end, then hide the element definitely
+				$('.nn-alert').one('webkitAnimationEnd', function(){
+				  $(this).html('');
+				  $(this).addClass('hide');
+				});
+			  }
+			  //one call for handwritten html alerts
+			  bindAnimationEnd();
+
+			  function hideAlert($alert){
+				$alert.addClass('animated bounceOutLeft');
+			  }
+			});
+		</script>
+
+<!-- Modal HTML -->
+
+	<script>
+		function deconnex() {
+			var testNom = 1;
+			bootbox.dialog({
+			  title: "Merci de confirmer",
+			  message: "Etes-vous certain de vouloir vous déconnecter?",
+			  buttons: {
+				supprimer: {
+				  label: "Se déconnecter",
+				  className: "btn-primary",
+				  callback: function() {
+					 window.location = "logout";
+					}
+				},
+				annuler: {
+				  label: "Annuler",
+				  className: "btn-info",
+				 // action:"/listeTest"
+				}
+			  }
+			});
+            // The function returns the product of p1 and p2
+		};
+	</script>
+
+	<script>
+	
+		$("#liste_notification_ul li").on("click", function(){
+		  //alert($(this).text() + "     "+ $(this).attr('value'));
+		  var id_notification = $(this).attr('value');
+		  var notif = $(this).text();
+		  
+			bootbox.dialog({
+			  title: "Notification",
+			  message: " "+ notif, //+id_notification + " "+ notif
+			  buttons: {
+				supprimer: {
+				  label: "ok",
+				  className: "btn-primary",
+				  callback: function() {
+					 window.location = "/modifierNotification?id_notification="+id_notification;
+					}
+				}
+			  }
+			});
+
+		});
+	
+		/*function notificationModal() {  //idNotification, notification
+			//alert("test");
+			//var id_notification = idNotification;
+			//var notif = unescape(notification);
+			
+			$( "#motif_appel_select option:selected" ).val();
+			
+			bootbox.dialog({
+			  title: "Notification",
+			  message: "Notification: ", //+id_notification + " "+ notif
+			  buttons: {
+				supprimer: {
+				  label: "ok",
+				  className: "btn-primary",
+				  callback: function() {
+					 //window.location = "/modifierNotification?id_notification="+id_notification;
+					}
+				}
+			  }
+			});
+            // The function returns the product of p1 and p2
+		};
+
+		function escapeTest(test) {
+			var notif = "l'application bléblé a été modifié";
+			alert(escape(test));
+		};*/
+
+	</script>
+
+   <!-- <div id="modalDisconnect" class="modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"
+              aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Merci de confirmer</h4>
+          </div>
+          <div class="modal-body">
+            <p>Etes-vous certain de vouloir vous déconnecter?</p>
+          </div>
+          <div class="modal-footer">
+			<a href="/logout" class="btn btn-primary">Se déconnecter</a>
+            <button type="button" class="btn btn-info" data-dismiss="modal">Annuler</button>
+          </div>
+        </div>
+      </div>
+    </div>-->
+
+
+<!-- /Header -->

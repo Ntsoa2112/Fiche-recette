@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<title>Recette - Accueil</title>
+		<meta name="generator" content="Bootply" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/styles.css" rel="stylesheet">
+
+		<link rel="stylesheet" href="css/jquery.dataTables.min.css">
+
+    <link href="fonts/css/font-awesome.css" rel="stylesheet">
+    <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+
+	<script type="text/javascript" src="js/paging.js"></script>
+	
+	<style>
+		.starColor {
+		  font-size:1.25em;
+		}
+
+		.starColor .fa-star{color: yellow;}
+		
+		.centered{
+			margin: 0 auto;
+		}
+	</style>
+	
+
+	</head>
+	<body onLoad="getLsDossier()">
+		<!-- HEADER -->
+		<% 
+		include ../header.ejs %>
+		<!-- /HEADER -->
+		<!-- Menu GAUCHE -->
+		<% var disable = "";
+		if(req.session.droit == 0){
+			disable = "hidden";}
+		%>
+		<!-- Main -->
+		<div class="container-fluid">
+			<div class="row">
+				<div id="menuCenter">
+					  <!--<% include ../dossierEtapeApp.ejs %>
+					 
+					  </br>
+					  </br>-->
+
+					<div class="row">
+						<div class="">
+							<div class="page-title">
+
+							  <div class="title_left">
+								<h2>
+								  Fiche recette
+								  <small>
+									Comp&#233;tence Dev
+								  </small>
+								</h2>
+							  </div>
+							</div>
+							</br>
+							<div class="clearfix"></div>
+							<%
+								var mapCompetence = new Map();
+								var lastID = 0;
+								var mapCompetencePers = new Map();
+								competences.forEach(function (comp) {
+									if(lastID!=Number(comp.id_pers)){
+									  mapCompetencePers = new Map();
+									  lastID=Number(comp.id_pers);
+									  mapCompetence[comp.appelation+" "+comp.id_pers] = mapCompetencePers;
+									}
+									mapCompetencePers[comp.id_competence] = comp;
+								});
+								
+								var mapCompetenceDev = new Map();
+								var lastIDdev = 0;
+								var mapCompetencePersDev = new Map();
+								competencesApp.forEach(function (comp) {
+									if(lastIDdev!=Number(comp.id_pers)){
+									  mapCompetencePersDev = new Map();
+									  lastIDdev=Number(comp.id_pers);
+									  mapCompetenceDev[comp.appelation+" "+comp.id_pers] = mapCompetencePersDev;
+									}
+									mapCompetencePersDev[comp.id_competence] = comp;
+								});
+								
+								var mapTechDev = new Map();
+								Object.keys(mapCompetence).forEach(function(key) {
+									var mapTemp = new Map();
+									
+									mapTemp[1] = mapCompetence[key];
+									mapTemp[2] = mapCompetenceDev[key];
+									
+									mapTechDev[key] = mapTemp;
+								});
+							%>
+								
+							<table class="table">
+								<thead>
+									<tr>
+									  <th scope="col">Comp&#233;tences Technologies</th>
+									  <th scope="col">Comp&#233;tences Techniques</th>
+									</tr>
+								</thead>
+								<tbody>
+										<%
+											var valueComp;
+											var html = "";
+											var valueMapTechDev;
+											Object.keys(mapTechDev).forEach(function(keyMapTechDev) {
+												html += "<tr>";
+												valueMapTechDev = mapTechDev[keyMapTechDev];
+												
+												Object.keys(valueMapTechDev).forEach(function(keyTypeComp) { 
+													valueComp = valueMapTechDev[keyTypeComp];
+													var valueCompPers;
+													
+													var keyMapTechDevSplit = keyMapTechDev.split(" ");
+													
+													html += "<td><div class='col-lg-12 '><div class='panel panel-default col-lg-12 '>"+
+														"<div class='panel-heading'>"+
+														"<div class='btn-group pull-right'>"+
+															"<a href='#' onclick = 'ajouterCompetence("+keyMapTechDevSplit[1]+","+keyTypeComp+")' class='btn btn-default btn-sm'><i class='fa fa-plus' style='color:#04B404'></i> Ajouter</a>"+
+														"</div>"+
+														keyMapTechDevSplit[0]+"</div>"+
+														"<div >"+      
+														"<div class='panel-body'>";
+													
+													Object.keys(valueComp).forEach(function(key) {
+														valueCompPers = valueComp[key];
+															html += "<div class='row'>"+
+																"<div class='col-lg-12'>"+
+																	"<div class='col-lg-5'>"+valueCompPers.libelle+"</div>"+
+																	"<div class='col-lg-4'>"+
+																	  "<div class='star-rating"+keyTypeComp+"-"+valueCompPers.id_competence_dev+"  starColor' >"+
+																		"<span class='fa fa-star-o fa-fw' data-rating='1' onclick='clickEtoile("+valueCompPers.id_competence_dev+")'></span>"+
+																		"<span class='fa fa-star-o fa-fw' data-rating='2' onclick='clickEtoile("+valueCompPers.id_competence_dev+")'></span>"+
+																		"<span class='fa fa-star-o fa-fw' data-rating='3' ></span>"+
+																		"<span class='fa fa-star-o fa-fw' data-rating='4' ></span>"+
+																		
+																		"<span class='fa fa-star-o fa-fw' data-rating='5' ></span>"+
+																		"<input type='hidden' name='whatever1' class='rating-value-"+valueCompPers.id_competence_dev+"' value='"+valueCompPers.nb_etoile+"'>"+
+																	  "</div>"+
+																	"</div>"+
+																	
+																	"<div class='btn-group pull-right col-lg-3' id='modif_etoile"+valueCompPers.id_competence_dev+"'>"+
+																		"<a href='#' onclick = 'modifierEtoiles("+valueCompPers.id_competence_dev+", "+keyTypeComp+")' class='btn btn-default btn-sm'><i class='fa fa fa-edit' style='color:#0040FF'></i></a>"+
+																		"<a href='#' onclick = 'supprimerEtoiles("+valueCompPers.id_competence_dev+", "+keyTypeComp+")' class='btn btn-default btn-sm'><i class='fa fa-trash' style='color:red'></i></a>"+
+																	"</div>"+
+																	
+																"</div>"+
+															"</div>";
+													});
+													html +="</div>" +
+														"</div>" +
+													"</div> </div> </td>";
+												});
+												html += "</tr>";
+											});
+										%>
+									  <%-html%>
+								</tbody>
+							</table>	
+						</div>
+					</div>
+					</br>
+					</br>
+					</br>
+					</br>
+					</br>
+					</br>
+					
+					<input class="hidden" id="competencesInput" value="<%=competences%>"></input>
+					<!-- Notifications -->
+					<% include ../notifications.ejs %>   <!-- include menu à gauche -->
+					<!-- /Notifications -->
+				</div>
+				<!--/col-span-9-->
+			</div><br/><br/><br/><br/>
+		</div>
+		<!-- /Main -->
+		<!-- Footer -->
+		<center><% include ../footer.ejs %></center>
+		<!-- /Footer -->
+                           
+		<!-- script references -->
+		<script src="/js/base.min.js"></script>
+		<script src="/js/project.min.js"></script>
+
+		<script src="js/jquery.min.js"></script>
+
+		<script type="text/javascript" src="js/jquery.dataTables.js"></script>
+
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/scripts.js"></script>
+		
+		<script>
+		
+		//DEBUT COMP
+		var competencesInputVal = <%-JSON.stringify(competences)%>;
+		var compLength = Object.keys(competencesInputVal).length;
+		
+		var SetRatingStarCompetence = function() {
+			for (var i = 0; i < compLength; i++) {
+				var $star_rating = $('.star-rating1-'+competencesInputVal[i].id_competence_dev+' .fa');
+				$star_rating.each(function() {
+					if (parseInt($star_rating.siblings('input.rating-value-'+competencesInputVal[i].id_competence_dev).val()) >= parseInt($(this).data('rating'))) {
+					  return $(this).removeClass('fa-star-o').addClass('fa-star');
+					} else {
+					  return $(this).removeClass('fa-star').addClass('fa-star-o');
+					}
+				});
+			}
+		};
+		SetRatingStarCompetence();
+		$(document).ready(function() {
+		});
+		//FIN COMP
+		
+		//DEBUT COMP APP *********************************************************************
+		var competencesInputValApp = <%-JSON.stringify(competencesApp)%>;
+		var compLengthApp = Object.keys(competencesInputValApp).length;
+		
+		var SetRatingStarCompetenceApp = function() {
+			for (var i = 0; i < compLengthApp; i++) {
+				var $star_rating = $('.star-rating2-'+competencesInputValApp[i].id_competence_dev+' .fa');
+				$star_rating.each(function() {
+					if (parseInt($star_rating.siblings('input.rating-value-'+competencesInputValApp[i].id_competence_dev).val()) >= parseInt($(this).data('rating'))) {
+					  return $(this).removeClass('fa-star-o').addClass('fa-star');
+					} else {
+					  return $(this).removeClass('fa-star').addClass('fa-star-o');
+					}
+				});
+			}
+		};
+		SetRatingStarCompetenceApp();
+		$(document).ready(function() {
+		});
+		//FIN COMP
+		
+		
+		function modifierEtoiles(id_competence_dev, app) {
+			var idComp = id_competence_dev;
+			var msg='<div class=""><label>Etoiles:</label> <select class="form-control" id="nb_etoiles"><option value="1">1</option>' +
+						  '<option value="2">2</option><option value="3">3</option>' +
+						  '<option value="4">4</option><option value="5">5</option>' +
+						  '</select></div><br>';
+			var titre = "MODIFICATION ";
+			
+			bootbox.dialog({
+			  message: msg,
+			  title: titre,
+			  buttons: {
+				annuler: {
+				  label: "Annuler",
+				  className: "btn-default",
+				  callback: function () {
+				  }
+				},
+				main: {
+				  label: "Valider",
+				  className: "btn-primary",
+				  callback: function () {
+						var nb=$( "#nb_etoiles" ).val();
+						window.location = "modifierNbEtoile?idCompetence="+idComp+"&nbEtoile="+nb;
+				  }
+				}
+			  }
+			});
+		}
+		
+		function supprimerEtoiles(id_competence_dev, app) {
+			var idComp = id_competence_dev;
+			bootbox.dialog({
+			  title: "Merci de confirmer",
+			  message: "Etes-vous certain de vouloir supprimer?",
+			  buttons: {
+				supprimer: {
+				  label: "Supprimer",
+				  className: "btn-primary",
+				  callback: function() {
+						window.location = "supprimerCompetenceLibelleDev?idCompetence="+idComp;
+					}
+				},
+				annuler: {
+				  label: "Annuler",
+				  className: "btn-info"
+				}
+			  }
+			});
+		}
+		
+		
+		function ajouterCompetence(idPers, typeC) {
+			var idDev = idPers;
+			var type = typeC;
+			
+			//alert(idDev +"  "+typeC);
+			
+			$.ajax({ // 1
+				type: "POST",
+				url: "/getListeCompetence?type="+type,
+				beforeSend: function(xhr){
+				},
+				success: function(msg){
+					var listeCompetences = JSON.parse(msg);
+				
+					$.ajax({ // 2
+						type: "GET",
+						url: "/getListeCompetenceDev?idDev="+idDev+"&type="+type,
+						beforeSend: function(xhr){
+						},
+						success: function(msg2){
+						
+							var listeCompetenceDev = JSON.parse(msg2);
+							var html = "<option value=''></option>";
+
+							for (var i = 0 ; i<listeCompetences.length ; i++){
+								html += "<option value='"+listeCompetences[i].id_competence+"'>"+listeCompetences[i].libelle+"</option>";
+							}
+							
+							var msgM='<div class=""><label>Libelle:</label>'+
+										'<select class="form-control" tabindex="-1" id="libelle_competence" name="typeRecherche">' +
+											html +
+										'</select></br>'+
+										'<label>Nombre etoile:</label>'+
+										'<select class="form-control" name="nombre_etoile" id="nombre_etoile"><option value="1">1</option>' +
+										'<option value="2">2</option><option value="3">3</option>' +
+										'<option value="4">4</option><option value="5">5</option>' +
+										'</select>'+
+									'</div>';
+				//'<input class="form-control" id="nombre_etoile" type="text" name="nombre_etoile" placeholder="" onchange="" required ></input>'+
+							var titre = "Ajout nouvelle competence technique:";
+							
+							bootbox.dialog({
+							  message: msgM,
+							  title: titre,
+							  buttons: {
+								annuler: {
+								  label: "Annuler",
+								  className: "btn-default",
+								  callback: function () {
+								  }
+								},
+								main: {
+								  label: "Ajouter",
+								  className: "btn-primary",
+								  callback: function () {
+									var id_comp=$( "#libelle_competence" ).val();
+									
+									for (var j = 0 ; j<listeCompetenceDev.length ; j++){
+										if(listeCompetenceDev[j].id_competence == id_comp){
+											alert("Competence déja existant");
+										}
+										else{
+											var nb_etoile=$( "#nombre_etoile" ).val();
+											if(id_comp != "" && nb_etoile != ""){
+												//alert(libelle_comp + " " + nb_etoile + " " + idDev);
+												window.location = "creerCompetenceDev?idComp="+id_comp+"&nbEtoile="+nb_etoile+"&idDev="+idDev;
+											}
+											else{
+												alert("Champ invalide");
+											}
+										}
+									}	
+								  }
+								}
+							  }
+							});
+						},
+						error: function (error) {
+							//alert('error; ' +error);
+						}
+					});
+				},
+				error: function (error) {
+					alert('error; ' +error);
+				}
+			});
+		  }
+		  
+		  // app **********************************************
+		  function ajouterCompetenceApp(idPers) {
+			var idDev = idPers;
+			$.ajax({ // 1
+				type: "POST",
+				url: "/getListeCompetenceApp",
+				beforeSend: function(xhr){
+				},
+				success: function(msg){
+					var listeCompetences = JSON.parse(msg);
+					$.ajax({ // 2
+						type: "GET",
+						url: "/getListeCompetenceDevApp?idDev="+idDev,
+						beforeSend: function(xhr){
+						},
+						success: function(msg2){
+						
+							var listeCompetenceDev = JSON.parse(msg2);
+							var html = "<option value=''></option>";
+
+							for (var i = 0 ; i<listeCompetences.length ; i++){
+								var nomIdApp = listeCompetences[i].nom_application + "(" +listeCompetences[i].id_application+ ")";
+								html += "<option value='"+listeCompetences[i].id_application+"'>"+nomIdApp+"</option>";
+							}
+							
+							var msgM='<div class=""><label>Libelle:</label>'+
+										'<select class="form-control" tabindex="-1" id="libelle_competence" name="typeRecherche">' +
+											html +
+										'</select></br>'+
+										'<label>Nombre etoile:</label>'+
+										'<select class="form-control" name="nombre_etoile" id="nombre_etoile"><option value="1">1</option>' +
+										'<option value="2">2</option><option value="3">3</option>' +
+										'<option value="4">4</option><option value="5">5</option>' +
+										'</select>'+
+									'</div>';
+									
+							var titre = "Ajout nouvelle competence application:" ;
+							
+							bootbox.dialog({
+							  message: msgM,
+							  title: titre,
+							  buttons: {
+								annuler: {
+								  label: "Annuler",
+								  className: "btn-default",
+								  callback: function () {
+								  }
+								},
+								main: {
+								  label: "Ajouter",
+								  className: "btn-primary",
+								  callback: function () {
+									var id_comp=$( "#libelle_competence" ).val();
+									
+									for (var j = 0 ; j<listeCompetenceDev.length ; j++){
+										if(listeCompetenceDev[j].id_application == id_comp){
+											alert("Application déja existant");
+										}
+										else{
+											var nb_etoile=$( "#nombre_etoile" ).val();
+											if(id_comp != "" && nb_etoile != ""){
+												window.location = "creerCompetenceDevApp?idComp="+id_comp+"&nbEtoile="+nb_etoile+"&idDev="+idDev;
+											}
+											else{
+												alert("Champ invalide");
+											}
+										}
+									}	
+								  }
+								}
+							  }
+							});
+						},
+						error: function (error) {
+						}
+					});
+				},
+				error: function (error) {
+					alert('error; ' +error);
+				}
+			});
+		  }
+		  
+		  
+		  
+		function clickEtoile(idCompetenceDev){
+			//var $star_rating = $('.star-rating-'+idCompetenceDev+' .fa');
+			//var onStar = parseInt($star_rating.data('rating'), 10);
+			//alert( $star_rating.data('rating'));
+			
+			
+			/*$star_rating.siblings('input.rating-value-'+idCompetenceDev).val($(this).data('rating'));
+			
+			alert ($star_rating.siblings('input.rating-value-'+idCompetenceDev).val());
+			
+			//window.location = "updateNbEtoile?idCompetence=" + idCompetenceDev  + "&nbEtoile="+$star_rating.val();
+			return SetRatingStarCompetence();*/
+		}
+
+		
+	</script>
+
+		<script>
+
+		$(document).ready(function(){
+			$('#tableDossier').dataTable();
+		});
+
+		</script>
+
+		<script type="text/javascript"><!--
+        var pager = new Pager('results', 12);
+        pager.init();
+        pager.showPageNav('pager', 'pageNavPosition');
+        pager.showPage(1);
+    //--></script>
+
+	<!-- DOSSIER ETAPE APPLICATION -->
+	<script src="js/dossierEtapeApp.js"></script>
+	
+	</body>
+</html>

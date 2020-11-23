@@ -1,0 +1,1290 @@
+
+<% var disable = "";
+if(req.session.droit == 0){
+  disable = "hidden";}
+%>
+
+<%
+  function CalculeDate(seconde)
+  {
+	var retourCalcul;
+	var h2=parseFloat(parseInt(seconde)/3600);
+	retourCalcul=h2;
+	return Number(retourCalcul.toFixed(2));
+  }
+%>
+<!--
+	var totalSeconds = parseInt(seconde, 10);
+	var hours = Math.floor(totalSeconds / 3600);
+	var h = "";
+	if(hours.toString().length == 1)
+	  h = "0"+hours.toString();
+	else
+	  h = hours.toString();
+
+	totalSeconds %= 3600;
+	var minutes = Math.floor(totalSeconds / 60);
+	var mn = "";
+	if(minutes.toString().length == 1)
+	  mn = "0"+minutes.toString();
+	else
+	  mn = minutes.toString();
+
+	var seconds = totalSeconds % 60;
+	var s = "";
+	if(seconds.toString().length == 1)
+	  s = "0"+seconds.toString();
+	else
+	  s = seconds.toString();
+
+	return h+":"+mn+":"+s;
+ -->    
+	<!-- resultsAppPris"-->
+		<table id="" class="table table-striped table-bordered table-hover table-condensed">
+		  <thead>
+		  <tr class="headings">
+			<th> ID </th>
+			<th><i class="fa fa-folder-open"></i> DEV  <% applications %></th>
+			<th><i class="fa fa-folder-open"></i> DEMANDEUR </th>
+			<th><i class="fa fa-paperclip"></i> PROJET </th>
+			<th><i class="fa fa-plus-circle"></i> APPLICATION </th>
+			<th><i class="fa fa-calendar"></i> DATE DEMANDE </th>
+			<th><i class="fa fa-calendar"></i> DEMANDE </th>
+			<th><i class="fa fa-file-text"></i> TEMPS PASSE </th>
+			<th><i class="fa fa-file-text"></i> AVANCEMENT(%) </th>
+			<th><i class="fa fa-cog"></i> DEAD LINE </th>
+			<th><i class="fa fa-cog"></i> TEMPS ESTIME</th>
+			<th><i class="fa fa-cog"></i> TYPE </th>
+			<th><i class="fa fa-cog"></i> DELAI </th>
+			<th><i class="fa fa-cog"></i> QUALITE </th>
+			<th><i class="fa fa-cog"></i> PRIORITE </th>
+			<th><i class="fa fa-cog"></i> DATE FIN DEMANDE </th>
+			<th><i class="fa fa-cog"></i> REFORMULATION</th>
+			<th><i class="fa fa-cog"></i> ESTIMATION ABAQUE </th>
+			<th><i class="fa fa-cog"></i> CAHIER DE TEST </th>
+			<th><i class="fa fa-cog"></i> DEMONSTRATION </th>
+			<th class = "<%= disable %>"><i class="fa fa-cog <%= disable %>"></i> MODIFIER ETAT</th>
+		  </tr>
+		  </thead>
+		  <tbody>
+		  <%
+		  var month = new Array();
+		  month[0] = "Janvier";
+		  month[1] = "Février";
+		  month[2] = "Mars";
+		  month[3] = "Avril";
+		  month[4] = "Mai";
+		  month[5] = "Juin";
+		  month[6] = "Juillet";
+		  month[7] = "Aout";
+		  month[8] = "Septembre";
+		  month[9] = "Octobre";
+		  month[10] = "Novembre";
+		  month[11] = "Décembre";
+		  %>
+
+		  <% applications.forEach(function(application){ %>
+		  <%
+
+			var hiddenClass="";
+			var dateDemande = new Date(Number(Date.parse(application.date_demande)));
+			var dateD = dateDemande.getFullYear()+"-"+dateDemande.getMonth()+"-"+dateDemande.getDate() + " , "+dateDemande.getHours()+":"+dateDemande.getMinutes()+":"+dateDemande.getSeconds();
+
+			var dateDemandeTerminer = new Date(Number(Date.parse(application.date_demande_termine)));
+			var dateT = dateDemandeTerminer.getFullYear()+"-"+dateDemandeTerminer.getMonth()+"-"+dateDemandeTerminer.getDate() + " , "+dateDemandeTerminer.getHours()+":"+dateDemandeTerminer.getMinutes()+":"+dateDemandeTerminer.getSeconds();
+			if(isNaN(dateDemandeTerminer.getFullYear())){
+			  dateT = "-";
+			}
+
+
+			var tempsPasse = application.temps_passe;
+			if(application.temps_passe == null){
+			  tempsPasse = "-";
+			}else{
+			  var sec_num = parseInt(tempsPasse, 10);
+			  var hours   = Math.floor(sec_num / 3600);
+			  var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+			  var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+			  if (hours   < 10) {hours   = "0"+hours;}
+			  if (minutes < 10) {minutes = "0"+minutes;}
+			  if (seconds < 10) {seconds = "0"+seconds;}
+			  //tempsPasse = hours+":"+minutes+":"+seconds;
+			  tempsPasse=CalculeDate(application.temps_passe);
+			}
+			var tempsPasse_estimation = application.estimation_dev;
+			if(application.estimation_dev == null){
+			  tempsPasse_estimation = "-";
+			}else{
+			  tempsPasse_estimation = CalculeDate(application.estimation_dev);
+			}
+			var etat = "";
+			var modifEtat = "";
+			if(application.etat_demande != "Prise en main"){
+			  etat = application.etat_demande;
+			  modifEtat = "disabled";
+			}else{
+			  etat = application.etat_demande+" (en cours)";
+			}
+			var bgcolor_priorite="";
+			if(application.id_priorite==null)
+			{
+			  bgcolor_priorite='';
+			  application.priorite='';
+			}
+			if(application.id_priorite==1)
+			{
+			  bgcolor_priorite="bgcolor=#F78181";
+			}
+			else
+			if(application.id_priorite==2)
+			{
+			  bgcolor_priorite="bgcolor=#F5DA81";
+			}
+			else
+			if(application.id_priorite==3)
+			{
+			  bgcolor_priorite="bgcolor=#9FF781";
+			}
+			
+			if(application.id_type_intervention > 4 && application.id_type_intervention !== 10)
+			{
+			  bgcolor_priorite="bgcolor=#A9E2F3";
+			}
+			if(application.sous_tache.length!=0)
+			  {
+				hiddenClass="hidden";
+			  }
+			var hiddenClassEtat="";
+			var hiddenClassCR="";
+			if(application.id_etat_demande==3)
+			  {
+				hiddenClassEtat="hidden";
+			  }
+			  var hiddenClassStandBy="hidden";
+			if(application.id_etat_demande==2)
+			  {
+				hiddenClassStandBy="";
+			  }
+
+			 var hiddenClassEnCours="hidden";
+			if(application.id_etat_demande==4)
+			  {
+				hiddenClassEnCours="";
+			  }
+
+			var hiddenClassAvancement="";
+			if(application.avancement_dev <100 )
+			  {
+				hiddenClassAvancement="hidden";
+			  }
+
+			var start = new Date(Number(Date.parse(application.date_demande)));
+			var startMonth = start.getMonth() + 1;
+			var month = startMonth;
+			if(startMonth < 10){
+				month = "0"+startMonth;
+			}
+			var day = start.getDate();
+			if(start.getDate() < 10){
+				day = "0"+start.getDate();
+			}
+			var dateDemande = start.getFullYear()+"-"+month+"-"+day;
+			
+			
+			var fin = new Date(Number(Date.parse(application.date_demande_termine)));
+			var finMonth = fin.getMonth() + 1;
+			var monthFin = finMonth;
+			if(fin.getMonth() < 10){
+				monthFin = "0"+finMonth;
+			}
+			var dayFin = fin.getDate();
+			if(fin.getDate() < 10){
+				dayFin = "0"+fin.getDate();
+			}
+			var dateDemandeFin = fin.getFullYear()+"-"+monthFin+"-"+dayFin;
+			if(isNaN(monthFin)){
+				dateDemandeFin = "-";
+			}
+			
+			var dateDemandeTermine = new Date(Number(Date.parse(application.date_demande_termine)));
+			var dateDemandeTermineMonth = dateDemandeTermine.getMonth() + 1;
+			var monthDateDemandeTermine = dateDemandeTermineMonth;
+			if(dateDemandeTermine.getMonth() < 10){
+				monthDateDemandeTermine = "0"+dateDemandeTermineMonth;
+			}
+			var dayDateDemandeTermine = dateDemandeTermine.getDate();
+			if(dateDemandeTermine.getDate() < 10){
+				dayDateDemandeTermine = "0"+dateDemandeTermine.getDate();
+			}
+			var dateDemandeTermine = dateDemandeTermine.getFullYear()+"-"+monthDateDemandeTermine+"-"+dayDateDemandeTermine;
+			if(isNaN(monthDateDemandeTermine)){
+				dateDemandeTermine = "-";
+			}
+			
+			var dateFirst = new Date(application.date_fin_cr);
+			var dateSecond = new Date(application.delai);
+			
+			var timeDiff = dateFirst.getTime() - dateSecond.getTime();
+			
+			var delaiAfficher = "1";
+			if ( timeDiff > 0){
+				delaiAfficher = "0";
+			}
+			if(application.num_dossier == "GESTIONS"){
+				delaiAfficher = "1";
+			}
+			
+				
+			var qualiteAfficher = "1";
+			if(application.type_intervention == "Bug"){
+				qualiteAfficher = "0";
+			}
+			
+			var droitDev = "hidden";
+			if(application.id_personne_dev == req.session.user){
+				droitDev = "";
+			}
+			
+		  %>
+		  <tr class="even pointer" data-toggle="collapse" data-target="#accordion-<%= application.id_demande%>" class="clickable">
+        <td <%= bgcolor_priorite %> class=" "><%= application.id_demande %></td> <!--  -->
+        <td <%= bgcolor_priorite %> class=" "><%= (application.appelation || "-") %></td>
+        <td <%= bgcolor_priorite %> class=" "><%= (application.demandeur || "-") %></td>
+        <td <%= bgcolor_priorite %> class=" "><%= (application.num_dossier || "-") %></td>
+        <td <%= bgcolor_priorite %> class=" "><%= (application.nom_application || "-") %></td>
+        <td <%= bgcolor_priorite %> class=" "><%= (dateDemande || "-") %></td>
+        <td <%= bgcolor_priorite %> class=" "><%= unescape(unescape(application.description)) %></td>
+        <td <%= bgcolor_priorite %> class=" "><%= tempsPasse %></td>
+        <td <%= bgcolor_priorite %> class=" "><%= (application.avancement_dev|| "-") %></td>
+        <td <%= bgcolor_priorite %> class=" "><%= (application.delai || "-") %></td>
+        <td <%= bgcolor_priorite %> class=" "><%= tempsPasse_estimation %></td>
+        <td <%= bgcolor_priorite %> class=" "><%= application.type_intervention %></td>
+        <td <%= bgcolor_priorite %> class=" "><%= ( delaiAfficher || "1")%></td><!-- qualite_dev -->
+        <td <%= bgcolor_priorite %> class=" "><%= ( qualiteAfficher || "1")%></td>
+        <td <%= bgcolor_priorite %> class=" "><%= (application.libelle_priorite || "-")%></td>
+        <td <%= bgcolor_priorite %> class=" "><%= (application.date_fin_cr  || "-")%></td>
+        <td <%= bgcolor_priorite %> class=" "><%= (application.reformulation  || "-")%></td>
+        <td <%= bgcolor_priorite %> class=" "><%= (application.estimation_abaque  || "-")%></td>
+        <td <%= bgcolor_priorite %> class=" "><%= (application.cahier_test  || "-")%></td>
+        <td <%= bgcolor_priorite %> class=" "><%= (application.demonstration  || "-")%></td>
+        <td <%= bgcolor_priorite %> class=" <%= disable %> ">
+          <table class =" <%= disable %> ">
+          <tr>
+            <td><a href="#" class="btn btn-primary <%= droitDev %> <%= disable %> " onclick = "ModifierDemande(<%=application.id_demande %>, '<%= escape(application.description) %>', '<%= tempsPasse_estimation %>','<%= application.delai %>','<%= tempsPasse %>',<%= application.id_type_intervention %>,'<%= application.qualite_dev %>','<%=application.avancement_dev%>', <%=application.id_priorite%>, <%=application.reformulation%>, <%=application.estimation_abaque%>, <%=application.cahier_test%>, <%=application.demonstration%>, <%=application.id_personne_demande%>, '<%= escape(application.demandeur) %>')">Modifier</a></td>
+            <td> | </td>
+            <td><a href="#" class="btn btn-primary <%= droitDev %> <%= disable %> " onclick = "AjouterSousTache(<%= application.id_demande %>)">Ajouter Sous Tache</a></td>
+            <td> | </td>
+            <td><a href="#" class="btn btn-primary <%= droitDev %> <%= disable %> <%= hiddenClass%> <%= hiddenClassEtat %>" onclick = "AjouterCR_Tache(<%= application.id_demande %>,'<%= application.temps_passe %>','<%= application.estimation_dev %>')">Ajout CR</a></td>
+            <td> | </td>
+            <td><a href="#" class="btn btn-primary <%= droitDev %> <%= disable %>  <%= hiddenClassEtat %> <%= hiddenClassStandBy %>" onclick = "confirmerStandBy(<%= application.id_demande%>, 4)">Mettre en Stand-by</a></td>
+            <td><a href="#" class="btn btn-primary <%= droitDev %> <%= disable %> <%= hiddenClassEtat %> <%= hiddenClassEnCours %>" onclick = "confirmerStandBy(<%= application.id_demande%>, 2)">Reprendre</a></td>
+			<td> | </td>
+            <td><a href="#" class="btn btn-primary <%= droitDev %> <%= disable %> <%= hiddenClassEtat %> <%= hiddenClassEnCours %>" onclick = "confirmerStandBy(<%= application.id_demande%>, 5)">Terminer</a></td>
+            <td> | </td>
+			
+			<td><a href="#" class="btn btn-primary <%= droitDev %> <%= disable %> " onclick = "SupprimerDemandeSousTacheCR(<%=application.id_demande %>)">Supprimer</a></td>
+            <td> | </td>
+            <!--td><a href="#" class="btn btn-primary"  onclick = "SupprimerDemande('<%= application.id_demande %>','<%= application.id_pers%>')">Ajout CR</a></td-->
+          </tr>
+          </table>
+        </td>
+		  </tr>
+
+
+		  <tr>
+		  <td colspan="26">
+			<div id="accordion-<%= application.id_demande%>" class="collapse">
+			  <table class="table table-bordered table-hover table-condensed">
+				<tr>
+				<th>SOUS TACHE</th>
+				<th>DATE AJOUT</th>
+				<th>TEMPS PASSE</th>
+				<th>AVANCEMENT</th>
+				<th>ESTIMATION</th>
+				<th>STATUS</th>
+				<th class ="<%= disable %>"><a href="#" class="btn btn-primary <%= droitDev %> <%= disable %> <%= hiddenClassEtat%>" onclick = "confirmerEnvoiEmail(<%= application.id_demande%>)">Envoyer Mail DDL</a>
+				| <a href="#" class="btn btn-primary <%= droitDev %> <%= disable %> <%= hiddenClassEtat%> <%= hiddenClassAvancement%>" onclick = "confirmerEnvoiEmailTermine(<%= application.id_demande%>)">Envoyer Mail Terminé</a></th>
+				</tr>
+				<% application.sous_tache.forEach(function(soustache){
+
+					var tempsPasse="";
+					tempsPasse=soustache.temps_passe;
+					if(tempsPasse!="0")
+					{
+					  var sec_num = parseInt(tempsPasse, 10);
+					  var hours   = Math.floor(sec_num / 3600);
+					  var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+					  var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+					  if (hours   < 10) {hours   = "0"+hours;}
+					  if (minutes < 10) {minutes = "0"+minutes;}
+					  if (seconds < 10) {seconds = "0"+seconds;}
+
+					  tempsPasse = CalculeDate(soustache.temps_passe);
+					  
+					}
+					if(soustache.estimation!=null)
+					{
+					  var estimation=CalculeDate(soustache.estimation);
+					}
+			var bgcolor= '';
+			var classHidden='';
+			  if(soustache.status=='Terminer')
+			  {
+			   bgcolor='bgcolor="#7FFFD4"';
+			   classHidden='style=display:none;';
+			  }
+			  
+				var startS = new Date(Number(Date.parse(soustache.date_soustache)));
+				var startMonthS = startS.getMonth() + 1;
+				var monthS = startMonthS;
+				if(startMonthS < 10){
+					monthS = "0"+startMonthS;
+				}
+				var dayS = startS.getDate();
+				if(startS.getDate() < 10){
+					dayS = "0"+startS.getDate();
+				}
+				var dateS = startS.getFullYear()+"-"+monthS+"-"+dayS;
+				if(dateS == "2018-11-08"){
+					dateS = "-";
+				}
+			    var libS = soustache.libelle_soustache;
+				var lib_sous_tache = libS.replace("'", "\'");
+
+				var lib_sous_tache1 = unescape(unescape(soustache.libelle_soustache));
+				
+				var disableAjoutCRsousTache = "";
+				if(!soustache.estimation || soustache.estimation == 0){
+					disableAjoutCRsousTache = "hidden";
+				}
+				
+				%>
+				<tr>
+				  <td <%=bgcolor %> ><%= lib_sous_tache1 %></td>
+				  <td <%=bgcolor %> ><%= dateS %></td>
+				  <td <%=bgcolor %> ><%= tempsPasse %></td>
+				  <td <%=bgcolor %> ><%= soustache.avancement %></td>
+				  <td <%=bgcolor %> ><%= estimation %></td>
+				  <td <%=bgcolor %> ><%= soustache.status %></td>
+				  <td <%=classHidden%> >
+					<table>
+					  <tr><!--  -->
+					  	<td><a href="#" class="btn btn-primary <%= droitDev %> <%= disable %>" onclick = "AjouterCR(<%= soustache.id_demande %>,<%= soustache.id_soustache %>,<%= soustache.temps_passe %>,'<%= soustache.estimation %>', '<%= soustache.libelle_soustache %>', <%= soustache.avancement %>, 1)">Modifier</a></td>
+						<td> | </td>
+						<td><a href="#" class="btn btn-primary <%= droitDev %> <%= disable %> <%= disableAjoutCRsousTache %>" onclick = "AjouterCR(<%= soustache.id_demande %>,<%= soustache.id_soustache %>,<%= soustache.temps_passe %>,'<%= soustache.estimation %>', '<%= soustache.libelle_soustache %>', <%= soustache.avancement %>, 0)">
+						Ajout CR</a></td>
+						<td> | </td>
+						<td><a href="#" class="btn btn-primary <%= droitDev %> <%= disable %> <%= disableAjoutCRsousTache %>" onclick = "SupprimerSousTahe(<%= soustache.id_soustache %>)">
+						Supprimer</a></td>
+
+
+					  </tr>
+					</table>
+				  </td>
+				</tr>
+				<%   });   %>
+			  </table>
+			</div>
+		  </td>
+		  </tr>
+
+
+		  <% }); %>
+		  </tbody>
+		</table>
+        </br>
+        </br>
+        </br>
+        <!-- Notifications -->
+        <% include ../notifications.ejs %>   <!-- include menu à gauche -->
+        <!-- /Notifications -->
+
+<form>
+  <input type="hidden" id="bug" name="bug" value = "<%=bug%>">
+  <input type="hidden" id="dev" name="dev" value = "<%=dev%>">
+  <input type="hidden" id="assistance" name="assistance" value = "<%=assistance%>">
+  <input type="hidden" id="newApp" name="newApp" value = "<%=newApp%>">
+</form>
+
+
+<!---------------------------------------FONCTION TABLE EXPORT ------------------------------->
+
+<script language="javascript">
+	function SupprimerSousTahe(id_sous_tache) {
+		var id_sous_tache = id_sous_tache;
+		bootbox.confirm({
+			title: "Supprimer sous-tâche",
+			message: "Etes-vous certain de vouloir supprimer cette sous-tâche?",
+			buttons: {
+				cancel: {
+					label: '<i class="fa fa-times"></i> Annuler'
+				},
+				confirm: {
+					label: '<i class="fa fa-check"></i> Supprimer'
+				}
+			},
+			callback: function (result) {
+				if (result == true){
+					//alert(id_sous_tache);
+					window.location = "supprimerSousTache?idSousTache=" + id_sous_tache;
+				}
+				else{
+
+				}
+			}
+		});
+	  }
+	  
+	  function SupprimerDemandeSousTacheCR(id_demande) {
+		var id_demande = id_demande;
+		bootbox.confirm({
+			title: "Supprimer demande",
+			message: "Etes-vous certain de vouloir supprimer cette demande?",
+			buttons: {
+				cancel: {
+					label: '<i class="fa fa-times"></i> Annuler'
+				},
+				confirm: {
+					label: '<i class="fa fa-check"></i> Supprimer'
+				}
+			},
+			callback: function (result) {
+				if (result == true){
+					//alert(id_demande);
+					window.location = "supprimerDemandeSousTacheCR?idDemande=" + id_demande;
+				}
+				else{
+
+				}
+			}
+		});
+	  }
+
+	function confirmerStandBy(id_demande, standbyEnCours) {
+
+		var msg = "Etes-vous certain de vouloir mettre en stand-by cette demande?";
+		var titre = "Stand-by";
+		if(standbyEnCours == 2){
+			msg = "Etes-vous certain de vouloir reprendre cette demande?";
+			titre = "Reprendre";
+		}
+		if(standbyEnCours == 5){
+			msg = "Etes-vous certain de vouloir terminer cette demande?";
+			titre = "Terminer";
+		}
+		var id_demande = id_demande;
+		bootbox.confirm({
+			title: titre,
+			message: msg,
+			buttons: {
+				cancel: {
+					label: '<i class="fa fa-times"></i> Annuler'
+				},
+				confirm: {
+					label: '<i class="fa fa-check"></i> Valider'
+				}
+			},
+			callback: function (result) {
+				//
+				if (result == true){
+					window.location = "ModifierEtatDemandeStandBy?idDemande="+id_demande+"&standbyEnCours="+standbyEnCours;
+					//alert("test");
+				}
+				else{
+
+				}
+			}
+		});
+	}
+
+  function confirmerEnvoiEmail(id_demande) {
+
+	var id_demande = id_demande;
+	bootbox.confirm({
+		title: "Envoi mail",
+		message: "Etes-vous certain de vouloir envoyer un mail de confirmation DDL et temps estimée?",
+		buttons: {
+			cancel: {
+				label: '<i class="fa fa-times"></i> Annuler'
+			},
+			confirm: {
+				label: '<i class="fa fa-check"></i> Envoyer'
+			}
+		},
+		callback: function (result) {
+			//
+			if (result == true){
+				window.location = "envoyerMailConfirmationDemande?idDemande=" + id_demande;
+			}
+			else{
+
+			}
+		}
+	});
+  }
+
+  function confirmerEnvoiEmailTermine(id_demande) {
+
+	var msg ='<label>Chemin:</label><input class="form-control" id="chemin" type="text" name="chemin" placeholder="Chemin de l application" onchange="" required ></input>';
+
+		var titre = "Terminer demande" ;
+
+		bootbox.dialog({
+			message: msg,
+			title: titre,
+			buttons: {
+				annuler: {
+				  label: "Annuler",
+				  className: "btn-default",
+				  callback: function () {
+					//alert("not ok");
+				  }
+			   },
+			   main: {
+				  label: "Valider",
+				  className: "btn-primary",
+				  callback: function () {
+					var chemin = $( "#chemin" ).val();
+					var idDemande = id_demande;
+
+					window.location = "envoyerMailConfirmationDemandeTermine?idDemande=" + idDemande+ "&chemin=" + chemin;
+				  }
+			   }
+
+			}
+		});
+  }
+
+  function loadDataTableG() {
+    //datatable-buttons_det
+
+
+    var handleDataTableButtons_gl = function() {
+      if ($("#table-globale").length) {
+        $("#table-globale").DataTable({
+          dom: "Bfrtip",
+          destroy: true,
+          searching: false,
+          paging: false,
+          sort: false,
+          "aLengthMenu": [[25, 50, 75, -1], [25, 50, 75, "All"]],
+          "iDisplayLength": 25,
+          buttons: [
+            {
+              extend: "copy",
+              className: "btn-sm"
+            },
+            {
+              extend: "csv",
+              className: "btn-sm"
+            },
+            {
+              extend: "excel",
+              className: "btn-sm"
+            },
+            {
+              extend: "pdfHtml5",
+              className: "btn-sm"
+            },
+            {
+              extend: "print",
+              className: "btn-sm"
+            },
+          ],
+          responsive: true
+        });
+      }
+    };
+    TableManageButtons_gl= function() {
+      "use strict";
+      return {
+        init: function() {
+          handleDataTableButtons_gl();
+        }
+      };
+    }();
+    TableManageButtons_gl.init();
+  }
+</script>
+
+
+<script language="javascript">
+  function BootboxContent(){
+    //var frm_str = '<input class="form-control" id="duration" type="text" name="duration" /></input>';
+    var frm_str = '<form id="some-form">'
+      + '<div class="form-group">'
+      + '<label for="date">Date</label>'
+      + '<input id="date" class="date span2 form-control input-sm" size="16" placeholder="dd-mm-yy" type="text">'
+      + '</div>'
+      + '</form>';
+
+    var object = $('<div/>').html(frm_str).contents();
+
+    object.find('.date').datepicker({
+      format: 'yyyy-mm-dd',
+      autoclose: true}).on('changeDate', function (ev) {
+      $(this).blur();
+      $(this).datepicker('hide');
+    });
+
+    return object
+  }
+  /*********     FONCTION AJOUTER CR  TACHE    ************/
+  function AjouterCR_Tache(idDemande,temps_Passe,temps_Estime) {
+	
+    var msg = '';
+    msg += '<label>Temps Passe:</label><input class="form-control" id="temps_passe" type="number" name="duration1" placeholder="" onchange="" required ></input><br>';
+    msg+='<div class=""><label>Avancement:</label> <select class="form-control" id="avancement"><option value="0">0</option>' +
+      '<option value="10">10</option><option value="20">20</option>' +
+      '<option value="30">30</option><option value="40">40</option>' +
+      '<option value="50">50</option><option value="60">60</option>' +
+      '<option value="70">70</option><option value="80">80</option>' +
+      '<option value="90">90</option><option value="100">100</option></select></div><br>';
+    var titre = "AJOUT CR DEMANDE:";
+    msg += '<label>Date CR:</label><input class="form-control" id="date_CR" type="date" name="duration1" placeholder="jj/mm/yyyy" onchange="" required></input>';
+
+    bootbox.dialog({
+      message: msg,
+      title: titre,
+      //inputType: 'date',
+      buttons: {
+        annuler: {
+          label: "Annuler",
+          className: "btn-default",
+          callback: function () {
+            //alert("not ok");
+          }
+        }, 
+        main: {
+          label: "Valider",
+          className: "btn-primary",
+          callback: function () {
+            var hms = $("#temps_passe").val();
+            var Date_CR = $("#date_CR").val();
+            var avancement = $("#avancement").val();
+            var semaine = weeek(Date_CR);
+
+            if(temps_Passe=="null")
+            {
+                temps_Passe=0;
+            }
+            //var isValid = /^(?:2[0-4]|0[0-9]):[0-5][0-9]:[0-5][0-9]$/.test(hms);
+            //if (isValid) {
+              var a = hms.split(':');
+			  
+              //var duration = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]);
+              var duration = parseFloat(hms)*3600;
+			  
+              var duration_demande = parseFloat(duration) + parseFloat(temps_Passe);
+			  //alert(duration_demande);
+              window.location = "AjoutCRTache?idDemande=" + idDemande + "&temps_passe=" + duration_demande + "&heure_cr=" + duration + "&temps_estime=" + temps_Estime + "&semaine=" + semaine + "&avancement=" + avancement + "&date_cr=" + Date_CR;
+            //}
+          }
+        }
+      }
+    });
+  }
+  /*********     FONCTION AJOUTER  SOUS TACHE DEV    ************/
+  function AjouterSousTache(idDemande) {
+    var msg = '';
+     msg += '<label>Sous tache:</label><input class="form-control" id="sous_tache" type="text" name="duration1" placeholder="sous tache" onchange="" required ></input><br>';
+ //    msg += '<label>Temps Passe</label><input class="form-control" id="temp_passe" type="text" name="duration1" placeholder="temp passe" onchange="" required ></input>';
+ //    msg += '<label>Date </label><input class="form-control" id="delai" type="date" name="duration1" placeholder="jj/mm/aaaa" onchange="" required ></input>';
+     msg += '<label>Estimation:</label><input class="form-control" id="estimation" type="number" name="duration1" placeholder="" onchange="" required ></input>';
+    var titre = "AJOUT SOUS TACHE:";
+
+
+    bootbox.dialog({
+      message: msg,
+      title: titre,
+      //inputType: 'date',
+      buttons: {
+        annuler: {
+          label: "Annuler",
+          className: "btn-default",
+          callback: function () {
+            //alert("not ok");
+          }
+        },
+        main: {
+          label: "Valider",
+          className: "btn-primary",
+          callback: function () {
+		  
+            var sous_tache=$("#sous_tache").val();
+            var estimation=$("#estimation").val();
+            var a = estimation.split(':');
+            //var duration = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]);
+            var duration = parseFloat(estimation)*3600;
+			//alert(duration);
+            window.location = "AjoutSousTache?idDemande="+idDemande+"&sous_tache="+escape(sous_tache)+"&estimation="+duration;
+            
+          }
+        }
+
+      }
+    });
+  }
+
+
+  function NumberToTime(number){
+	var sec_num = parseInt(number, 10); // temps passé
+	var hours   = Math.floor(sec_num / 3600);
+	var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+	var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+	if (hours   < 10) {hours   = "0"+hours;}
+	if (minutes < 10) {minutes = "0"+minutes;}
+	if (seconds < 10) {seconds = "0"+seconds;}
+
+	res =  hours+":"+minutes+":"+seconds;
+	return res;
+  }
+
+  function TimeToNumber(time){
+	var a = time.split(':');
+    var duration = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]);
+    return duration;
+  }
+
+  /*********     FONCTION MODIFIER SOUS TACHER / AJOUT CEDEV    ************/
+  function AjouterCR(idDemande,id_soustache,temps_passe_param,estimation, libelle_soustache, avancement, modifier) { // modifier si 1 , modifier + ajout cr si 0
+	//var test = "l'art";
+	//alert(test.replace(/'/g, "&apos;"));
+	//alert("test");	//var temp_passe_time = NumberToTime(temps_passe_param);
+	var temp_passe_time = temps_passe_param / 3600;
+	//var estimation_time = NumberToTime(estimation);
+	var estimation_time = estimation / 3600;
+
+	var msg = '';
+	var titre = " ";
+
+	if(modifier == 1){
+		msg += '<div><label>Libelle :</label><input class="form-control" id="libelle_form" type="text" name="libelle_form" onchange="" required value ="'+unescape(unescape(libelle_soustache))+'"></input></div>';
+		msg+='<br>';
+		msg += '<div><label>Temps Passe:</label><input class="form-control" id="temp_passe_mofif" type="number" name="temp_passe_mofif" placeholder="" onchange="" required value ="'+temp_passe_time+'" ></input></div>';
+		msg+='<br>';
+		msg+='<div class=""><label>Avancement:</label> <select class="form-control" id="avancement"><option value="'+avancement+'">'+avancement+'</option>' +
+		  '<option value="10">10</option><option value="20">20</option>' +
+		  '<option value="30">30</option><option value="40">40</option>' +
+		  '<option value="50">50</option><option value="60">60</option>' +
+		  '<option value="70">70</option><option value="80">80</option>' +
+		  '<option value="90">90</option><option value="100">100</option></select></div>';
+		  msg+='<br>';
+		  msg += '<label>Estimation</label><input class="form-control" id="estimation" type="number" name="duration1" placeholder="Estimation" value ="'+estimation_time+'" onchange="" required ></input>';
+		titre = "MODIFIER SOUS-TACHE:";
+	}
+	else{
+		msg += '<div><label>Temps Passe:</label><input class="form-control" id="temp_passe" type="number" name="duration1" placeholder="" onchange="" required ></input></div>';
+		msg+='<br>';
+		msg+='<div class=""><label>Avancement:</label> <select class="form-control" id="avancement"><option value="0">0</option>' +
+		  '<option value="10">10</option><option value="20">20</option>' +
+		  '<option value="30">30</option><option value="40">40</option>' +
+		  '<option value="50">50</option><option value="60">60</option>' +
+		  '<option value="70">70</option><option value="80">80</option>' +
+		  '<option value="90">90</option><option value="100">100</option></select></div>';
+		  msg+='<br>'; //  msg += '<label>Estimation</label><input class="form-control" id="estimation" type="text" name="duration1" placeholder="Estimation" onchange="" required ></input>';
+		msg+='<div><label>Date CR:</label><input class="form-control" type="date" id="date_cr" placeholder="jj/mm/aaaa"></div>';//    msg += '<label>Estimation</label><input class="form-control" id="estimation" type="text" name="duration1" placeholder="Estimation" onchange="" required ></input>';
+		titre = "AJOUT CR TACHE:";
+	}
+
+    bootbox.dialog({
+      message: msg,
+      title: titre,
+      //inputType: 'date',
+      buttons: {
+        annuler: {
+          label: "Annuler",
+          className: "btn-default",
+          callback: function () {
+            //alert("not ok");
+          }
+        },
+        main: {
+          label: "Enregistrer",
+          className: "btn-primary",
+          callback: function () {
+
+            var temp_passe_CR = $("#temp_passe").val();
+            var avancement = $("#avancement").val();
+            var date_cr=$("#date_cr").val();
+			
+			if(modifier == 1)
+			{
+				var lib2 = $("#libelle_form").val(); //.replace(/'/g, "&apos;");
+				var libelle = escape(lib2);
+				//var durationEstimation = TimeToNumber($( "#estimation" ).val());
+				
+				var durationEstimation = 0;
+				if($( "#estimation" ).val()){
+					durationEstimation = parseFloat($( "#estimation" ).val())*3600;
+				}
+				
+				
+				//var isValidEstimation = /^(?:2[0-4]|0[0-9]):[0-5][0-9]:[0-5][0-9]$/.test($( "#estimation" ).val());
+				//if (isValidEstimation)
+				//{
+					var temps_passe_modif = parseFloat($("#temp_passe_mofif").val())*3600;
+					//alert(durationEstimation + " " + temps_passe_modif);
+					var lienModif = "UpdateSousTache?idSousTache=" + id_soustache + "&avancement=" + avancement + "&tempspasse_soustache=" + temps_passe_modif + "&estimation_soustache="+durationEstimation+"&libelle_soustache="+ escape(libelle) ;
+					
+					window.location = lienModif;
+				/*}
+				else
+				{
+					alert("Format estimation invalide");
+				}*/
+			}
+			else
+			{
+				//var duration = TimeToNumber($( "#temp_passe" ).val());
+				var duration = parseFloat($( "#temp_passe" ).val())*3600; 
+				//alert(duration);
+				/*var isValid = /^(?:2[0-4]|0[0-9]):[0-5][0-9]:[0-5][0-9]$/.test($( "#temp_passe" ).val());
+				if (isValid)
+				{*/
+				   var temps_passe_soustache = duration+temps_passe_param;
+				   var temps_passe_CR=duration;
+
+					//alert("Window location Modifier + ajout CR");
+					var date_cr_Spec= weeek(date_cr.trim());
+					//alert(date_cr);
+					window.location = "ModifierSousTache?idDemande=" + idDemande + "&idSousTache=" + id_soustache + "&avancement=" + avancement + "&tempspasse_soustache=" + temps_passe_soustache + "&estimation_soustache="+estimation+"&tempspasse_CR="+ temps_passe_CR+"&semaine_cr="+date_cr_Spec + "&date_cr=" + date_cr;
+				/*}
+				else
+				{
+				   alert("Format temps passé invalide");
+				}*/
+			}
+          }
+        }
+      }
+    });
+  }
+  /***      FONCTION CALCULE SEMAINE DEV   ***/
+  function weeek(date) {
+      /*var date_split=date.split('/');
+      var annee=date_split[2];-
+      var mois=date_split[1];
+      var jour=date_split[0];
+      var Date_Format=annee+"-"+mois+"-"+jour;*/
+    //Date_Format=Date_Format.toString();
+      var d = new Date(date.toString());
+   // Create a copy of this date object
+   var target = new Date(d.valueOf());
+  // ISO week date weeks start on monday // so correct the day number
+  var dayNr = (d.getDay() + 6) % 7;
+  // Set the target to the thursday of this week so the // target date is in the right year
+  target.setDate(target.getDate() - dayNr + 3);
+  // ISO 8601 states that week 1 is the week // with january 4th in it
+  var jan4 = new Date(target.getFullYear(), 0, 4);
+  // Number of days between target date and january 4th
+  var dayDiff = (target - jan4) / 86400000;
+  // Calculate week number: Week 1 (january 4th) plus the // number of weeks between target date and january 4th
+  var weekNr = 1 + Math.ceil(dayDiff / 7);
+  weekNr=weekNr-1
+  return weekNr+1;
+}
+  /***      FONCTION MODIFIER DEMANDE DEV  ***/
+  /*'<div class="">' +
+      '  <label>Dossier: </label>' +
+      '    </div>' +
+      '    <div class="">' +
+      '      <select class="form-control" tabindex="-1" id="dossierDash" name="typeTest"  onchange="getval(this);" placeholder = "Dossier">' +
+      '      <option value="1">Dossier</option>' +
+      '      </select>' +
+      '      </div><br>' +
+      '      <div class="">' +
+      '      <label>  Application: </label>' +
+      '    </div>' +
+      '    <div class="">' +
+      '      <select class="form-control" tabindex="-1" id="applicationDash" name="typeTest" placeholder = "Application" onchange="onChangeApp();">' +
+      '      <option value="1">Application</option>' +
+      '      </select>' +
+      '      </div><br>';
+    msg += */
+  // SUPPRIMER DEMANDE
+  function SupprimerDemande(idDemande) {
+    getLsDossier();
+    if(delai=="null")
+    {
+      delai="";
+    }
+    var msg='<div class=""><label>Description Demande:</label> <input class="form-control" id="description_demande" value="'+description+'" type="text" name="duration1" placeholder="" onchange="" required ></input></div><br>';
+    msg += '<div class=""><label>Temps passe:</label> <input class="form-control" id="Temps_passer_Dev" value="'+tempsPasse+'" type="text" name="duration1" placeholder="00:00:00" onchange="" required ></input></div><br>';
+    msg += '<div class=""><label>Temps Estime :</label> <input class="form-control" id="temps_estime" value="'+estimation+'" type="text" name="duration1" placeholder="00:00:00" onchange="" required ></input></div><br>';
+    msg += '<div class=""><label>Dead Line :</label> <input class="form-control" id="Delai" value="'+delai+'" type="date" name="duration1" placeholder="jj/mm/aaaa" onchange="" required ></input></div>';
+
+    msg+='<br>';
+    msg+=''
+    msg+='';
+    /*msg+='<div class=""><label>Type intervention :</label>' +
+     '      <select class="form-control" tabindex="-1" id="typeIntervention" name="typeIntervention"   placeholder = "Dossier">' +
+     '      <option value="0">-</option>' +
+     '      <option value="1">Bug</option>' +
+     '      <option value="2">Developpement</option>' +
+     '      <option value="3">Assistance</option>' +
+     '        ' +
+     '      <option value="5">Recherche et developpement</option>' +
+     '      ' +
+     '    </select>' +
+     '    </div><br>';*/
+    msg+='<div class=""><label>Avancement:</label> <select id="Avancement_dev"><option value="'+avancement+'">'+avancement+'</option>' +
+      '<option value="10">10</option><option value="20">20</option>' +
+      '<option value="30">30</option><option value="40">40</option>' +
+      '<option value="50">50</option><option value="60">60</option>' +
+      '<option value="70">70</option><option value="80">80</option>' +
+      '<option value="90">90</option><option value="100">100</option></select></div>';
+    msg+='<br>';
+    msg+='<div class=""><label>Qualite:</label> <select id="Qualite_dev"><option value="0">0</option><option value="1">1</option></select></div>';
+    var titre = "MODIFIER DEMANDE  :"
+    /*  if(id_type == 4){
+     msg = '<input class="form-control" id="duration1" type="text" name="duration1" placeholder="00:00:00" onchange="" required ></input></br>'+
+     '<input class="form-control" id="chemin1" type="text" name="chemin1" placeholder="Chemin application" onchange="" required ></input>';
+     titre = "Temps passé et chemin :";
+     }*/
+
+    bootbox.dialog({
+      message: msg,
+      title: titre,
+      //inputType: 'date',
+      buttons: {
+        annuler: {
+          label: "Annuler",
+          className: "btn-default",
+          callback: function () {
+            //alert("not ok");
+          }
+        },
+        main: {
+          label: "Valider",
+          className: "btn-primary",
+          callback: function () {
+            //var idDossier=$("#dossierDash").val();
+            //var idApplication=$("#applicationDash").val();
+
+            var description_demande=$("#description_demande").val();
+            var Delai=$("#Delai").val();
+            var typeIntervention=$("#typeIntervention").val();
+            var Avancemant=$( "#Avancement_dev" ).val();
+            var Qualite=$( "#Qualite_dev" ).val();
+
+            var hms_dev = $( "#Temps_passer_Dev" ).val();
+            //var isValid = /^(?:2[0-4]|0[0-9]):[0-5][0-9]:[0-5][0-9]$/.test(hms_dev);
+            var hms_estimation = $( "#temps_estime" ).val();
+
+            //if (isValid) {
+            var a_dev = hms_dev.split(':');
+            var duration_dev = (+a_dev[0]) * 60 * 60 + (+a_dev[1]) * 60 + (+a_dev[2]);
+            var a_estimation = hms_estimation.split(':');
+            var duration_estimation = (+a_estimation[0]) * 60 * 60 + (+a_estimation[1]) * 60 + (+a_estimation[2]);
+
+            //&idDossier="+idDossier+"&idApplication="+idApplication+"  &typeIntervention="+typeIntervention+"
+
+            //alert("ModifierDemandeEnCours?idDemande="+idDemande+"&description_demande="+description_demande+"&Delai="+Delai+"&temps_passe_dev="+duration_dev+"&temps_estime="+duration_estimation+"&avancement="+Avancemant+"&qualite="+Qualite);
+
+            window.location = "ModifierDemandeEnCours?idDemande="+idDemande+"&description_demande="+description_demande+"&Delai="+Delai+"&temps_passe_dev="+duration_dev+"&temps_estime="+duration_estimation+"&avancement="+Avancemant+"&qualite="+Qualite;
+            //} else {
+            //alert("Format temps passé invalide");
+            //}
+          }
+        }
+
+      }
+    });
+  }
+
+  
+  //DOSSIER APP MODIF Demande **********************************************************************************************
+	/*function getLsApplicationMod(idDossier)
+	{
+	  $.ajax({
+		type: "GET",
+		url: "/getLsApplication?idDossier="+idDossier,
+		success: function(msg){
+		  $("#applicationDash").html(msg);
+		  //$("#application").html(msg);
+		},
+		error: function (error) {
+		  alert('error; ' +error);
+		}
+	  });
+	}
+	function getLsDossierMod()
+	{
+	  $.ajax({
+		type: "GET",
+		url: "/getLsDossier",
+		success: function(msg){
+		  $("#dossierDashMod").html(msg);
+		  //$("#dossierNum").html(msg);
+		},
+		error: function (error) {
+		  alert('error; ' +error);
+		}
+	  });
+	}
+	function getvalMod(sel) {
+	   getLsApplicationMod(sel.value);
+	}*/
+	//FIN DOSSIER APP MODIF Demande **********************************************************************************************
+
+  // MODIFIER DEMANDE
+  function ModifierDemande(idDemande, description, estimation,delai,tempsPasse,id_intervention,qualite, avancement, id_priorite, reformulation, estimation_abaque, cahier_test, demonstration, id_personne_demande, nom_demandeur) {
+	//alert(id_priorite)
+	
+    getLsDossier();
+    if(delai=="null")
+    {
+        delai="";
+    }
+	var temps_passe_temp = 0;
+	if(tempsPasse){
+		temps_passe_temp = tempsPasse;
+	}
+    var msg='<div class=""><label>Description Demande:</label> <input class="form-control" id="description_demande" value="'+unescape(unescape(description))+'" type="text" name="duration1" placeholder="" onchange="" required ></input></div><br>';
+    
+	/*msg += '<div class=""><label>Dossier:</label> <select class="form-control" tabindex="-1" id="dossierDashMod" name="typeTest"  onchange="getvalMod(this);" placeholder = "Dossier">'+
+			'<option value="1">Dossier</option>'+
+		  '</select></div><br>';
+		  
+	msg += '<div class=""><label>Application:</label> <select class="form-control" tabindex="-1" id="applicationDashMod" name="typeTest" placeholder = "Application">'+
+			'<option value="1">Application</option>'+
+		  '</select></div><br>';*/
+		  
+	var html_demandeur = loadDemandeur_modal(id_personne_demande, nom_demandeur);
+	msg += '<div class=""><label>Demandeur :</label> <select id="demandeur" class="form-control" required >'+html_demandeur+'</select></div><br>'; //value="'+id_personne_demande+'"
+	//$("#demandeur").val(id_personne_demande);
+	
+	msg += '<div class=""><label>Temps passe:</label> <input class="form-control" id="Temps_passer_Dev" value="'+temps_passe_temp+'" type="number" name="duration1" placeholder="" onchange="" required ></input></div><br>';
+    msg += '<div class=""><label>Temps Estime :</label> <input class="form-control" id="temps_estime" value="'+estimation+'" type="number" name="duration1" placeholder="" onchange="" required ></input></div><br>';
+    msg += '<div class=""><label>Dead Line :</label> <input class="form-control" id="Delai" value="'+delai+'" type="date" name="duration1" placeholder="jj/mm/aaaa" onchange="" required ></input></div>';
+
+    msg+='<br>';
+	
+	
+	msg += '<div class=""><label>Reformulation :</label> <select id="reformulation"><option value="'+reformulation+'">'+reformulation+'</option>' +
+			  '<option value="1">1</option>' +
+			  '<option value="0">0</option>' +
+			  '</select></div><br>';
+	msg += '<div class=""><label>Estimation abaque :</label>  <select id="estimation_abaque"><option value="'+estimation_abaque+'">'+estimation_abaque+'</option>' +
+			  '<option value="1">1</option>' +
+			  '<option value="0">0</option>' +
+			  '</select></div><br>';
+	msg += '<div class=""><label>Cahier de test :</label>  <select id="cahier_test"><option value="'+cahier_test+'">'+cahier_test+'</option>' +
+			  '<option value="1">1</option>' +
+			  '<option value="0">0</option>' +
+			  '</select></div><br>';
+	msg += '<div class=""><label>Demonstration :</label>  <select id="demonstration"><option value="'+demonstration+'">'+demonstration+'</option>' +
+			  '<option value="1">1</option>' +
+			  '<option value="0">0</option>' +
+			  '</select></div><br>';
+	
+    msg+=''
+    msg+='';
+    /*msg+='<div class=""><label>Type intervention :</label>' +
+      '      <select class="form-control" tabindex="-1" id="typeIntervention" name="typeIntervention"   placeholder = "Dossier">' +
+      '      <option value="0">-</option>' +
+      '      <option value="1">Bug</option>' +
+      '      <option value="2">Developpement</option>' +
+      '      <option value="3">Assistance</option>' +
+      '        ' +
+      '      <option value="5">Recherche et developpement</option>' +
+      '      ' +
+      '    </select>' +
+      '    </div><br>';*/
+    msg+='<div class=""><label>Avancement:</label> <select id="Avancement_dev"><option value="'+avancement+'">'+avancement+'</option>' +
+      '<option value="10">10</option><option value="20">20</option>' +
+      '<option value="30">30</option><option value="40">40</option>' +
+      '<option value="50">50</option><option value="60">60</option>' +
+      '<option value="70">70</option><option value="80">80</option>' +
+      '<option value="90">90</option><option value="100">100</option></select></div>';
+    msg+='<br>';
+    msg+='<div class=""><label>Qualite:</label> <select id="Qualite_dev"><option value="0">0</option><option value="1">1</option></select></div>';
+    var titre = "MODIFIER DEMANDE  :"
+
+    bootbox.dialog({
+      message: msg,
+      title: titre,
+      //inputType: 'date',
+      buttons: {
+        annuler: {
+          label: "Annuler",
+          className: "btn-default",
+          callback: function () {
+            //alert("not ok");
+          }
+        },
+        main: {
+          label: "Valider",
+          className: "btn-primary",
+          callback: function () {
+		  
+            //var idDossier=$("#dossierDash").val();
+            //var idApplication=$("#applicationDash").val();
+
+            var description_demande = escape($("#description_demande").val());
+            var Delai=$("#Delai").val();
+            var typeIntervention=$("#typeIntervention").val();
+            var Avancemant=$( "#Avancement_dev" ).val();
+            var Qualite=$( "#Qualite_dev" ).val();
+			
+            var demandeur=$( "#demandeur" ).val();
+
+			var hms_dev = 0;
+			if($( "#Temps_passer_Dev" ).val()){
+				hms_dev = $( "#Temps_passer_Dev" ).val();
+			}
+			//alert(hms_dev);
+            //var isValid = /^(?:2[0-4]|0[0-9]):[0-5][0-9]:[0-5][0-9]$/.test(hms_dev);
+			
+            var hms_estimation = $( "#temps_estime" ).val();
+			
+            //if (isValid) {
+              //var a_dev = hms_dev.split(':');
+			  
+               //var duration_dev = (+a_dev[0]) * 60 * 60 + (+a_dev[1]) * 60 + (+a_dev[2]);
+              var duration_dev = parseFloat(hms_dev)*3600;
+			  
+               //var a_estimation = hms_estimation.split(':');
+              //var duration_estimation = (+a_estimation[0]) * 60 * 60 + (+a_estimation[1]) * 60 + (+a_estimation[2]);
+              var duration_estimation = parseFloat(hms_estimation)*3600;
+
+			  //&idDossier="+idDossier+"&idApplication="+idApplication+"  &typeIntervention="+typeIntervention+"
+
+			  //alert("ModifierDemandeEnCours?idDemande="+idDemande+"&description_demande="+description_demande+"&Delai="+Delai+"&temps_passe_dev="+duration_dev+"&temps_estime="+duration_estimation+"&avancement="+Avancemant+"&qualite="+Qualite);
+			//alert(duration_dev + " " + duration_estimation);
+			
+			
+				var ref = $("#reformulation").val();
+				var estim = $("#estimation_abaque").val();
+				var test = $("#cahier_test").val();
+				var demo = $("#demonstration").val();
+				var temp = "&reformulation="+ref+"&estimation_abaque="+estim+"&cahier_test="+test+"&demonstration="+demo;
+				
+				
+				var id_demandeur = demandeur;
+				if(!id_demandeur){
+					id_demandeur = id_personne_demande;
+				}
+				
+				//alert(id_demandeur);
+				
+                window.location = "ModifierDemandeEnCours?idDemande="+idDemande+"&description_demande="+escape(description_demande)+"&Delai="+Delai+"&temps_passe_dev="+duration_dev+"&temps_estime="+duration_estimation+"&avancement="+Avancemant+"&qualite="+Qualite+temp+"&demandeur="+id_demandeur;
+            
+			//} else {
+              //alert("Format temps passé invalide");
+            //}
+          }
+        }
+
+      }
+    });
+  }
+  
+  function loadDemandeur_modal(id_personne_demande, nom_demandeur){
+		var html = "<option value='"+id_personne_demande+"' selected='selected'>"+id_personne_demande+"-"+nom_demandeur+"</option>";
+		$.ajax({
+			type: "GET",
+			url: "/getListeDemandeur",
+			async:false,
+			success: function(msg){
+				var data = JSON.parse(msg);
+				for (var i = 0 ; i<data.length ; i++){
+				   var temp = data[i].get_demandeurs_fr.toString().split(',');
+				   var matricule = temp[0].replace(/[()]/g,'');
+				   var appelation = temp[1].replace(/[()]/g,'');
+				   var prenom = temp[2].replace(/[()]/g,'');
+				   var departement = temp[3].replace(/[()]/g,'');
+				   html += "<option value='"+matricule+"'> " +matricule+" - " +appelation+ " [ " +departement+ " ]</option>"; //+prenom+ " - " 
+				}
+				//$("#demandeur").html(html);
+				//$("#demandeur_application").html(html);
+			},
+			error: function (error) {
+				alert("ERROR GET VEHICULE");
+			}
+		});
+		return html;
+	}
+</script>
+
+<script language="javascript">
+  $(function() {
+    $('#duration').durationPicker({
+      lang: 'en',
+      //showDays : false,  $('#duration').durationPicker();
+      showSeconds: true
+    }); //DURATION                  <<========================
+  } );
+</script>
+
+
+<!-- CHART JS -->
+<script>
+
+  var barTest = Morris.Bar({
+    element: 'bar-tempsPasse',
+    data: [
+      {y: 'Bug', a: 10},
+      {y: 'Dev', a: 20},
+      {y: 'Assistance', a: 30},
+      {y: 'App', a: 30}
+    ],
+    barColors: function(row, series, type) {
+      var letters = '0123456789ABCDEF'.split('');
+      var color = '#';
+      for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    },
+    xkey: 'y',
+    ykeys: ['a'],
+    labels: ['Temps passé']
+  });
+
+  //Data activite
+  var bug = $("#bug").val();
+  var dev = $("#dev").val();
+  var assistance = $("#assistance").val();
+  var newApp = $("#newApp").val();
+  //alert(bug + "  " + dev + "  " + assistance + "  " + newApp);
+  //fin data activite
+
+  var barActivite = Morris.Bar({
+    element: 'bar-activite',
+    data: [
+      {y: 'Bug', a: bug},
+      {y: 'Dev', a: dev},
+      {y: 'Assistance', a: assistance},
+      {y: 'App', a: newApp}
+    ],
+    barColors: function(row, series, type){
+      var letters = '0123456789ABCDEF'.split('');
+      var color = '#';
+      for (var i = 0; i < 6; i++ ){
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    },
+    xkey: 'y',
+    ykeys: ['a'],
+    labels: ['Nombre']
+  });
+</script>
+<!-- /CHART JS -->
+
+<script type="text/javascript"><!--
+  var pager = new Pager('resultsAppPris', 10);
+  pager.init();
+  pager.showPageNav('pager', 'pageNavPosition');
+  pager.showPage(1);
+</script>
+
+
+
+
+

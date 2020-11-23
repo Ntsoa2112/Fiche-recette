@@ -1,0 +1,23 @@
+<% 
+	var onChangeDossier = "getAjaxFiltreTachePrisDossier(this);";
+	var onChangeApp = "getAjaxFiltreTachePris();";
+	
+	if(req.session.user == 177 || req.session.user == 487 || req.session.user == 1020){
+		onChangeDossier = "getAjaxFiltreTachePrisDossierGlobale(this); getAjaxFiltreTachePrisDossier(this);";
+		onChangeApp = "getGestionSousTache(); getAjaxFiltreTachePris();";
+	}
+  
+%>
+
+<div class="form-group col-md-2">
+	<label for="tc_select">Dossier</label>
+	<select class="form-control" id="dossierDash" name="dossier_select" onchange="<%= onChangeDossier %>">
+	  <option value="">-</option>
+	</select>
+</div>
+<div class="form-group col-md-2">
+	<label for="tc_select">Application</label>
+	<select class="form-control" id="applicationDash" name="application_select" onchange="<%= onChangeApp %>">
+	  <option value="">-</option>
+	</select>
+</div>

@@ -1,0 +1,195 @@
+<html>
+<head>
+<title>DashboardController.js</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: rgb(0,0,0); font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); font-style: italic; }
+.s1 { }
+.s2 { color: rgb(0,0,128); font-weight: bold; }
+.s3 { color: rgb(0,128,0); font-weight: bold; }
+.s4 { color: rgb(0,0,255); }
+</style>
+</head>
+<BODY BGCOLOR="#ffffff">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#C0C0C0" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+DashboardController.js</FONT>
+</center></TD></TR></TABLE>
+<pre>
+
+<span class="s0">/** 
+ * Created by 8032 on 08/04/2016. 
+ */</span><span class="s1"> 
+module.exports = { 
+  </span><span class="s0">//_________________________________________________debut SendDATA</span><span class="s1"> 
+  </span><span class="s0">//fonction qui retourne les data necessaire dans dashboard</span><span class="s1"> 
+  sendData: </span><span class="s2">function </span><span class="s1">(req, res) { 
+  </span><span class="s2">if </span><span class="s1">(!req.session.user) </span><span class="s2">return </span><span class="s1">res.redirect(</span><span class="s3">'/login'</span><span class="s1">); 
+  </span><span class="s2">else </span><span class="s1">{ 
+ 
+    </span><span class="s2">var </span><span class="s1">retVal = []; 
+    </span><span class="s0">//_________________________________________APPLICATION</span><span class="s1"> 
+    </span><span class="s0">//application validé</span><span class="s1"> 
+    </span><span class="s2">var </span><span class="s1">queryValide = </span><span class="s3">' COUNT(*) from fr_test_application where id_resultat = 1'</span><span class="s1">; 
+      TestApplication.count({id_resultat:</span><span class="s3">'1'</span><span class="s1">}).exec(</span><span class="s2">function </span><span class="s1">countCB(err, valide) { 
+        </span><span class="s2">if </span><span class="s1">(err) { 
+          console.log(err); 
+        } 
+        console.log(</span><span class="s3">&quot;resultat ***************************************************  &quot;</span><span class="s1">+valide); 
+        </span><span class="s0">//application non validé</span><span class="s1"> 
+        TestApplication.count({id_resultat:</span><span class="s3">'2'</span><span class="s1">}).exec(</span><span class="s2">function </span><span class="s1">countCB(err, nonValide) { 
+          </span><span class="s2">if </span><span class="s1">(err) { 
+            console.log(err); 
+          } 
+          </span><span class="s0">//application en attente de validation</span><span class="s1"> 
+          TestApplication.count({id_resultat:</span><span class="s3">'3'</span><span class="s1">}).exec(</span><span class="s2">function </span><span class="s1">countCB(err, attente) { 
+            </span><span class="s2">if </span><span class="s1">(err) { 
+              console.log(err); 
+            } 
+            </span><span class="s0">//application testé</span><span class="s1"> 
+            TestApplication.count({id_resultat:</span><span class="s3">'4'</span><span class="s1">}).exec(</span><span class="s2">function </span><span class="s1">countCB(err, teste) { 
+              </span><span class="s2">if </span><span class="s1">(err) { 
+                console.log(err); 
+              } 
+              </span><span class="s0">//non testé</span><span class="s1"> 
+              TestApplication.count({id_resultat:</span><span class="s3">'5'</span><span class="s1">}).exec(</span><span class="s2">function </span><span class="s1">countCB(err, nonTeste) { 
+                </span><span class="s2">if </span><span class="s1">(err) { 
+                  console.log(err); 
+                } 
+ 
+                retVal[</span><span class="s3">&quot;valide&quot;</span><span class="s1">] = valide; 
+                retVal[</span><span class="s3">&quot;nonValide&quot;</span><span class="s1">] = nonValide; 
+                retVal[</span><span class="s3">&quot;attente&quot;</span><span class="s1">] = attente; 
+                retVal[</span><span class="s3">&quot;teste&quot;</span><span class="s1">] = teste; 
+                retVal[</span><span class="s3">&quot;nonTeste&quot;</span><span class="s1">] = nonTeste; 
+ 
+                res.view(</span><span class="s3">'dashboard'</span><span class="s1">, retVal);  </span><span class="s0">//redirection vers dashboard</span><span class="s1"> 
+              }); 
+            }); 
+          }); 
+        }); 
+      }); 
+    } 
+  }, 
+ 
+  getLsEtape: </span><span class="s2">function </span><span class="s1">(req, res) { 
+    </span><span class="s2">var </span><span class="s1">idDossier = req.param(</span><span class="s3">'idDossier'</span><span class="s1">,</span><span class="s2">null</span><span class="s1">); 
+    Etape.query(</span><span class="s3">'select id_lien, p_etape.libelle from p_lien_oper_dossier LEFT JOIN p_etape ON p_lien_oper_dossier.id_oper=p_etape.id_etape WHERE id_dossier = '</span><span class="s1">+idDossier+</span><span class="s3">' order by id_lien'</span><span class="s1">, </span><span class="s2">function</span><span class="s1">(eror, test) 
+    { 
+      </span><span class="s2">var </span><span class="s1">str = </span><span class="s3">'&lt;option value=&quot;&quot;&gt;&lt;/option&gt;'</span><span class="s1">; 
+       </span><span class="s2">if </span><span class="s1">(eror) 
+       { 
+         </span><span class="s2">return </span><span class="s1">res.send(</span><span class="s3">'erreur 2018'</span><span class="s1">); 
+       }</span><span class="s2">else</span><span class="s1">{ 
+         </span><span class="s0">//console.log( test.length() );</span><span class="s1"> 
+ 
+          </span><span class="s0">// return res.send(test);</span><span class="s1"> 
+         </span><span class="s2">for</span><span class="s1">(</span><span class="s2">var </span><span class="s1">i=</span><span class="s4">0 </span><span class="s1">; i&lt; test.rows.length ; i++){ 
+           str += </span><span class="s3">'&lt;option value=' </span><span class="s1">+test.rows[i].id_lien +</span><span class="s3">'&gt;' </span><span class="s1">+ test.rows[i].libelle  +</span><span class="s3">'&lt;/option&gt;'</span><span class="s1">; 
+           console.log( test.rows.length ); 
+         } 
+         </span><span class="s2">return </span><span class="s1">res.send(str); 
+       } 
+    }); 
+  }, 
+ 
+  getLsDossier: </span><span class="s2">function </span><span class="s1">(req, res) { 
+    </span><span class="s2">var </span><span class="s1">idPers = req.session.user; 
+    Etape.query(</span><span class="s3">'SELECT p_affectation.id_dossier,p_dossier.num_dossier FROM p_affectation LEFT JOIN p_dossier ON p_affectation.id_dossier = p_dossier.id_dossier WHERE id_pers=' </span><span class="s1">+idPers+</span><span class="s3">' AND id_etat = 0 ORDER BY num_dossier ASC'</span><span class="s1">, </span><span class="s2">function</span><span class="s1">(eror, test) 
+    { 
+      console.log( </span><span class="s3">&quot;taile ============================&gt; &quot;</span><span class="s1">+test.rows.length ); 
+      </span><span class="s2">var </span><span class="s1">str = </span><span class="s3">'&lt;option value=&quot;&quot;&gt;&lt;/option&gt;'</span><span class="s1">; 
+      </span><span class="s2">if </span><span class="s1">(eror) 
+      { 
+        </span><span class="s2">return </span><span class="s1">res.send(</span><span class="s3">'erreur 2018'</span><span class="s1">); 
+      }</span><span class="s2">else</span><span class="s1">{ 
+        </span><span class="s0">// return res.send(test);</span><span class="s1"> 
+        </span><span class="s2">for</span><span class="s1">(</span><span class="s2">var </span><span class="s1">i=</span><span class="s4">0 </span><span class="s1">; i&lt; test.rows.length ; i++){ 
+          str += </span><span class="s3">'&lt;option value=' </span><span class="s1">+test.rows[i].id_dossier +</span><span class="s3">'&gt;' </span><span class="s1">+ test.rows[i].num_dossier  +</span><span class="s3">'&lt;/option&gt;'</span><span class="s1">; 
+          console.log( test.rows.length ); 
+        } 
+        </span><span class="s2">return </span><span class="s1">res.send(str); 
+      } 
+    }); 
+  }, 
+ 
+  getLsApplication: </span><span class="s2">function </span><span class="s1">(req, res) { 
+    </span><span class="s2">var </span><span class="s1">idDossier = req.param(</span><span class="s3">'idDossier'</span><span class="s1">,</span><span class="s2">null</span><span class="s1">); 
+    Etape.query(</span><span class="s3">'SELECT nom_application from fr_application where id_dossier = '</span><span class="s1">+idDossier+</span><span class="s3">''</span><span class="s1">, </span><span class="s2">function</span><span class="s1">(eror, test) 
+    { 
+      console.log( </span><span class="s3">&quot;taile ============================&gt; &quot;</span><span class="s1">+test.rows.length ); 
+      </span><span class="s2">var </span><span class="s1">str = </span><span class="s3">'&lt;option value=&quot;&quot;&gt;&lt;/option&gt;'</span><span class="s1">; 
+      </span><span class="s2">if </span><span class="s1">(eror) 
+      { 
+        </span><span class="s2">return </span><span class="s1">res.send(</span><span class="s3">'erreur 2018'</span><span class="s1">); 
+      }</span><span class="s2">else</span><span class="s1">{ 
+        </span><span class="s0">// return res.send(test);</span><span class="s1"> 
+        </span><span class="s2">for</span><span class="s1">(</span><span class="s2">var </span><span class="s1">i=</span><span class="s4">0 </span><span class="s1">; i&lt; test.rows.length ; i++){ 
+          str += </span><span class="s3">'&lt;option value=' </span><span class="s1">+test.rows[i].id_application +</span><span class="s3">'&gt;' </span><span class="s1">+ test.rows[i].nom_application  +</span><span class="s3">'&lt;/option&gt;'</span><span class="s1">; 
+          console.log( test.rows.length ); 
+        } 
+        </span><span class="s2">return </span><span class="s1">res.send(str); 
+      } 
+    }); 
+  }, 
+ 
+ 
+  </span><span class="s0">//_________________________________________________debut SendDATA Testeur</span><span class="s1"> 
+  </span><span class="s0">//fonction qui retourne les data necessaire dans dashboard</span><span class="s1"> 
+  sendDataT: </span><span class="s2">function </span><span class="s1">(req, res) { 
+    </span><span class="s2">if </span><span class="s1">(!req.session.user) </span><span class="s2">return </span><span class="s1">res.redirect(</span><span class="s3">'/login'</span><span class="s1">); 
+    </span><span class="s2">else </span><span class="s1">{ 
+ 
+      </span><span class="s2">var </span><span class="s1">retVal = []; 
+      </span><span class="s0">//_________________________________________APPLICATION</span><span class="s1"> 
+      </span><span class="s0">//application validé</span><span class="s1"> 
+      </span><span class="s2">var </span><span class="s1">queryValide = </span><span class="s3">' COUNT(*) from fr_test_application where id_resultat = 1'</span><span class="s1">; 
+      TestApplication.count({id_resultat:</span><span class="s3">'1'</span><span class="s1">}).exec(</span><span class="s2">function </span><span class="s1">countCB(err, valide) { 
+        </span><span class="s2">if </span><span class="s1">(err) { 
+          console.log(err); 
+        } 
+        console.log(</span><span class="s3">&quot;resultat ***************************************************  &quot;</span><span class="s1">+valide); 
+        </span><span class="s0">//application non validé</span><span class="s1"> 
+        TestApplication.count({id_resultat:</span><span class="s3">'2'</span><span class="s1">}).exec(</span><span class="s2">function </span><span class="s1">countCB(err, nonValide) { 
+          </span><span class="s2">if </span><span class="s1">(err) { 
+            console.log(err); 
+          } 
+          </span><span class="s0">//application en attente de validation</span><span class="s1"> 
+          TestApplication.count({id_resultat:</span><span class="s3">'3'</span><span class="s1">}).exec(</span><span class="s2">function </span><span class="s1">countCB(err, attente) { 
+            </span><span class="s2">if </span><span class="s1">(err) { 
+              console.log(err); 
+            } 
+            </span><span class="s0">//application testé</span><span class="s1"> 
+            TestApplication.count({id_resultat:</span><span class="s3">'4'</span><span class="s1">}).exec(</span><span class="s2">function </span><span class="s1">countCB(err, teste) { 
+              </span><span class="s2">if </span><span class="s1">(err) { 
+                console.log(err); 
+              } 
+              </span><span class="s0">//non testé</span><span class="s1"> 
+              TestApplication.count({id_resultat:</span><span class="s3">'5'</span><span class="s1">}).exec(</span><span class="s2">function </span><span class="s1">countCB(err, nonTeste) { 
+                </span><span class="s2">if </span><span class="s1">(err) { 
+                  console.log(err); 
+                } 
+ 
+                retVal[</span><span class="s3">&quot;valide&quot;</span><span class="s1">] = valide; 
+                retVal[</span><span class="s3">&quot;nonValide&quot;</span><span class="s1">] = nonValide; 
+                retVal[</span><span class="s3">&quot;attente&quot;</span><span class="s1">] = attente; 
+                retVal[</span><span class="s3">&quot;teste&quot;</span><span class="s1">] = teste; 
+                retVal[</span><span class="s3">&quot;nonTeste&quot;</span><span class="s1">] = nonTeste; 
+ 
+                res.view(</span><span class="s3">'testeur/accueilTesteur'</span><span class="s1">, retVal);  </span><span class="s0">//redirection vers dashboard</span><span class="s1"> 
+              }); 
+            }); 
+          }); 
+        }); 
+      }); 
+    } 
+  }, 
+ 
+} 
+</span><span class="s0">//_________________________________________________fin SendDATA</span><span class="s1"> 
+ 
+</span></pre>
+</body>
+</html>

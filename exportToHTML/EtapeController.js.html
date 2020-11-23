@@ -1,0 +1,79 @@
+<html>
+<head>
+<title>EtapeController.js</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: rgb(0,0,0); font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); font-style: italic; }
+.s1 { color: rgb(128,128,128); font-weight: bold; font-style: italic; }
+.s2 { }
+.s3 { color: rgb(0,0,128); font-weight: bold; }
+.s4 { color: rgb(0,128,0); font-weight: bold; }
+</style>
+</head>
+<BODY BGCOLOR="#ffffff">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#C0C0C0" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+EtapeController.js</FONT>
+</center></TD></TR></TABLE>
+<pre>
+
+<span class="s0">/** 
+ * EtapeController 
+ * 
+ * </span><span class="s1">@description </span><span class="s0">:: Server-side logic for managing etapesd 
+ * </span><span class="s1">@help        </span><span class="s0">:: See http://sailsjs.org/#!/documentation/concepts/Controllers 
+ */</span><span class="s2"> 
+ 
+module.exports = { 
+  findEtape: </span><span class="s3">function</span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+ 
+    Etape.find({}, </span><span class="s3">function</span><span class="s2">(err, found){ 
+      </span><span class="s3">if</span><span class="s2">(err){ 
+        console.log(err); 
+      } 
+      console.log(found); 
+      res.view( </span><span class="s4">'etape/listeEtape'</span><span class="s2">, {etapes: found} ); 
+    }); 
+  }, 
+ 
+  findEtapeT: </span><span class="s3">function</span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+ 
+    Etape.find({}, </span><span class="s3">function</span><span class="s2">(err, found){ 
+      </span><span class="s3">if</span><span class="s2">(err){ 
+        console.log(err); 
+      } 
+      console.log(found); 
+      res.view( </span><span class="s4">'testeur/listeEtapeTesteur'</span><span class="s2">, {etapes: found} ); 
+    }); 
+  }, 
+ 
+  </span><span class="s0">//____________________________________________debut fonctionn FIND BY ID</span><span class="s2"> 
+  findEtapeById: </span><span class="s3">function</span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+ 
+    </span><span class="s3">var </span><span class="s2">id=req.param(</span><span class="s4">'id'</span><span class="s2">,</span><span class="s3">null</span><span class="s2">); 
+    Etape.findOne(id).exec(</span><span class="s3">function </span><span class="s2">(err, finn) 
+    { 
+      </span><span class="s3">if </span><span class="s2">(err) { 
+        </span><span class="s3">return </span><span class="s2">res.negotiate(err); 
+      } 
+      </span><span class="s3">if </span><span class="s2">(!id) { 
+        </span><span class="s3">return </span><span class="s2">res.notFound(</span><span class="s4">'Could not find sorry.'</span><span class="s2">); 
+      } 
+      sails.log(</span><span class="s4">'Found &quot;%s&quot;'</span><span class="s2">, id); 
+      </span><span class="s3">return </span><span class="s2">res.json(id); 
+    }); 
+  } 
+  </span><span class="s0">//____________________________________________fin fonctionn FIND BY ID</span><span class="s2"> 
+}; 
+ 
+</span></pre>
+</body>
+</html>

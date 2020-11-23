@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<title>Recette - Ajout application</title>
+		<meta name="generator" content="Bootply" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<!-- Include Bootstrap Datepicker -->
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.min.css" />
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker3.min.css" />
+		<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.min.js"></script>
+		
+		<link href="css/styles.css" rel="stylesheet">
+		<link href="fonts/css/font-awesome.css" rel="stylesheet">
+		<link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+
+	</head>
+	<body onLoad="getLsDossier()">
+		<!-- HEADER -->
+		<% include ../header.ejs %>
+		<!-- /HEADER -->
+		<!-- Menu GAUCHE -->
+		<% var disable = "";
+		if(req.session.droit == 0){
+			disable = "hidden";}
+		%>
+
+		<!-- CONTAINER -->
+		<div class="container-fluid">
+			<div class="row">
+				<div id="menuCenter">
+					<!-- avant container -->
+          
+           <!-- include menu à gauche -->
+					<!-- /avant container-->
+
+					<div class="row"> <!-- CONTAINER -->
+						<div class="">
+							<div class="page-title">
+								  <div class="title_left">
+									<h2>
+									  Fiche recette
+									  <small>
+										Ajout application
+									  </small>
+									</h2>
+								  </div>
+							</div>
+							</br>
+							<div class="clearfix"></div>
+
+							<div class="row">
+								<div class="col-md-12 col-sm-12 col-xs-12">
+									<div class="x_panel">
+										<div class="x_content">
+											<div class="x_panel">
+												<div class="x_title">
+													<div class="clearfix"></div>
+												</div>
+												<div class="x_content">
+													<br />
+													
+													<!-- exemple datepicker -->
+												
+												
+													<!--<div class="container">
+														<div class="row">
+															<div class='col-sm-6'>
+																<div class="form-group">
+																	<div class='input-group date' id='datetimepicker1'>
+																		<input type='text' class="form-control"/>
+																		<span class="input-group-addon">
+																			<span class="glyphicon glyphicon-calendar"></span>
+																		</span>
+																	</div>
+																</div>
+															</div>
+															<script type="text/javascript">
+																/*$(function () {
+																	$('#datetimepicker1').datetimepicker();
+																});*/
+																$(document).ready(function(){
+																	$("#datetimepicker1").datepicker();
+																});
+															</script>
+														</div>
+													</div>  -->
+													
+													
+													<form method="POST" action="/ajoutApplication" id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" style="margin-left:150px">
+													   <input type='text'  id='nb_fonctionnalite' name='nb_fonctionnalite' required='required' class='form-control col-md-7 col-xs-12 hidden' value="">
+													   <div id="form-0">
+													       <div class="form-group">
+															<label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Nom application :<span class="required"></span>
+															</label>
+															<div class="col-md-6 col-sm-6 col-xs-12">
+																<input type="text" id="nom_application" required="required" name="nom_application" class="form-control col-md-7 col-xs-12" required>
+															</div>
+															<!-- pattern="[a-zA-Z]+" oninvalid="setCustomValidity('Veuillez entrer des lettres')" onchange="try{setCustomValidity('')}catch(e){}" -->
+														</div>
+														<div class="form-group">
+															<label class="control-label col-md-3 col-sm-3 col-xs-12" for="comment">Description de l'application :<span class="required"></span>
+															</label>
+															<div class="col-md-6 col-sm-6 col-xs-12">
+																<textarea type="text" id="description" required="required" name="description" class="form-control col-md-7 col-xs-12" required></textarea>
+															</div>
+														</div>
+														<div class="form-group">
+															<label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Numero dossier :<span class="required"></span>
+															</label>
+															<div class="col-md-6 col-sm-6 col-xs-12">
+															  <select class="form-control" tabindex="-1" id="dossierNum" name="dossier_num"  onchange="getval(this);" placeholder = "Dossier">
+																<option value="1">Dossier</option>
+															  </select>
+															</div>
+														</div>
+														<div class="form-group">
+															<label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Chemin :<span class="required"></span>
+															</label>
+															<div class="col-md-6 col-sm-6 col-xs-12">
+																<input type="text"  id="chemin" name="chemin" required="required" class="form-control col-md-7 col-xs-12" required>
+															</div>
+														</div>
+
+														<div class="ln_solid"></div>
+														<div class="form-group">
+															<div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+																<div class="row">
+																	<h3 class="col-md-4 col-sm-4 col-xs-12">Les Fonctionnalités</h3>
+																	<a href="#" onclick= "addFonctionnalite();" class="col-md-12 col-sm-12 col-xs-12"><i class="fa fa-plus fa-3x"></i></a>
+																</div>
+															</div>
+                                                        </div>
+													   </div>
+														
+														<div class="form-group">
+															<div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+																<button type="submit" class="btn btn-primary">Ajouter</button>
+																<!-- <a href="#" onclick= "ajouter();" class="col-md-12 col-sm-12 col-xs-12"><button type="submit" class="btn btn-primary">Ajouter 2</button></a> -->
+															</div>
+															<br/><br/><br/><br/><br/><br/>
+														</div>
+
+														<!-- Alert -->
+														<!--<div class="form-group">
+															<div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+																<div class="alert alert-danger fade in">
+																	<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+																	<strong>Erreur: </strong> Le nom que vous avez entré est invalide.
+																</div>
+															</div>
+														</div>-->
+														<!-- /Alert -->
+													</form>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<br/>
+								<br/>
+								<br/>
+								<br/>
+
+							</div>
+						</div>
+					</div>
+					
+					<!-- Notifications -->
+					<% include ../notifications.ejs %>
+					<!-- /Notifications -->
+				</div>
+			</div>
+		</div>
+		<!-- /CONTAINER -->
+		
+		<!-- Footer -->
+		<center><% include ../footer.ejs %></center>
+		<!-- /Footer -->
+
+		<!-- script  -->
+		<script src="/js/base.min.js"></script>
+		<script src="/js/project.min.js"></script>
+
+		<script src="js/jquery.min.js"></script>
+
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/jquery-ui.min.js"></script>
+		<script src="js/scripts.js"></script>
+		
+		<!-- DOSSIER ETAPE APPLICATION -->
+		<script src="js/dossierEtapeApp.js"></script>
+		
+		<script src="js/bootstrap-datepicker.js"></script>
+		
+		<script>
+            var i = 1;
+            function addFonctionnalite(){
+                
+                $("<div class='form-group'>"+
+                    "<label class='control-label col-md-3 col-sm-3 col-xs-12' for='last-name'>Fonctionnalité-"+i+" :<span class='required'></span></label>"+
+                        "<div class='form-group'>"+
+                            "<div class='col-md-3 col-sm-3 col-xs-12'>"+
+                                "<input type='text'  id='libelle-"+i+"' name='libelle-"+i+"' required='required' class='form-control col-md-2 col-xs-6' placeholder='Titre'>"+
+                            "</div>"+
+                            "<div class='col-md-3 col-sm-3 col-xs-12'>"+
+                                "<div class='input-group date' id='datetimepicker1'><input type='text'  id='delai-"+i+"' name='delai-"+i+"' class='form-control col-md-2 col-xs-6' placeholder='Delai - jj/mm/aaa'><span class='input-group-addon'><span class='glyphicon glyphicon-calendar'></span></span></div>"+
+                        
+                            "</div>"+
+                  
+                        "</div>"+
+                    "</div>"+
+                 "<div class='form-group'>"+
+                    "<label class='control-label col-md-3 col-sm-3 col-xs-12' for='last-name'><span class='required'></span></label>"+
+                        "<div class='form-group'>"+
+                            "<div class='col-md-3 col-sm-3 col-xs-12'>"+
+                                "<textarea type='text'  id='entree-"+i+"' name='entree-"+i+"' required='required' class='form-control col-md-2 col-xs-6' placeholder='Entrée'></textarea>"+
+                            "</div>"+
+                            "<div class='col-md-3 col-sm-3 col-xs-12'>"+
+                                "<textarea type='text'  id='sortie-"+i+"' name='sortie-"+i+"' required='required' class='form-control col-md-2 col-xs-6' placeholder='Sortie'></textarea>"+
+                            "</div>"+
+                  
+                        "</div>"+
+                    "</div>")
+                 .attr("id", "form-"+i)
+                 .attr("name", "form-"+i)
+                 .appendTo("#form-0");
+                 //.prependTo("#form-"+(i-1));
+                  /*$( function() {
+                    $( "#delai-"+i ).datepicker();
+                  } );*/
+				$("#nb_fonctionnalite").val(i);
+                i++;
+            };
+			
+			function get_nb_fonctionnalite(){
+                alert("valeur de i = "+i);
+				/*var j;
+				for(j=1; j<i;j++){
+					alert("Valeur "+j+"   ===>  "+document.getElementById('nom-'+j).value);
+					var libelle = document.getElementById('nom-'+j).value;
+					var entree = document.getElementById('entree-'+j).value;
+					var sortie = document.getElementById('sortie-'+j).value;
+					var delai = document.getElementById('delai-'+j).value;
+					//window.location = "ajoutApplicationFonctionnalite?idFonctionnalite=";
+				}*/
+            };
+			
+			function loadForm(val) {
+				$.ajax({
+				  type: "GET",
+				  url: "/ajoutApplicationFonctionnalite?type="+val,
+				  beforeSend: function(xhr){
+				  },
+				  success: function(msg){
+					$("#forms").html(msg);
+				  },
+				  error: function (error) {
+					//alert('error; ' +error);
+				  }
+				});
+			}
+        </script>
+	</body>
+</html>

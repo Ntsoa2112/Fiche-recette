@@ -1,0 +1,430 @@
+<html>
+<head>
+<title>ApplicationController.js</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: rgb(0,0,0); font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); font-style: italic; }
+.s1 { color: rgb(128,128,128); font-weight: bold; font-style: italic; }
+.s2 { }
+.s3 { color: rgb(0,0,128); font-weight: bold; }
+.s4 { color: rgb(0,128,0); font-weight: bold; }
+.s5 { color: rgb(0,0,255); }
+</style>
+</head>
+<BODY BGCOLOR="#ffffff">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#C0C0C0" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+ApplicationController.js</FONT>
+</center></TD></TR></TABLE>
+<pre>
+
+<span class="s0">/** 
+ * ApplicationController 
+ * 
+ * </span><span class="s1">@description </span><span class="s0">:: Server-side logic for managing applications 
+ * </span><span class="s1">@help        </span><span class="s0">:: See http://sailsjs.org/#!/documentation/concepts/Controllers 
+ */</span><span class="s2"> 
+ 
+module.exports = { 
+  isAdmin: </span><span class="s3">function</span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">var </span><span class="s2">idUser = req.session.user; 
+    console.log(</span><span class="s4">&quot;IS ADMOIN id User =======================&gt; &quot;</span><span class="s2">+idUser); 
+    findOne({ id:idUser}).exec(</span><span class="s3">function </span><span class="s2">(err, found){ 
+      </span><span class="s3">if</span><span class="s2">(err){ 
+        console.log(err); 
+      } 
+      </span><span class="s3">else</span><span class="s2">{ 
+        console.log(</span><span class="s4">&quot;ty le user =======================&gt; &quot;</span><span class="s2">+found); 
+        </span><span class="s3">if</span><span class="s2">(idUser = </span><span class="s5">1</span><span class="s2">){ 
+          </span><span class="s3">return </span><span class="s5">1</span><span class="s2">; 
+        }</span><span class="s3">else</span><span class="s2">{ 
+          </span><span class="s3">return </span><span class="s5">0</span><span class="s2">; 
+        } 
+      } 
+    }); 
+  }, 
+ 
+  </span><span class="s0">//_________________________________________________debut FIND APPLI</span><span class="s2"> 
+  </span><span class="s0">//fonction qui retourne la liste de toutes les applications</span><span class="s2"> 
+  findApplication: </span><span class="s3">function</span><span class="s2">(req, res) 
+  { 
+      </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+      </span><span class="s3">else</span><span class="s2">{ 
+        Application.query(</span><span class="s4">'select fr_application.*, p_dossier.num_dossier from fr_application join p_dossier on fr_application.id_dossier = p_dossier.id_dossier'</span><span class="s2">, </span><span class="s3">function</span><span class="s2">(err, found){ 
+          </span><span class="s3">if</span><span class="s2">(err){ 
+            console.log(err); 
+          }</span><span class="s0">/*else{ 
+            if(this.isAdmin() == 1){ 
+              console.log(found.rows); 
+              res.view( 'application/accueil', {applications: found.rows} );  //redirection vers accueil avec la liste des applications 
+            }else{ 
+              console.log(found.rows); 
+              res.view( 'testeur/listeApplicationTesteur', {applications: found.rows} );  //redirection vers accueil avec la liste des applications 
+            } 
+          }*/</span><span class="s2"> 
+          res.view( </span><span class="s4">'application/accueil'</span><span class="s2">, {applications: found.rows} );  </span><span class="s0">//redirection vers accueil avec la liste des applications</span><span class="s2"> 
+        }); 
+      } 
+  }, 
+ 
+  findApplicationT: </span><span class="s3">function</span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+    </span><span class="s3">else</span><span class="s2">{ 
+      Application.query(</span><span class="s4">'select fr_application.*, p_dossier.num_dossier from fr_application join p_dossier on fr_application.id_dossier = p_dossier.id_dossier'</span><span class="s2">, </span><span class="s3">function</span><span class="s2">(err, found){ 
+        </span><span class="s3">if</span><span class="s2">(err){ 
+          console.log(err); 
+        } 
+        console.log(found.rows); 
+        res.view( </span><span class="s4">'testeur/listeApplicationTesteur'</span><span class="s2">, {applications: found.rows} );  </span><span class="s0">//redirection vers accueil avec la liste des applications</span><span class="s2"> 
+      }); 
+    } 
+  }, 
+  </span><span class="s0">//_________________________________________________fin FIND APPLICATION</span><span class="s2"> 
+ 
+ 
+  </span><span class="s0">//_________________________________________________debut FIND APPLI to TEST</span><span class="s2"> 
+  </span><span class="s0">//fonction qui retourne la liste de toutes les applications qui ne sont pas encore testÃ©es</span><span class="s2"> 
+  findApplicationToTest: </span><span class="s3">function</span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+ 
+    Application.query(</span><span class="s4">'select fr_application.*, p_dossier.num_dossier from fr_application join p_dossier on fr_application.id_dossier = p_dossier.id_dossier'</span><span class="s2">, </span><span class="s3">function</span><span class="s2">(err, found){ 
+      </span><span class="s3">if</span><span class="s2">(err){ 
+        console.log(err); 
+      } 
+      console.log(found.rows); 
+      res.view( </span><span class="s4">'application/listeApplication'</span><span class="s2">, {applications: found.rows} );  </span><span class="s0">//redirection vers accueil avec la liste des applications</span><span class="s2"> 
+    }); 
+  }, 
+  findApplicationToTestT: </span><span class="s3">function</span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+ 
+    Application.query(</span><span class="s4">'select fr_application.*, p_dossier.num_dossier from fr_application join p_dossier on fr_application.id_dossier = p_dossier.id_dossier'</span><span class="s2">, </span><span class="s3">function</span><span class="s2">(err, found){ 
+      </span><span class="s3">if</span><span class="s2">(err){ 
+        console.log(err); 
+      } 
+      console.log(found.rows); 
+      res.view( </span><span class="s4">'testeur/listeApplicationTesteurTesteur'</span><span class="s2">, {applications: found.rows} );  </span><span class="s0">//redirection vers accueil avec la liste des applications</span><span class="s2"> 
+    }); 
+  }, 
+  </span><span class="s0">//_________________________________________________fin FIND APPLICATION TO TEST</span><span class="s2"> 
+ 
+ 
+  </span><span class="s0">//_________________________________________________debut FIND APPLI Resultat</span><span class="s2"> 
+  </span><span class="s0">//fonction qui retourne la liste de toutes les applications qui ne sont pas encore testÃ©es</span><span class="s2"> 
+  findApplicationTested: </span><span class="s3">function</span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+ 
+    Application.query(</span><span class="s4">'select fr_application.*, p_dossier.num_dossier from fr_application join p_dossier on fr_application.id_dossier = p_dossier.id_dossier'</span><span class="s2">, </span><span class="s3">function</span><span class="s2">(err, found){ 
+      </span><span class="s3">if</span><span class="s2">(err){ 
+        console.log(err); 
+      } 
+      console.log(found.rows); 
+      res.view( </span><span class="s4">'test/listeApplicationTeste'</span><span class="s2">, {applications: found.rows} ); 
+    }); 
+  }, 
+  findApplicationTestedT: </span><span class="s3">function</span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+ 
+    Application.query(</span><span class="s4">'select fr_application.*, p_dossier.num_dossier from fr_application join p_dossier on fr_application.id_dossier = p_dossier.id_dossier'</span><span class="s2">, </span><span class="s3">function</span><span class="s2">(err, found){ 
+      </span><span class="s3">if</span><span class="s2">(err){ 
+        console.log(err); 
+      } 
+      console.log(found.rows); 
+      res.view( </span><span class="s4">'testeur/listeApplicationTesteTesteur'</span><span class="s2">, {applications: found.rows} ); 
+    }); 
+  }, 
+  </span><span class="s0">//_________________________________________________fin FIND APPLICATION Resultat</span><span class="s2"> 
+ 
+ 
+  </span><span class="s0">//_________________________________________________debut FIND APPLI test Specifique</span><span class="s2"> 
+  </span><span class="s0">//fonction qui retourne la liste de toutes les applications</span><span class="s2"> 
+  findApplicationTestSpecifique: </span><span class="s3">function</span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+ 
+    Application.query(</span><span class="s4">'select fr_application.nom_application,fr_application.id_application, p_dossier.num_dossier from fr_application join p_dossier on fr_application.id_dossier = p_dossier.id_dossier'</span><span class="s2">, </span><span class="s3">function</span><span class="s2">(err, found){ 
+      </span><span class="s3">if</span><span class="s2">(err){ 
+        console.log(err); 
+      } 
+      console.log(found.rows); 
+      res.view( </span><span class="s4">'test/ajoutTestSpecifique'</span><span class="s2">, {applications: found.rows} );  </span><span class="s0">//redirection vers accueil avec la liste des applications</span><span class="s2"> 
+    }); 
+  }, 
+  </span><span class="s0">//_________________________________________________fin FIND APPLICATION</span><span class="s2"> 
+ 
+ 
+  </span><span class="s0">//_________________________________________________debut FIND APPLI PDF Specifique</span><span class="s2"> 
+  </span><span class="s0">//fonction qui retourne la liste de toutes les applications</span><span class="s2"> 
+  findApplicationForPDF: </span><span class="s3">function</span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+ 
+    Application.query(</span><span class="s4">'select fr_application.nom_application,fr_application.id_application, p_dossier.num_dossier from fr_application join p_dossier on fr_application.id_dossier = p_dossier.id_dossier'</span><span class="s2">, </span><span class="s3">function</span><span class="s2">(err, found){ 
+      </span><span class="s3">if</span><span class="s2">(err){ 
+        console.log(err); 
+      } 
+      console.log(found.rows); 
+      res.view( </span><span class="s4">'application/genererPdf'</span><span class="s2">, {applications: found.rows} );  </span><span class="s0">//redirection vers accueil avec la liste des applications</span><span class="s2"> 
+    }); 
+  }, 
+  findApplicationForPDFT: </span><span class="s3">function</span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+ 
+    Application.query(</span><span class="s4">'select fr_application.nom_application,fr_application.id_application, p_dossier.num_dossier from fr_application join p_dossier on fr_application.id_dossier = p_dossier.id_dossier'</span><span class="s2">, </span><span class="s3">function</span><span class="s2">(err, found){ 
+      </span><span class="s3">if</span><span class="s2">(err){ 
+        console.log(err); 
+      } 
+      console.log(found.rows); 
+      res.view( </span><span class="s4">'testeur/genererPdfTesteur'</span><span class="s2">, {applications: found.rows} );  </span><span class="s0">//redirection vers accueil avec la liste des applications</span><span class="s2"> 
+    }); 
+  }, 
+  </span><span class="s0">//_________________________________________________fin FIND APPLICATION</span><span class="s2"> 
+ 
+ 
+  </span><span class="s0">//____________________________________________debut fonctionn FIND BY ID application</span><span class="s2"> 
+  </span><span class="s0">//fonction qui recherche une application par son id et qui retourne une application</span><span class="s2"> 
+  findApplicationById: </span><span class="s3">function</span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+ 
+    </span><span class="s3">var </span><span class="s2">id=req.param(</span><span class="s4">'id'</span><span class="s2">,</span><span class="s3">null</span><span class="s2">); </span><span class="s0">//id application</span><span class="s2"> 
+    </span><span class="s3">var </span><span class="s2">retVal = []; 
+ 
+    Application.findOne(id).exec(</span><span class="s3">function </span><span class="s2">(err, application){ 
+      </span><span class="s3">if </span><span class="s2">(err){ 
+        </span><span class="s3">return </span><span class="s2">res.negotiate(err); 
+      } 
+      </span><span class="s3">if </span><span class="s2">(!id){ 
+        </span><span class="s3">return </span><span class="s2">res.notFound(</span><span class="s4">'Could not find sorry.'</span><span class="s2">); 
+      } 
+      </span><span class="s3">var </span><span class="s2">listtest; 
+      Test.query(</span><span class="s4">'SELECT fr_test.nom_test,fr_type_test.nom_type_test FROM fr_test JOIN fr_type_test ON fr_test.id_type_test = fr_type_test.id_type_test where fr_test.id_type_test &lt; 4 and fr_test.suppr = false'</span><span class="s2">, </span><span class="s3">function</span><span class="s2">(eror, test) 
+      { 
+        </span><span class="s3">if </span><span class="s2">(eror){ 
+          </span><span class="s3">return </span><span class="s2">res.negotiate(eror); 
+        } 
+        </span><span class="s0">//query jointure</span><span class="s2"> 
+        TestApp.query(</span><span class="s4">'SELECT fr_test.nom_test,fr_type_test.nom_type_test FROM fr_test JOIN fr_type_test ON fr_test.id_type_test = fr_type_test.id_type_test JOIN fr_test_application ON fr_test_application.id_test = fr_test.id_test where fr_test_application.id_application = '</span><span class="s2">+id+</span><span class="s4">' and fr_test.suppr = false'</span><span class="s2">, </span><span class="s3">function</span><span class="s2">(erorSpec, testSpec) { 
+          </span><span class="s3">if </span><span class="s2">(erorSpec){ 
+            </span><span class="s3">return </span><span class="s2">res.negotiate(erorSpec); 
+          } 
+          sails.log(</span><span class="s4">'Found &quot;%s&quot;'</span><span class="s2">, testSpec); 
+          sails.log(</span><span class="s4">'Found &quot;%s&quot;'</span><span class="s2">, test); 
+ 
+          Application.query(</span><span class="s4">'select fr_application.id_dossier, p_dossier.num_dossier from fr_application join p_dossier on p_dossier.id_dossier = '</span><span class="s2">+application.id_dossier+</span><span class="s4">''</span><span class="s2">, </span><span class="s3">function</span><span class="s2">(err, numDossier){ 
+            </span><span class="s3">if</span><span class="s2">(err){ 
+              console.log(err); 
+            } 
+            console.log(numDossier.rows); 
+ 
+            Etape.query(</span><span class="s4">'select id_lien, p_etape.libelle from p_lien_oper_dossier LEFT JOIN p_etape ON p_lien_oper_dossier.id_oper=p_etape.id_etape WHERE id_dossier = '</span><span class="s2">+application.id_dossier+</span><span class="s4">' order by id_lien'</span><span class="s2">, </span><span class="s3">function</span><span class="s2">(eror, etape) 
+            { 
+              </span><span class="s3">if </span><span class="s2">(eror){ 
+                </span><span class="s3">return </span><span class="s2">res.send(</span><span class="s4">'erreur'</span><span class="s2">); 
+              }</span><span class="s3">else</span><span class="s2">{ 
+                retVal[</span><span class="s4">'applications'</span><span class="s2">] = application; 
+                retVal[</span><span class="s4">'list_tests'</span><span class="s2">] = test.rows; 
+                retVal[</span><span class="s4">'list_tests_specifiques'</span><span class="s2">] = testSpec.rows; </span><span class="s0">//test specifique</span><span class="s2"> 
+                retVal[</span><span class="s4">'numeroDossier'</span><span class="s2">] = numDossier.rows; 
+                retVal[</span><span class="s4">'etapes'</span><span class="s2">] = etape.rows; 
+ 
+                </span><span class="s0">//Redirection</span><span class="s2"> 
+                res.view( </span><span class="s4">'application/detailApplication'</span><span class="s2">, retVal ); 
+              } 
+            }); 
+          }); 
+        }); 
+      }); 
+      sails.log(</span><span class="s4">'Found &quot;%s&quot;'</span><span class="s2">, id); 
+    }); 
+  }, 
+  </span><span class="s0">//____________________________________________fin fonctionn FIND BY ID</span><span class="s2"> 
+ 
+ 
+  </span><span class="s0">//____________________________________________debut fonctionn FIND BY ID TEST Makany am page test</span><span class="s2"> 
+  </span><span class="s0">//fonction qui recherche une application par son id et qui retourne une application</span><span class="s2"> 
+  findApplicationByIdTest: </span><span class="s3">function</span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+ 
+    </span><span class="s3">var </span><span class="s2">id=req.param(</span><span class="s4">'id'</span><span class="s2">,</span><span class="s3">null</span><span class="s2">); 
+    </span><span class="s3">var </span><span class="s2">retVal = []; 
+ 
+    Application.findOne(id).exec(</span><span class="s3">function </span><span class="s2">(err, application) 
+    { 
+      </span><span class="s3">if </span><span class="s2">(err) 
+      { 
+        </span><span class="s3">return </span><span class="s2">res.negotiate(err); 
+      } 
+      </span><span class="s3">if </span><span class="s2">(!id) 
+      { 
+        </span><span class="s3">return </span><span class="s2">res.notFound(</span><span class="s4">'Could not find sorry.'</span><span class="s2">); 
+      } 
+      </span><span class="s3">var </span><span class="s2">listtest; 
+      Test.query(</span><span class="s4">'SELECT fr_test.nom_test,fr_type_test.nom_type_test FROM fr_test JOIN fr_type_test ON fr_test.id_type_test = fr_type_test.id_type_test where fr_test.id_type_test &lt; 4 and fr_test.suppr = false'</span><span class="s2">, </span><span class="s3">function</span><span class="s2">(eror, test) 
+      { 
+        </span><span class="s3">if </span><span class="s2">(eror) 
+        { 
+          </span><span class="s3">return </span><span class="s2">res.negotiate(eror); 
+        } 
+        </span><span class="s0">//query jointure</span><span class="s2"> 
+        TestApp.query(</span><span class="s4">'SELECT fr_test.nom_test,fr_type_test.nom_type_test FROM fr_test JOIN fr_type_test ON fr_test.id_type_test = fr_type_test.id_type_test JOIN fr_test_application ON fr_test_application.id_test = fr_test.id_test where fr_test_application.id_application = '</span><span class="s2">+id+</span><span class="s4">' and fr_test.suppr = false'</span><span class="s2">, </span><span class="s3">function</span><span class="s2">(erorSpec, testSpec) { 
+          </span><span class="s3">if </span><span class="s2">(erorSpec) 
+          { 
+            </span><span class="s3">return </span><span class="s2">res.negotiate(erorSpec); 
+          } 
+          sails.log(</span><span class="s4">'Found &quot;%s&quot;'</span><span class="s2">, testSpec); 
+          sails.log(</span><span class="s4">'Found &quot;%s&quot;'</span><span class="s2">, test); 
+ 
+          Application.query(</span><span class="s4">'select fr_application.id_dossier, p_dossier.num_dossier from fr_application join p_dossier on p_dossier.id_dossier = '</span><span class="s2">+application.id_dossier+</span><span class="s4">''</span><span class="s2">, </span><span class="s3">function</span><span class="s2">(err, numDossier){ 
+            </span><span class="s3">if</span><span class="s2">(err){ 
+              console.log(err); 
+            } 
+            console.log(numDossier.rows); 
+            retVal[</span><span class="s4">'applications'</span><span class="s2">] = application; 
+            retVal[</span><span class="s4">'list_tests'</span><span class="s2">] = test.rows; 
+            retVal[</span><span class="s4">'list_tests_specifiques'</span><span class="s2">] = testSpec.rows; </span><span class="s0">//test specifique</span><span class="s2"> 
+            retVal[</span><span class="s4">'numeroDossier'</span><span class="s2">] = numDossier.rows; 
+ 
+            </span><span class="s0">//Redirection ver detailApplication avec la liste des applications, liste des tests, liste des tests spÃ©cifiques de l'application</span><span class="s2"> 
+            res.view( </span><span class="s4">'test/pageTest'</span><span class="s2">,retVal ); 
+          }); 
+ 
+        }); 
+      }); 
+      sails.log(</span><span class="s4">'Found &quot;%s&quot;'</span><span class="s2">, id); 
+    }); 
+  }, 
+  </span><span class="s0">//____________________________________________fin fonctionn FIND BY ID TEST</span><span class="s2"> 
+ 
+  </span><span class="s0">//____________________________________________debut fonctionn CREATE</span><span class="s2"> 
+  </span><span class="s0">//fonction pour creer une application</span><span class="s2"> 
+  createApplication: </span><span class="s3">function </span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+ 
+    </span><span class="s3">if</span><span class="s2">(req.method == </span><span class="s4">'POST' </span><span class="s2">&amp;&amp; req.param(</span><span class="s4">'nom_application'</span><span class="s2">,</span><span class="s3">null</span><span class="s2">) != </span><span class="s3">null </span><span class="s2">&amp;&amp; req.param(</span><span class="s4">'id_dossier'</span><span class="s2">,</span><span class="s3">null</span><span class="s2">) != </span><span class="s3">null </span><span class="s2">&amp;&amp; req.param(</span><span class="s4">'description'</span><span class="s2">,</span><span class="s3">null</span><span class="s2">) != </span><span class="s3">null</span><span class="s2">) 
+    { 
+      Application.create({nom_application:req.param(</span><span class="s4">'nom_application'</span><span class="s2">),id_dossier:req.param(</span><span class="s4">'id_dossier'</span><span class="s2">),description_application:req.param(</span><span class="s4">'description'</span><span class="s2">)}).exec(</span><span class="s3">function</span><span class="s2">(err,model) 
+      { 
+        </span><span class="s3">if </span><span class="s2">(err) { 
+          console.log(err); 
+        } 
+        </span><span class="s3">else</span><span class="s2">{ 
+          </span><span class="s0">//res.send('Successfully Created!');</span><span class="s2"> 
+          res.redirect(</span><span class="s4">'accueil'</span><span class="s2">); 
+        } 
+ 
+      }); 
+    } 
+    </span><span class="s3">else</span><span class="s2"> 
+    { 
+      res.view( </span><span class="s4">'application/ajoutApplication'</span><span class="s2">); 
+    } 
+  }, 
+  </span><span class="s0">//____________________________________________fin fonction CREATE</span><span class="s2"> 
+ 
+  </span><span class="s0">//____________________________________________debut fonctionn UPDATE</span><span class="s2"> 
+  updateApplication: </span><span class="s3">function </span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+ 
+    </span><span class="s3">var </span><span class="s2">id=req.param(</span><span class="s4">'id'</span><span class="s2">,</span><span class="s3">null</span><span class="s2">); 
+    Application.findOne(id).done(</span><span class="s3">function</span><span class="s2">(err, model) 
+    { 
+      </span><span class="s3">if</span><span class="s2">(req.method==</span><span class="s4">'POST' </span><span class="s2">&amp;&amp; req.param(</span><span class="s4">'Application'</span><span class="s2">,</span><span class="s3">null</span><span class="s2">)!=</span><span class="s3">null</span><span class="s2">) 
+      { 
+        </span><span class="s3">var </span><span class="s2">app=req.param(</span><span class="s4">'Application'</span><span class="s2">,</span><span class="s3">null</span><span class="s2">); 
+        model.nom_application=app.nom_application; 
+        model.id_dossier=app.id_dossier; 
+ 
+        model.save(</span><span class="s3">function</span><span class="s2">(err) 
+        { 
+          </span><span class="s3">if </span><span class="s2">(err) 
+          { 
+            res.send(</span><span class="s4">'Error'</span><span class="s2">); 
+          } 
+          </span><span class="s3">else</span><span class="s2"> 
+          { 
+            res.redirect( </span><span class="s4">'user/view/'</span><span class="s2">+model.id); 
+          } 
+        }); 
+      } 
+      </span><span class="s3">else</span><span class="s2"> 
+      { 
+        res.render( </span><span class="s4">'user/update'</span><span class="s2">,{</span><span class="s4">'model'</span><span class="s2">:model}); 
+      } 
+    }); 
+  }, 
+  </span><span class="s0">//____________________________________________fin fonctionn UPDATE</span><span class="s2"> 
+ 
+ 
+  </span><span class="s0">//____________________________________________Debut fonctionn Recherche</span><span class="s2"> 
+  search : </span><span class="s3">function </span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+ 
+    </span><span class="s3">var </span><span class="s2">moterechercher=req.param(</span><span class="s4">'search_item'</span><span class="s2">,</span><span class="s3">null</span><span class="s2">); 
+    </span><span class="s0">//selection des donnees de recherche</span><span class="s2"> 
+    Application.query(</span><span class="s4">&quot;SELECT fr_application.nom_application,fr_application.id_application,fr_application.description_application, p_dossier.id_dossier, p_dossier.num_dossier FROM fr_application JOIN p_dossier ON fr_application.id_dossier = p_dossier.id_dossier where fr_application.nom_application like '%&quot;</span><span class="s2">+moterechercher+</span><span class="s4">&quot;%' or p_dossier.num_dossier like '%&quot;</span><span class="s2">+moterechercher+</span><span class="s4">&quot;%'&quot;</span><span class="s2">, </span><span class="s3">function</span><span class="s2">(err, found){ 
+      </span><span class="s3">if</span><span class="s2">(err){ 
+        console.log(err); 
+      } 
+ 
+      console.log(found.rows); 
+      console.log(moterechercher); 
+      res.view( </span><span class="s4">'application/accueil'</span><span class="s2">, {applications: found.rows} ); 
+    }); 
+  }, 
+ 
+  findApplicationByDossier : </span><span class="s3">function </span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+    </span><span class="s3">var </span><span class="s2">dossier=req.param(</span><span class="s4">'idDossier'</span><span class="s2">,</span><span class="s3">null</span><span class="s2">); 
+    </span><span class="s0">//selection des donnees de recherche</span><span class="s2"> 
+    Application.query(</span><span class="s4">&quot;SELECT fr_application.nom_application,fr_application.id_application, p_dossier.id_dossier FROM fr_application JOIN p_dossier ON fr_application.id_dossier = p_dossier.id_dossier where p_dossier.num_dossier ='&quot;</span><span class="s2">+dossier+</span><span class="s4">&quot;'&quot;</span><span class="s2">, </span><span class="s3">function</span><span class="s2">(err, found){ 
+      </span><span class="s3">if</span><span class="s2">(err){ 
+        console.log(err); 
+      } 
+ 
+      console.log(found.rows); 
+      res.view( </span><span class="s4">'application/resultatRecherche'</span><span class="s2">, {applications: found.rows} ); 
+    }); 
+  }, 
+  </span><span class="s0">//____________________________________________fin fonctionn Recherche</span><span class="s2"> 
+ 
+  </span><span class="s0">//_________________________________________________debut FIND APPLI from Dossier</span><span class="s2"> 
+  </span><span class="s0">//fonction qui retourne la liste de toutes les applications dans un dossier</span><span class="s2"> 
+  findAppliDossier: </span><span class="s3">function</span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+ 
+    </span><span class="s3">var </span><span class="s2">dossier=req.param(</span><span class="s4">'num_dossier'</span><span class="s2">,</span><span class="s3">null</span><span class="s2">); 
+    </span><span class="s3">var </span><span class="s2">retVal = []; 
+    Application.query(</span><span class="s4">&quot;select fr_application.*, p_dossier.num_dossier from fr_application join p_dossier on fr_application.id_dossier = p_dossier.id_dossier where p_dossier.num_dossier ='&quot;</span><span class="s2">+dossier+</span><span class="s4">&quot;'&quot;</span><span class="s2">, </span><span class="s3">function</span><span class="s2">(err, found){ 
+      </span><span class="s3">if</span><span class="s2">(err){ 
+        console.log(err); 
+      } 
+      console.log(found.rows); 
+      retVal[</span><span class="s4">'applications'</span><span class="s2">] = found.rows; 
+      retVal[</span><span class="s4">'numDossier'</span><span class="s2">] = dossier; 
+      res.view( </span><span class="s4">'application/listeApplicationDossier'</span><span class="s2">, retVal );  </span><span class="s0">//redirection vers accueil avec la liste des applications</span><span class="s2"> 
+    }); 
+  }, 
+  </span><span class="s0">//_________________________________________________fin FIND APPLI from Dossier</span><span class="s2"> 
+ 
+ 
+}; 
+ 
+</span></pre>
+</body>
+</html>

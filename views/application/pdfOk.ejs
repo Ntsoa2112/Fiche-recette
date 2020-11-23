@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <title>Recette - Accueil</title>
+  <meta name="generator" content="Bootply" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/styles.css" rel="stylesheet">
+  <link href="fonts/css/font-awesome.css" rel="stylesheet">
+  <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body>
+<!-- HEADER -->
+<% include ../header.ejs %>
+<!-- /HEADER -->
+<!-- Menu GAUCHE -->
+		<% var disable = "";
+		if(req.session.droit == 0){
+			disable = "hidden";}
+		%>
+<!-- Main -->
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-9">
+      <!-- avant container -->
+      
+      </br>
+      <hr>    <!-- include menu à gauche blabla -->
+      <!-- /avant container-->
+
+      <div class="row"> <!-- CONTAINER -->
+        <div class="">
+          <div class="page-title">
+            <div class="title_left">
+              <h2>
+                Fiche recette
+                <small>
+                  Générer pdf
+                </small>
+              </h2>
+            </div>
+            </br>
+            </br>
+            <h3>Le PDF a été généré avec succès.</h3>
+
+          </div>
+          <div class="clearfix"></div>
+        </div>
+
+      </div>
+      <!--/row-->
+
+
+
+      <!-- Notifications -->
+      <% include ../notifications.ejs %>   <!-- include menu à gauche -->
+      <!-- /Notifications -->
+    </div>
+    <!--/col-span-9-->
+  </div>
+</div>
+<!-- /Main -->
+<!-- Footer -->
+		<center><% include ../footer.ejs %></center>
+		<!-- /Footer -->
+<!-- script references -->
+<script src="/js/base.min.js"></script>
+<script src="/js/project.min.js"></script>
+
+<script src="js/jquery.min.js"></script>
+
+<script src="js/bootstrap.min.js"></script>
+<script src="js/scripts.js"></script>
+</body>
+</html>

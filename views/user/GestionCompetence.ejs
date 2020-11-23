@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<title>Recette - Accueil</title>
+		<meta name="generator" content="Bootply" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/styles.css" rel="stylesheet">
+
+		<link rel="stylesheet" href="css/jquery.dataTables.min.css">
+
+    <link href="fonts/css/font-awesome.css" rel="stylesheet">
+    <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+
+	<script type="text/javascript" src="js/paging.js"></script>
+
+	</head>
+	<body onLoad="getLsDossier()">
+		<!-- HEADER -->
+		<% 
+		include ../header.ejs %>
+		<!-- /HEADER -->
+		<!-- Menu GAUCHE -->
+		<% var disable = "";
+		if(req.session.droit == 0){
+			disable = "hidden";}
+		%>
+		<!-- Main -->
+		<div class="container-fluid">
+			<div class="row">
+				<div id="menuCenter">
+					  <!--<% include ../dossierEtapeApp.ejs %>
+					 
+					  </br>
+					  </br>-->
+
+					<div class="row">
+						<div class="">
+							<div class="page-title">
+
+							  <div class="title_left">
+								<h2>
+								  Fiche recette
+								  <small>
+									Gestion Technologie
+								  </small>
+								</h2>
+							  </div>
+							</div>
+							</br>
+							<div class="clearfix"></div>
+							
+							<div class="form-group">
+								<a href = "#" onclick = "ajouterCompetence()"><button type="button" class="btn btn-primary collapse-link <%= disable %> "> <i class="fa fa-plus" style="color:#04B404"></i> Nouvelle</button></a>
+							</div>
+							</br>
+							
+							<div class="row">
+							  <div class="col-md-12 col-sm-12 col-xs-12">
+								<div class="x_panel">
+								  <div class="x_title">
+									<div class="clearfix"></div>
+								  </div>
+								  <div class="x_content">
+
+									<table id="results" class="table table-striped table-bordered table-hover table-condensed"> <!--class="table table-striped responsive-utilities jambo_table"   table table-striped id="tableDossier"-->
+									  <thead>
+									  <tr class="headings">
+										<th>ID </th>
+										<th><i class="fa fa-folder-open"></i> Libelle </th>
+										<th class=" no-link last"><i class="fa fa-pencil"></i> Modifier</span></th>
+										<th class=" no-link last"><i class="fa fa-pencil"></i> Supprimer</span></th>
+									  </tr>
+									  </thead>
+									  <tbody>
+									  <% competences.forEach(function(competence){ %>
+									  <tr class="even pointer">
+										<td class=" "><%= competence.id_competence %></td>
+										<td class=" "><%= competence.libelle %></td>
+										<td class=""><a href="#" id ="modification" name="modification" value="<%= competence.id_competence %>" onclick="mod(<%= competence.id_competence %>,'<%= competence.libelle %>')" >Modifier</a></td>
+										<td class=""><a href="#" id ="supression" name="suppression" value="<%= competence.id_competence %>" onclick="sup(<%= competence.id_competence %>)" >Supprimer</a></td>
+									  </tr>
+									  <% }); %>
+									  </tbody>
+									</table>
+
+									<div id="pageNavPosition"></div>
+									
+								  </div>
+								</div>
+							  </div>
+							</div>
+						</div>
+						
+					</div>
+					<!--/row-->
+					</br>
+					
+					<!--/row-->
+					</br>
+					</br>
+					</br>
+					</br>
+					</br>
+					
+
+					<!-- Notifications -->
+					<% include ../notifications.ejs %>   <!-- include menu à gauche -->
+					<!-- /Notifications -->
+				</div>
+				<!--/col-span-9-->
+			</div>
+		</div>
+		<!-- /Main -->
+		<!-- Footer -->
+		<center><% include ../footer.ejs %></center>
+		<!-- /Footer -->
+
+		<!-- script references -->
+		<script src="/js/base.min.js"></script>
+		<script src="/js/project.min.js"></script>
+
+		<script src="js/jquery.min.js"></script>
+
+		<script type="text/javascript" src="js/jquery.dataTables.js"></script>
+
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/scripts.js"></script>
+		
+		<script>
+		function ajouterCompetence() {
+			var msg='<div class=""><label>Libelle:</label> <input class="form-control" id="libelle_competence" type="text" name="libelle_competence" placeholder="" onchange="" required ></input></div><br>';
+			var titre = "Ajout nouvelle competence :"
+			
+			bootbox.dialog({
+			  message: msg,
+			  title: titre,
+			  buttons: {
+				annuler: {
+				  label: "Annuler",
+				  className: "btn-default",
+				  callback: function () {
+				  }
+				},
+				main: {
+				  label: "Ajouter",
+				  className: "btn-primary",
+				  callback: function () {
+					var libelle_comp=$( "#libelle_competence" ).val();
+					if(libelle_comp != ""){
+						window.location = "creerCompetenceLibelle?libelle="+libelle_comp+"&type=1";
+					}
+					else{
+						alert("Champ invalide");
+					}
+				  }
+				}
+			  }
+			});
+		  }
+		
+		  function mod(v, lib) {
+			var idComp = v;
+			var libelle = lib;
+			var msg='<div class=""><label>Libelle:</label> <input class="form-control" id="libelle_competence" value="'+libelle+'" type="text" name="libelle_competence" placeholder="" onchange="" required ></input></div><br>';
+			var titre = "MODIFICATION :"
+			
+			bootbox.dialog({
+			  message: msg,
+			  title: titre,
+			  buttons: {
+				annuler: {
+				  label: "Annuler",
+				  className: "btn-default",
+				  callback: function () {
+				  }
+				},
+				main: {
+				  label: "Valider",
+				  className: "btn-primary",
+				  callback: function () {
+						var libelle_comp=$( "#libelle_competence" ).val();
+						window.location = "modifierCompetenceLibelle?idCompetence="+idComp+"&libelle="+libelle_comp+"&type=1";
+				  }
+				}
+			  }
+			});
+		  }
+		
+		function sup(v) {
+			var idComp = v;
+			bootbox.dialog({
+			  title: "Merci de confirmer",
+			  message: "Etes-vous certain de vouloir supprimer?",
+			  buttons: {
+				supprimer: {
+				  label: "Supprimer",
+				  className: "btn-primary",
+				  callback: function() {
+					 window.location = "supprimerCompetenceLibelle?idCompetence="+idComp+"&type=1";
+					}
+				},
+				annuler: {
+				  label: "Annuler",
+				  className: "btn-info"
+				}
+			  }
+			});
+            // The function returns the product of p1 and p2
+		}
+		
+	</script>
+
+		<script>
+
+		$(document).ready(function(){
+			$('#tableDossier').dataTable();
+		});
+
+		</script>
+
+		<script type="text/javascript"><!--
+        var pager = new Pager('results', 12);
+        pager.init();
+        pager.showPageNav('pager', 'pageNavPosition');
+        pager.showPage(1);
+    //--></script>
+
+	<!-- DOSSIER ETAPE APPLICATION -->
+	<script src="js/dossierEtapeApp.js"></script>
+	
+	</body>
+</html>

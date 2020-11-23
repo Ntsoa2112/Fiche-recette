@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<title>Recette - Accueil</title>
+		<meta name="generator" content="Bootply" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/styles.css" rel="stylesheet">
+    <link href="fonts/css/font-awesome.css" rel="stylesheet">
+    <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+
+    <style>
+      table, td, th {
+        border: 1px solid #ddd;
+        text-align: left;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      th, td {
+        padding: 15px;
+      }
+    </style>
+
+	</head>
+	<body>
+		<!-- HEADER -->
+		<% include ../header.ejs %>
+		<!-- /HEADER -->
+		<!-- Menu GAUCHE -->
+		<% var disable = "";
+		if(req.session.droit == 0){
+			disable = "hidden";}
+		%>
+		<!-- Main -->
+		<div class="container-fluid">
+			<div class="row">
+				<div id="menuCenter">
+					<!-- avant container -->
+           <!-- include menu à gauche blabla -->
+					<!-- /avant container-->
+
+					<div class="row"> <!-- CONTAINER -->
+						<div class="">
+							<div class="page-title">
+							  <div class="title_left">
+								<h2>
+								  Fiche recette
+								  <small>
+									Apercu PDF
+								  </small>
+								</h2>
+							  </div>
+
+                <form  method="POST" action="/generate">
+					<button type="submit" class="btn btn-primary" formtarget="_blank">Génerer PDF</button>
+                  <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                      <div class="x_panel">
+                        <div class="x_title">
+                          <div class="clearfix"></div>
+                        </div>
+                        <h3><%= applications.nom_application %></h3>
+                        </br>
+                        <div class="x_content">
+									<h4>Description de l'application:</h4>
+									  <p><b>Nom:</b> <%= applications.nom_application %></p>
+											<p><b>Dossier:</b> <%= numeroDossier[0].num_dossier %>.</p>
+                      <p><b>Description:</b> <%= applications.description_application %></p>
+					    <%
+							var start = new Date(Number(Date.parse(applications.date_ajout)));
+							var month = new Array();
+							month[0] = "Janvier";
+							month[1] = "Février";
+							month[2] = "Mars";
+							month[3] = "Avril";
+							month[4] = "Mai";
+							month[5] = "Juin";
+							month[6] = "Juillet";
+							month[7] = "Aout";
+							month[8] = "Septembre";
+							month[9] = "Octobre";
+							month[10] = "Novembre";
+							month[11] = "Décembre";
+							var n = month[start.getMonth()];
+					  
+					    %>
+                      <p> <b>Ajouté le </b> <%= start.getDate() %>  <%= n %>  <%= start.getFullYear() %> <b>par</b> <%= persAjout[0].nom %> <%= persAjout[0].prenom %> (<b>matricule</b>: <%= persAjout[0].matricule %>).</p>
+                      <p><b>Chemin:</b> <%= applications.chemin %></p>
+					  </br>
+                          <p><h4>Resultats des tests:</h4></p>
+
+                          <table>
+                            <thead>
+                            <tr class="headings" >
+                              <th class="column-title">Titre test </th>
+                              <th class="column-title">Type test</th>
+                              <th class="column-title">Testeur</th>
+                              <th class="column-title">Date debut</th>
+                              <th class="column-title">Date fin</th>
+                              <th class="column-title">Durée</th>
+                              <th class="column-title">Résultat </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <% list_tests.forEach(function(test){ %>
+                            <tr class="even pointer">
+								<%
+									var debut = new Date(Number(Date.parse(test.date_debut)));
+									var fin = new Date(Number(Date.parse(test.date_fin)));
+									var nDebut = month[debut.getMonth()];
+									var nFin = month[fin.getMonth()];
+									
+									var deb = debut.getDate()+" "+nDebut+" "+debut.getFullYear()+" à "+debut.getHours()+":"+debut.getMinutes()+":"+debut.getSeconds();
+									var fn = fin.getDate()+" "+nFin+" "+fin.getFullYear()+" à "+fin.getHours()+":"+fin.getMinutes()+":"+fin.getSeconds();
+									
+									if(typeof nDebut == "undefined"){
+										deb = " - ";
+									}
+									if(typeof nFin == "undefined"){
+										fn = " - ";
+									}
+									
+									var minutes;
+									var hours;
+									if (fin.getMinutes() < debut.getMinutes())
+									{
+										minutes = debut.getMinutes() - fin.getMinutes();
+										hours = fin.getHours() - debut.getHours() - 1;
+									}else
+									{
+										minutes = fin.getMinutes() - debut.getMinutes();
+										hours = fin.getHours() - debut.getHours();
+									}
+									
+									if(isNaN(minutes)){
+										minutes = " - ";
+									}
+									if(isNaN(hours)){
+										hours = " - ";
+									}
+									var duree = hours+" h "+minutes+" min";
+								%>
+							  <td class=" "><%= test.nom_test %></td>
+							  <td class=" "><%= test.nom_type_test %></td>
+							  <td class=" "><%= test.nom %> <%= test.prenom %> (<%= test.matricule %>)</td>
+							  <td class=" "><%= deb %></td>
+							  <td class=" "><%= fn %></td>
+							  <td class=" "><%= duree %></td>
+							  <td class=" "><%= test.libelle_type_resultat %></td>
+                            </tr>
+                            <% }); %>
+                            </tbody>
+                          </table>
+                        </div>
+                        </br>
+                      </div>
+                    </div>
+                  </div>
+                  </br>
+
+                  <input type="hidden" value="<%= applications.id_application %>" id="idApplication" name="idApplication" class="form-control col-md-7 col-xs-12">
+                  <input type="hidden" value="<%= applications.nom_application %>" id="nomApplication" name="nomApplication" class="form-control col-md-7 col-xs-12">
+                  <input type="hidden" value="<%= numeroDossier[0].num_dossier %>" id="dossierApplication" name="dossierApplication" class="form-control col-md-7 col-xs-12">
+                  <input type="hidden" value="<%= applications.description_application %>" id="descriptionApplication" name="descriptionApplication" class="form-control col-md-7 col-xs-12">
+                  <input type="hidden" value="<%= list_tests %>" id="listTests" name="listTests" class="form-control col-md-7 col-xs-12">
+                  <input type="hidden" value="<%= start.getDate() %>  <%= n %>  <%= start.getFullYear() %>" id="dateAjout" name="dateAjout" class="form-control col-md-7 col-xs-12">
+                  <input type="hidden" value="<%= persAjout[0].nom %> <%= persAjout[0].prenom %> (<b>matricule</b>: <%= persAjout[0].matricule %>)" id="persAjout" name="persAjout" class="form-control col-md-7 col-xs-12">
+                  <input type="hidden" value="<%= applications.chemin %>" id="chemin" name="chemin" class="form-control col-md-7 col-xs-12">
+
+                  
+                </form>
+
+							</div>
+							<div class="clearfix"></div>
+						</div>
+
+					</div>
+					<!--/row-->
+
+
+					<!-- Notifications -->
+					<% include ../notifications.ejs %>   <!-- include menu à gauche -->
+					<!-- /Notifications -->
+				</div>
+				<!--/col-span-9-->
+			</div>
+		</div>
+		<!-- /Main -->
+		<!-- Footer -->
+		<center><% include ../footer.ejs %></center>
+		<!-- /Footer -->
+
+		<!-- script references -->
+		<script src="/js/base.min.js"></script>
+		<script src="/js/project.min.js"></script>
+
+		<script src="js/jquery.min.js"></script>
+
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/scripts.js"></script>
+	</body>
+</html>

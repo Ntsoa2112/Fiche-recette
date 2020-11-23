@@ -1,0 +1,84 @@
+
+<% var disable = "";
+	if(req.session.droit == 0){
+		disable = "hidden";}
+%>
+
+<table id="resultsTest" class="table table-striped table-bordered table-hover table-condensed">
+	<thead>
+		<tr class="headings">
+			<th>ID</th>
+			<th><i class="fa fa-paperclip"></i> Test </th>
+			
+			<th><i class="fa fa-plus-circle"></i> Nombre de test effectu&#233; </th>
+			
+			<th><i class="fa fa-calendar"></i> Date dernier test effectu&#233; </th>
+			
+			<th> <i class="fa fa-filter"></i> Type test </th>
+			<th> <i class="fa fa-cube"></i> Application </th>
+			<th class="hidden"> <i class="fa fa-cube"></i> Statut </th>
+			<th><i class="fa fa-edit"></i>  Ex&#233;cuter </th>
+			<th class="hidden"><i class="fa fa-file-text"></i>  Résultat </th>
+			<th class = " <%= disable %>"><i class="fa fa-pencil"></i>  Modifier </th>
+			<th class = " <%= disable %>"><i class="fa fa-trash"></i> Supprimer </th>
+			<!--<th class=" no-link last"><i class="fa fa-file-text"></i> Détails</span>
+			</th>-->
+		</tr>
+	</thead>
+
+	<tbody>
+	
+		<%
+			var month = new Array();
+			month[0] = "Janvier";
+			month[1] = "Fevrier";
+			month[2] = "Mars";
+			month[3] = "Avril";
+			month[4] = "Mai";
+			month[5] = "Juin";
+			month[6] = "Juillet";
+			month[7] = "Aout";
+			month[8] = "Septembre";
+			month[9] = "Octobre";
+			month[10] = "Novembre"
+			month[11] = "Decembre";
+		%>
+	
+		<% tests.forEach(function(test){ %>
+			
+			<%
+				var fin = new Date(Number(Date.parse(test.get_date_last_test)));
+				var nFin = month[fin.getMonth()];
+				var dateFin = fin.getDate()+" "+nFin+" "+fin.getFullYear()+" &#224; "+fin.getHours()+":"+fin.getMinutes()+":"+fin.getSeconds();
+				
+				if(nFin == null){
+					dateFin = " - ";
+				}
+				if(typeof nFin == "undefined" ){
+					dateFin = " - ";
+				}
+			%>
+		
+			<tr class=" "><td class=" "><%= test.id_test %></td>	
+			<td class=" "><%= test.nom_test %></td>
+
+			<td class=" "> <%= test.get_count_test %> </td>
+			<td class=" "> <%= dateFin %> </td>
+			
+			<td class=" "><%= test.nom_type_test %></td>	
+			<td class=" "><%= test.nom_application %></td>	
+			<td class=" "><a href="/appByIdTest?id=<%= test.id_application %>&test=<%= test.id_test %>">Ex&#233;cuter</a></td>	<!-- appByIdTest?id=<%= req.param('id',null) %>&test=<%= test.id_test %>  -->
+			<td class="hidden"><a href="/voirResultatTest">Résultat</a></td>	
+			<td class="<%= disable %>"><a href="/testById?id=<%= test.id_test %>">Modifier</a></td>	
+			<td class="<%= disable %>"><a href="#" id ="supression" name="suppression" value="<%= test.id_test %>" onclick="sup(<%= test.id_test %>)" >Supprimer</a></td>
+			</tr>	
+		<% }); %>
+	</tbody>
+</table>
+<div id="pageNavPosition"></div>
+<script type="text/javascript">
+	var pager = new Pager('resultsTest', 10);
+	pager.init();
+	pager.showPageNav('pager', 'pageNavPosition');
+	pager.showPage(1);
+</script>

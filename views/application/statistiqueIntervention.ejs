@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<title>Recette - Ajout application</title>
+		<meta name="generator" content="Bootply" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<!-- Include Bootstrap Datepicker -->
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.min.css" />
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker3.min.css" />
+		<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.min.js"></script>
+		
+		<link href="css/styles.css" rel="stylesheet">
+		<link href="fonts/css/font-awesome.css" rel="stylesheet">
+		<link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+
+	</head>
+	<body onLoad="getLsDossier()">
+		<!-- HEADER -->
+		<% include ../header.ejs %>
+		<!-- /HEADER -->
+		<!-- Menu GAUCHE -->
+		<% var disable = "";
+		if(req.session.droit == 0){
+			disable = "hidden";}
+		%>
+
+		<!-- CONTAINER -->
+		<div class="container-fluid">
+			<div class="row">
+				<div id="menuCenter">
+					<!-- avant container -->
+          
+           <!-- include menu à gauche -->
+					<!-- /avant container-->
+
+					<div class="row"> <!-- CONTAINER -->
+						<div class="">
+							<div class="page-title">
+								  <div class="title_left">
+									<h2>
+									  Fiche recette
+									  <small>
+										Statistique des interventions
+									  </small>
+									</h2>
+								  </div>
+							</div>
+							</br>
+							<div class="clearfix"></div>
+
+						</div>
+					</div>
+					
+					<!-- Notifications -->
+					<% include ../notifications.ejs %>
+					<!-- /Notifications -->
+				</div>
+			</div>
+		</div>
+		<!-- /CONTAINER -->
+		
+		<!-- Footer -->
+		<center><% include ../footer.ejs %></center>
+		<!-- /Footer -->
+
+		<!-- script  -->
+		<script src="/js/base.min.js"></script>
+		<script src="/js/project.min.js"></script>
+
+		<script src="js/jquery.min.js"></script>
+
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/jquery-ui.min.js"></script>
+		<script src="js/scripts.js"></script>
+		
+		<!-- DOSSIER ETAPE APPLICATION -->
+		<script src="js/dossierEtapeApp.js"></script>
+		
+		<script src="js/bootstrap-datepicker.js"></script>
+	</body>
+</html>

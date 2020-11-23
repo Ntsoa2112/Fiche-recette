@@ -1,0 +1,82 @@
+<html>
+<head>
+<title>ResultatController.js</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: rgb(0,0,0); font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); font-style: italic; }
+.s1 { color: rgb(128,128,128); font-weight: bold; font-style: italic; }
+.s2 { }
+.s3 { color: rgb(0,0,128); font-weight: bold; }
+.s4 { color: rgb(0,128,0); font-weight: bold; }
+.s5 { color: rgb(0,0,255); }
+</style>
+</head>
+<BODY BGCOLOR="#ffffff">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#C0C0C0" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+ResultatController.js</FONT>
+</center></TD></TR></TABLE>
+<pre>
+
+<span class="s0">/** 
+ * ResultatController 
+ * 
+ * </span><span class="s1">@description </span><span class="s0">:: Server-side logic for managing resultats 
+ * </span><span class="s1">@help        </span><span class="s0">:: See http://sailsjs.org/#!/documentation/concepts/Controllers 
+ */</span><span class="s2"> 
+ 
+module.exports = { 
+  </span><span class="s0">//____________________________________________debut fonctionn CREATE</span><span class="s2"> 
+  createResultat: </span><span class="s3">function </span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+ 
+    </span><span class="s0">//resultat</span><span class="s2"> 
+    </span><span class="s3">var </span><span class="s2">id_resultat = </span><span class="s4">&quot; &quot;</span><span class="s2">; 
+    </span><span class="s3">var </span><span class="s2">id_personnel = req.session.user; 
+    </span><span class="s3">var </span><span class="s2">datetime = </span><span class="s3">new </span><span class="s2">Date(); 
+    console.log(</span><span class="s4">'*******************************date___________ =&gt;'</span><span class="s2">+datetime); 
+    </span><span class="s3">var </span><span class="s2">date_resultat = datetime; 
+    </span><span class="s3">var </span><span class="s2">resultat = req.param(</span><span class="s4">'resultat'</span><span class="s2">); 
+ 
+    </span><span class="s0">//Test application</span><span class="s2"> 
+    </span><span class="s3">var </span><span class="s2">id_test = req.param(</span><span class="s4">'idTest'</span><span class="s2">); 
+    </span><span class="s3">var </span><span class="s2">id_appplication = req.param(</span><span class="s4">'id_application'</span><span class="s2">); 
+    </span><span class="s3">var </span><span class="s2">id_recette = </span><span class="s5">1</span><span class="s2">; </span><span class="s0">//pour tester</span><span class="s2"> 
+ 
+    Resultat.create({id_personnel:id_personnel, date_resultat:date_resultat, resultat:resultat}).exec(</span><span class="s3">function</span><span class="s2">(err,model) 
+    { 
+      </span><span class="s3">if </span><span class="s2">(err) { 
+        console.log(err); 
+      } 
+      </span><span class="s3">else </span><span class="s2">{ 
+        Resultat.findOne({id_personnel:id_personnel, date_resultat:date_resultat, resultat:resultat}).exec(</span><span class="s3">function</span><span class="s2">(err, found) 
+        { 
+          </span><span class="s3">if</span><span class="s2">(err) 
+          { 
+            console.log(err); 
+          } 
+          </span><span class="s3">else</span><span class="s2"> 
+          { 
+            TestApplication.create({id_test:id_test, id_appplication:id_appplication, id_resultat:found.id_resultat, id_recette: id_recette}).exec(</span><span class="s3">function</span><span class="s2">(err,model) 
+            { 
+              </span><span class="s3">if </span><span class="s2">(err) { 
+ 
+                console.log(err); 
+              } 
+              res.redirect(</span><span class="s4">'/appByIdTest?id='</span><span class="s2">+id_appplication); 
+            }); 
+          } 
+        }); 
+      } 
+ 
+    }); 
+  }, 
+  </span><span class="s0">//____________________________________________fin fonction CREATE</span><span class="s2"> 
+}; 
+ 
+</span></pre>
+</body>
+</html>

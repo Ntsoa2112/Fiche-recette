@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <title>Recette - Recherche</title>
+  <meta name="generator" content="Bootply" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/styles.css" rel="stylesheet">
+  <link href="fonts/css/font-awesome.css" rel="stylesheet">
+  <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body>
+<!-- HEADER -->
+<% include ../header.ejs %>
+<!-- /HEADER -->
+<!-- Menu GAUCHE -->
+<% include ../menuGauche.ejs %>   <!-- include menu à gauche -->
+<!-- /MENU GAUCHE -->
+		<!-- /HEADER -->
+		<!-- Menu GAUCHE -->
+		<% var disable = "";
+		if(req.session.droit == 0){
+			disable = "hidden";}
+		%>
+
+<!-- Container -->
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-9">
+      <!-- avant container -->
+      
+      </br>
+      <hr>   <!-- include menu à gauche -->
+      <!-- /avant container-->
+
+      <div class="row"> <!-- CONTAINER -->
+        <div class="">
+          <div class="page-title">
+            <div class="title_left">
+              <h2>
+                Fiche recette
+                <small>
+                  Resultat recherche
+                </small>
+              </h2>
+            </div>
+
+          </div>
+          </br>
+          <div class="clearfix"></div>
+
+          <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="x_panel">
+                <div class="x_title">
+                  <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                  <table id="example" class="table table-striped table-bordered table-hover table-condensed">
+                    <thead>
+                    <tr class="headings">
+                      <th> ID </th>
+                      <th><i class="fa fa-paperclip"></i> Application </th>
+                      <th><i class="fa fa-folder-open"></i> Dossier </th>
+                      <th class=" no-link last"><i class="fa fa-file-text"></i> Détails</span>
+                      </th>
+                      <th class=" no-link last"><i class="fa fa-cog"></i> Tester</span>
+                      </th>
+                      <th class=" no-link last"><i class="fa fa-file-pdf-o"></i> PDF </span>
+                      </th>
+                      <th><i class="fa fa-pencil"></i> Modifier </th>
+                      <th><i class="fa fa-trash"></i> Supprimer </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <% applications.forEach(function(application){ %>
+                    <tr class="even pointer">
+                      <td class=" "><%= application.id_application %></td>
+                      <td class=" "><%= application.nom_application %></td>
+                      <td class=" "><%= application.num_dossier %></td>
+                      <td class=" last"><a href="/appById?id=<%= application.id_application %>">Voir détails</a>
+                      </td>
+                      <td class=" last"><a href="/appByIdTest?id=<%= application.id_application %>">Tester</a>
+                      </td>
+                      <td class=" last"><a href="/apercuPdf?idApplication=<%= application.id_application %>">aperçu  PDF</a>
+                      </td>
+                      <td class=" last"><a href="/appById?id=<%= application.id_application %>">Modifier</a>
+                      </td>
+                      <td class=" last"><a href="/appById?id=<%= application.id_application %>">Supprimer</a>
+                      </td>
+                    </tr>
+                    <% }); %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <br />
+            <br />
+            <br />
+          </div>
+        </div>
+      </div>
+      <!--/row-->
+
+
+      <!-- Notifications -->
+      <% include ../notifications.ejs %>
+      <!-- /Notifications -->
+
+    </div>
+    <!--/col-span-9-->
+  </div>
+</div>
+<!-- /Container -->
+<!-- Footer -->
+		<center><% include ../footer.ejs %></center>
+		<!-- /Footer -->
+
+<!-- Footer -->
+		<center><% include footer.ejs %></center>
+		<!-- /Footer -->
+
+<!-- script  -->
+<script src="/js/base.min.js"></script>
+<script src="/js/project.min.js"></script>
+
+<script src="js/jquery.min.js"></script>
+
+<script src="js/bootstrap.min.js"></script>
+<script src="js/scripts.js"></script>
+</body>
+</html>

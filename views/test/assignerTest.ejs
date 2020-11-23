@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<title>Recette - Ajout test</title>
+		<meta name="generator" content="Bootply" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/styles.css" rel="stylesheet">
+    <link href="fonts/css/font-awesome.css" rel="stylesheet">
+    <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+	</head>
+	<body onLoad="getLsDossier()">
+		<!-- HEADER -->
+		<% include ../header.ejs %>
+		<!-- /HEADER -->
+		<!-- Menu GAUCHE -->
+		<% var disable = "";
+		if(req.session.droit == 0){
+			disable = "hidden";}
+		%>
+
+		<!-- Container -->
+		<div class="container-fluid">
+			<div class="row">
+				<div id="menuCenter">
+					<!-- avant container -->
+
+
+
+             <!-- include menu à gauche -->
+					<!-- /avant container-->
+
+					<div class="row">
+						<div class="">
+							<div class="page-title">
+							  <div class="title_left">
+								<h2>
+								  Fiche recette
+								  <small>
+									Assigner test
+								  </small>
+								</h2>
+							  </div>
+							</div>
+							</br>
+							<div class="clearfix"></div>
+
+							<div class="row">
+							  <div class="col-md-12 col-sm-12 col-xs-12">
+								<div class="x_panel">
+								  <div class="x_title">
+									<div class="clearfix"></div>
+
+
+									<div class="clearfix"></div>
+								  </div>
+								  <div class="x_content">
+									<br />
+
+									<form method="POST" action="/ajoutTest" id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" style="margin-left:150px">
+
+									<div class="form-group">
+										<label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name" >Dossier <span class="required"></span>
+										</label>
+										<div class="col-md-6 col-sm-6 col-xs-12">
+											<select class="form-control" tabindex="-1" id="dossierDash" name="dossierApp"  onchange="getval(this);" placeholder = "Dossier">
+												<option value="1">Dossier</option>
+											</select>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name" >Application <span class="required"></span>
+										</label>
+										<div class="col-md-6 col-sm-6 col-xs-12">
+											<select class="form-control" tabindex="-1" id="application" name="idApplication" placeholder = "Application">
+											</select>
+										</div>
+									</div>
+
+									  <div class="form-group">
+										<label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name" id="etapeTest">Etape<span class="required"></span>
+										</label>
+										<div class="col-md-6 col-sm-6 col-xs-12">
+											<!--<select class="select2_single form-control" tabindex="-1" id="etapeTest" name="typeTest">
+												<% etapes.forEach(function(etape){ %>
+												  <option value="<%= etape.id_libelle %>" ><%= etape.libelle %></option>
+												<% }); %>
+											 </select>-->
+											 <select class="form-control" tabindex="-1" id="etape" name="etapeTest" placeholder = "Etape">
+										     </select>
+										</div>
+									  </div>
+
+									  <div class="form-group">
+										<label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name" >Nom du test<span class="required"></span>
+										</label>
+										<div class="col-md-6 col-sm-6 col-xs-12">
+										  <input type="text" id="nomTest" required="required" name="nomTest" class="form-control col-md-7 col-xs-12">
+										</div>
+									  </div>
+									  <div class="form-group">
+										<label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name" id="typeTest1">Type du test<span class="required"></span>
+										</label>
+										<div class="col-md-6 col-sm-6 col-xs-12">
+										  <select class="select2_single form-control" tabindex="-1" id="typeTest" name="typeTest">
+											<% types.forEach(function(type){ %>
+											  <option value="<%= type.id_type_test %>" ><%= type.nom_type_test %></option>
+											<% }); %>
+										  </select>
+										</div>
+									  </div>
+									  <div class="ln_solid"></div>
+									  <div class="form-group">
+										<div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+										  <button type="submit" class="btn btn-primary waves-attach" data-backdrop="static" data-toggle="modal" href="#doc_dialog_example_alert" id="doc_snackbar_toggle_1">Ajouter</button>
+
+										</div>
+									  </div>
+									</form>
+								  </div>
+								</div>
+							  </div>
+							</div>
+						</div>
+					</div>
+
+
+					<!-- Notifications -->
+					<% include ../notifications.ejs %>
+					<!-- /Notifications -->
+				</div>
+			</div>
+		</div>
+		<!-- /container -->
+		<!-- Footer -->
+		<center><% include ../footer.ejs %></center>
+		<!-- /Footer -->
+
+		<!-- script -->
+		<script src="/js/base.min.js"></script>
+		<script src="/js/project.min.js"></script>
+
+		<script src="js/jquery.min.js"></script>
+
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/scripts.js"></script>
+
+		<!-- DOSSIER ETAPE APPLICATION -->
+		<script src="js/dossierEtapeApp.js"></script>
+	</body>
+</html>

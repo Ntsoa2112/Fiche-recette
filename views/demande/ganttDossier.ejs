@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <title>Fiche Recette</title>
+  <meta name="generator" content="Bootply" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/styles.css" rel="stylesheet">
+  <link href="fonts/css/font-awesome.css" rel="stylesheet">
+  <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+  <script type="text/javascript" src="js/paging.js"></script>
+
+  <link rel="stylesheet" href="css/bootstrap-duration-picker.css">
+  
+  <link rel="stylesheet" href="css/jquery.ganttView.css">
+
+  <style>
+    a.disabled {
+      color: gray;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body onload="">
+<!-- HEADER -->
+<% include ../header.ejs %>
+<!-- /HEADER -->
+
+<!-- Main -->
+<div class="container-fluid">
+  <div class="row">
+    <div id="menuCenter">
+    
+      <div class="row"> <!-- CONTAINER -->
+        <div class="">
+          <div class="page-title">
+            <div class="title_left">
+              <h2>
+                Fiche recette
+                <small>
+					GANTT (Dossiers en cours)
+                </small>
+              </h2>
+            </div>
+          </div>
+
+
+          <div class="row">
+
+
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="x_panel">
+                <div class="x_content">
+					
+				  </br>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+				  
+					<div id="ganttChart"></div>
+					
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </br>
+        </br>
+        </br>
+        <!-- Notifications -->
+        <% include ../notifications.ejs %>   <!-- include menu à gauche -->
+        <!-- /Notifications -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- /Main -->
+<center><% include ../footer.ejs %></center>
+<script src="/js/base.min.js"></script>
+<script src="/js/jquery-1.12.4.js"></script>
+<script src="/js/project.min.js"></script>
+<script src="/js/bootbox.min.js"></script>
+
+<!--<script src="/js/jquery.min.js"></script>-->
+<script src="js/bootstrap.min.js"></script>
+<script src="js/scripts.js"></script>
+<script src="js/bootstrap-datepicker.js"></script>
+
+<script type="text/javascript" src="js/raphael-min.js"></script>
+<script type="text/javascript" src="js/morris-min.js"></script>
+
+<script type="text/javascript" src="js/bootstrap-duration-picker-debug.js"></script>
+
+<!-- DOSSIER ETAPE APPLICATION -->
+<script src="js/dossierEtapeApp.js"></script>
+
+<!-- GANTT   <script src="js/jquery.fn.gantt.min.js"></script> -->
+<script src="js/jquery.ganttView.js"></script>
+<script src="js/date.js"></script>
+<script src="js/data.js"></script>
+
+<!--DATATABLE-->
+		<script src="/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+		<script src="/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+		<script src="/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/buttons.flash.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/buttons.html5.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/buttons.print.min.js"></script>
+		<script src="/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+		<script src="/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+		<script src="/vendors/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+		<script src="/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
+		<script src="/vendors/datatables.net-scroller/js/datatables.scroller.min.js"></script>
+		<script src="/vendors/jszip/dist/jszip.min.js"></script>
+		<script src="/vendors/pdfmake/build/pdfmake.min.js"></script>
+		<script src="/vendors/pdfmake/build/vfs_fonts.js"></script>
+<!--FIN DATATABLE-->
+
+<!---------------------------------------FONCTION TABLE EXPORT ------------------------------->
+
+<script language="javascript">
+	function find_doublon(arra1) {
+        var object = {};
+        var result = [];
+
+        arra1.forEach(function (item) {
+          if(!object[item]){
+			object[item] = 0;
+		  }
+          else{
+			object[item] += 1;
+		  }
+        })
+
+        for (var prop in object) {
+           if(object[prop] >= 2) {
+               result.push(prop);
+           }
+        }
+        return result;
+    }
+
+	//afficher Gantt
+	$(function () {
+		$.ajax({
+		  type: "GET",
+		  url: "/AfficherDataGanttDossier",
+
+		  success: function(msg){
+			var data = JSON.parse(msg);
+			//alert(data);
+			
+			var mapData = new Map();
+			var lastID = "";
+			var mapDossier = new Map();
+			
+			data.forEach(function (projet) {
+				if(lastID!=projet.num_dossier){
+				  mapDossier = new Map();
+				  lastID = projet.num_dossier;
+				  mapData[projet.num_dossier] = mapDossier;
+				}
+				mapDossier[projet.id_demande] = projet;
+			});
+			
+			var mapDataFinal = new Map();
+			var id_temp = "";
+			Object.keys(mapData).forEach(function(key) {
+				var temp = mapData[key];
+				Object.keys(temp).forEach(function(key2) {
+					if(id_temp!=temp[key2].num_dossier){
+					  id_temp = temp[key2].num_dossier;
+					  mapDataFinal[temp[key2].num_dossier] = mapData[key];
+					}
+				});
+			});
+			
+			var dataArray = [];
+			var i = 1;
+			
+			Object.keys(mapDataFinal).forEach(function(key) {
+				var seriesData = [];
+				var mapDataFinal2 = mapDataFinal[key]; //key = id_personne_dev
+				
+				var nom_dossier = "";
+				var temp_nom_app = [];
+				var temp_deb = [];
+				var temp_fin = [];
+				Object.keys(mapDataFinal2).forEach(function(key2) {
+					var temp = mapDataFinal2[key2]; //key = id_demande
+					
+					//date start et end
+					var deb = temp.date_demande.toString();
+					var debut = deb.substring(0,10);
+					var fin = temp.delai;
+					
+					temp_nom_app.push(temp.nom_application);
+					temp_deb.push(deb.substring(0,10));
+					temp_fin.push(temp.delai);
+					
+					
+					var debutSplit = debut.split("-");
+					var finSplit = fin.split("-") ;
+					var demande = { name: temp.nom_application, start: new Date(Number(debutSplit[0]),Number(debutSplit[1])-1,Number(debutSplit[2])-1), end: new Date(Number(finSplit[0]),Number(finSplit[1])-1,Number(finSplit[2])-1) }; //, color: "#f0f0f0"
+					seriesData.push(demande);
+					
+					/*if(temp_nom_app.length > 1){
+						var check = 0;
+						for(var temp_app in  temp_nom_app){
+							if( temp.nom_application == temp_app ){
+								check = 1;
+								 //date debut et fin
+								var d1 = Date.parse("2012-11-01");
+								var d2 = Date.parse("2012-11-04");
+								if (d1 < d2) {
+									alert ("Error!");
+								}
+								for(var temp_deb_var in  temp_deb){
+									if( Date.parse(temp_deb_var) < Date.parse(debut) ){
+										debut = temp_deb_var;
+										alert("inferieur DEBUT");
+									}
+								}
+								for(var temp_fin_var in  temp_fin){
+									if( Date.parse(temp_fin_var) > Date.parse(fin) ){
+										fin = temp_fin_var;
+										alert("superieur FIN");
+									}
+								}
+							}
+						}
+						if(check = 0){
+							var debutSplit = debut.split("-");
+							var finSplit = fin.split("-") ;
+							var demande = { name: temp.nom_application, start: new Date(Number(debutSplit[0]),Number(debutSplit[1])-1,Number(debutSplit[2])-1), end: new Date(Number(finSplit[0]),Number(finSplit[1])-1,Number(finSplit[2])-1) }; //, color: "#f0f0f0"
+							seriesData.push(demande);
+						}
+					}
+					else{
+						var debutSplit = debut.split("-");
+						var finSplit = fin.split("-") ;
+						var demande = { name: temp.nom_application, start: new Date(Number(debutSplit[0]),Number(debutSplit[1])-1,Number(debutSplit[2])-1), end: new Date(Number(finSplit[0]),Number(finSplit[1])-1,Number(finSplit[2])-1) }; //, color: "#f0f0f0"
+						seriesData.push(demande);
+					}*/
+				});
+				
+				var nameData = key;
+				dataArray.push({id: i, name: nameData, series: seriesData});
+				i = i+1;
+			});
+			
+			//$("#testData").val(JSON.stringify(dataArray));
+			//alert(JSON.stringify(dataArray));
+			
+			//CREATE GANTT
+			$("#ganttChart").ganttView({ 
+				data: dataArray,
+				slideWidth: 1450,
+				height: 3000,
+				behavior: {
+					onClick: function (data) { 
+						
+					},
+					onResize: function (data) { 
+						
+					},
+					onDrag: function (data) { 
+						
+					}
+				}
+			});
+			
+		  },
+		  error: function (error) {
+		  }
+		});
+	});
+	
+</script>
+ 
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<title>Recette - Liste des tests</title>
+		<meta name="generator" content="Bootply" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/styles.css" rel="stylesheet">
+
+    <link href="fonts/css/font-awesome.css" rel="stylesheet">
+    <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- bootbox code -->
+    <script src="js/bootbox.min.js"></script>
+	
+	<script type="text/javascript" src="js/paging.js"></script>
+
+	</head>
+	<body onLoad="onLoadDossierTest()">
+		<!-- HEADER -->
+		<% include ../header.ejs %>
+		<!-- /HEADER -->
+		<!-- Menu GAUCHE -->
+		<% var disable = "";
+		if(req.session.droit == 0){
+			disable = "hidden";}
+		%>
+
+		<!-- CONTAINER -->
+		<div class="container-fluid">
+			<div class="row">
+				<div id="menuCenter">
+					<!-- avant container -->
+			<% include ../dossierEtapeApp.ejs %>
+		  
+          </br>    <!-- include menu à gauche -->
+          </br>    <!-- include menu à gauche -->
+					<!-- /avant container-->
+
+					<div class="row">
+						<div class="">
+							<div class="page-title">
+							  <div class="title_left">
+								<h2>
+								  Fiche recette
+								  <small>
+									Liste des tests
+								  </small>
+								</h2>
+							  </div>
+							</div>
+							</br>
+							<div class="clearfix"></div>
+
+							<a href = "/ajoutTestCommun" class = " <%= disable %>"><button type="button" class="btn btn-primary collapse-link">Ajouter nouveau test</button></a>
+							<a href = "/listeTypeTest" class = "<%= disable %>"><button type="button" class="btn btn-primary collapse-link">Gestion type de test</button></a>
+							<br /><br /><br />
+								
+							<div class="row">
+								<div class="col-md-12 col-sm-12 col-xs-12">
+									<div class="x_panel">
+										<div class="x_title">
+											<div class="clearfix"></div>
+										</div>
+										<div class="x_content">
+											<div id="testList">
+											</div>
+										</div>
+									</div>
+								</div>
+								<br />
+								<br />
+
+							</div>
+							
+							<br />
+								<br /><br />
+								<br /><br />
+								<br /><br />
+						</div>
+					</div>
+					<!--/row-->
+				</div>
+				<!--/col-span-9-->
+			</div>
+		</div>
+		<!-- /Main -->
+
+		<!-- Footer -->
+		<center><% include ../footer.ejs %></center>
+		<!-- /Footer -->
+		<!-- script references -->
+		<script src="/js/base.min.js"></script>
+		<script src="/js/project.min.js"></script>
+		<script src="js/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/scripts.js"></script>
+		
+		<script>
+		function sup(v) {
+			var testNom = v;
+			bootbox.dialog({
+			  title: "Merci de confirmer",
+			  message: "Etes-vous certain de vouloir supprimer "+testNom+"?",
+			  buttons: {
+				supprimer: {
+				  label: "Supprimer",
+				  className: "btn-primary",
+				  callback: function() {
+					window.location = "/testSupprById?idTest="+testNom;
+					}
+				},
+				annuler: {
+				  label: "Annuler",
+				  className: "btn-info",
+				  action:"/listeTest"
+				}
+			  }
+			});
+            // The function returns the product of p1 and p2
+		}
+		
+		</script>
+	<!-- DOSSIER ETAPE APPLICATION -->
+	<script src="js/dossierEtapeApp.js"></script>
+	
+	</body>
+</html>

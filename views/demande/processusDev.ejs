@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <title>Fiche Recette</title>
+  <meta name="generator" content="Bootply" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/styles.css" rel="stylesheet">
+  <link href="fonts/css/font-awesome.css" rel="stylesheet">
+  <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+  <script type="text/javascript" src="js/paging.js"></script>
+  <link rel="stylesheet" href="css/bootstrap-duration-picker.css">
+  <style>
+    a.disabled {
+      color: gray;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body onload="loadAllDemande();">
+<!-- HEADER -->
+<% include ../header.ejs %>
+<!-- /HEADER -->
+<% var disable = "";
+if(req.session.droit == 0){
+  disable = "hidden";}
+
+ var disableDev = "hidden";
+ if(req.session.user == 177 || req.session.user == 487 || req.session.user == 1020){
+  disableDev = "";
+  }
+
+  var showTable = "hidden";
+  var showTableGlobale = "hidden";
+  if(req.session.user == 177){
+	showTableGlobale = "";
+  }else{
+	showTable = " ";
+  }
+
+  var disableExport = "";
+
+%>
+
+<%
+	var onChangeTab = "onChange();";
+%>
+
+<!-- Main -->
+<div class="container-fluid">
+  <div class="row">
+    <div id="menuCenter">
+    <%
+      function CalculeDate2(seconde)
+      {
+        var totalSeconds = parseInt(seconde, 10);
+        var hours = Math.floor(totalSeconds / 3600);
+        var h = "";
+        if(hours.toString().length == 1)
+          h = "0"+hours.toString();
+        else
+          h = hours.toString();
+
+        totalSeconds %= 3600;
+        var minutes = Math.floor(totalSeconds / 60);
+        var mn = "";
+        if(minutes.toString().length == 1)
+          mn = "0"+minutes.toString();
+        else
+          mn = minutes.toString();
+
+        var seconds = totalSeconds % 60;
+        var s = "";
+        if(seconds.toString().length == 1)
+          s = "0"+seconds.toString();
+        else
+          s = seconds.toString();
+
+        return h+":"+mn+":"+s;
+      }
+	  
+	  function CalculeDate(seconde)
+      {
+        var totalSeconds = parseInt(seconde, 10);
+        var hours = Math.floor(totalSeconds / 3600);
+        return hours;
+      }
+    %>
+      <div class="row"> <!-- CONTAINER -->
+        <div class="">
+          <div class="page-title">
+            <div class="title_left">
+              <h2>
+                Fiche recette
+                <small>
+					Processus DEV 
+                </small>
+              </h2>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="x_panel">
+                <div class="x_content <%= disable %>">
+				  </br>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+					<div class="form-group col-md-2">
+						<label for="tc_select">Début</label>
+						<input type="date" class="form-control" id="debut_select" name="debut_select" onchange="<%= onChangeTab %>" oninput="<%= onChangeTab %>"></input>
+					</div>
+					<div class="form-group col-md-2">
+						<label for="tc_select">Fin</label>
+						<input type="date" class="form-control" id="fin_select" name="fin_select" onchange="<%= onChangeTab %>" oninput="<%= onChangeTab %>"></input>
+					</div>
+						<br/>
+						<br/>
+						<br/>
+						<br/>
+						<br/>
+					<% var disable = "";
+						if(req.session.droit == 0){
+						  disable = "hidden";}
+					%>
+
+					<%
+					  function CalculeDate(seconde)
+					  {
+						var totalSeconds = parseInt(seconde, 10);
+						var hours = Math.floor(totalSeconds / 3600);
+						var h = "";
+						if(hours.toString().length == 1)
+						  h = "0"+hours.toString();
+						else
+						  h = hours.toString();
+
+						totalSeconds %= 3600;
+						var minutes = Math.floor(totalSeconds / 60);
+						var mn = "";
+						if(minutes.toString().length == 1)
+						  mn = "0"+minutes.toString();
+						else
+						  mn = minutes.toString();
+
+						var seconds = totalSeconds % 60;
+						var s = "";
+						if(seconds.toString().length == 1)
+						  s = "0"+seconds.toString();
+						else
+						  s = seconds.toString();
+
+						return h+":"+mn+":"+s;
+					  }
+					%>
+
+					<!------------------------------------------------ DEBUT TABLE GLOBALE TABLEAU ---------->
+							<div id ="lstTacheGlobale" class="col-md-12">
+							  <table class="table" id="table-globale">
+								<thead>
+								  <tr>
+									<th> N° </th>
+									<th> Calcul </th>
+									<th> Intitulé de l'indicateur  </th>
+									<th> Cible </th>
+									<th> - </th>
+								  </tr>
+								</thead>
+								<tbody id="glob_gs">
+								  <tr>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+								  </tr>
+								</tbody>
+							  </table>
+							</div>
+							<input type="hidden" id="applications" name="applications" value = "<%=applications%>">
+							<!------------------------------------------------  FIN DEBUT TABLE GLOBALE ---------->
+
+                    <div id="pageNavPosition"></div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </br>
+        </br>
+        </br>
+        <!-- Notifications -->
+        <% include ../notifications.ejs %>   <!-- include menu à gauche -->
+        <!-- /Notifications -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<form>
+  <input type="hidden" id="bug" name="bug" value = "<%=bug%>">
+  <input type="hidden" id="dev" name="dev" value = "<%=dev%>">
+  <input type="hidden" id="assistance" name="assistance" value = "<%=assistance%>">
+  <input type="hidden" id="newApp" name="newApp" value = "<%=newApp%>">
+</form>
+
+<!-- /Main -->
+<center><% include ../footer.ejs %></center>
+<script src="/js/base.min.js"></script>
+<script src="/js/jquery-1.12.4.js"></script>
+
+<script src="/js/project.min.js"></script>
+
+<script src="/js/bootbox.min.js"></script>
+
+<!--<script src="/js/jquery.min.js"></script>-->
+<script src="js/bootstrap.min.js"></script>
+<script src="js/scripts.js"></script>
+<script src="js/bootstrap-datepicker.js"></script>
+
+<script type="text/javascript" src="js/raphael-min.js"></script>
+<script type="text/javascript" src="js/morris-min.js"></script>
+
+<script type="text/javascript" src="js/bootstrap-duration-picker-debug.js"></script>
+
+<!-- DOSSIER ETAPE APPLICATION -->
+<script src="js/dossierEtapeApp.js"></script>
+
+
+<!--DATATABLE-->
+		<script src="/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+		<script src="/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+		<script src="/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/buttons.flash.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/buttons.html5.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/buttons.print.min.js"></script>
+		<script src="/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+		<script src="/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+		<script src="/vendors/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+		<script src="/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
+		<script src="/vendors/datatables.net-scroller/js/datatables.scroller.min.js"></script>
+		<script src="/vendors/jszip/dist/jszip.min.js"></script>
+		<script src="/vendors/pdfmake/build/pdfmake.min.js"></script>
+		<script src="/vendors/pdfmake/build/vfs_fonts.js"></script>
+<!--FIN DATATABLE-->
+
+<!---------------------------------------FONCTION TABLE EXPORT ------------------------------->
+
+<script language="javascript">
+	function onChange(){
+		getGestionSousTache();
+	}
+
+	function loadAllDemande(){
+		loadDataTableG();
+		getLsDossier();
+		loadDev();
+		loadDemandeur();
+		loadPriorite();
+		loadEtatDemande();
+		loadTypeDemande();
+		//getGestionSousTache();
+	}
+
+	//Load
+	function loadDev(){
+		$.ajax({
+		  type: "GET",
+		  url: "/getLsDevPers",
+
+		  success: function(msg){
+
+			var html = "<option value=''></option>";
+			var data = JSON.parse(msg);
+
+			//alert("test "+data);
+
+			for (var i = 0 ; i<data.length ; i++){
+			  html += "<option value='"+data[i].id_pers+"'>"+data[i].id_pers+" - "+data[i].appelation+"</option>";
+			}
+			$("#dev_select").html(html);
+		  },
+		  error: function (error) {
+			alert(error);
+		  }
+		});
+	}
+
+	//DEMANDEUR
+	function loadDemandeur(){
+		$.ajax({
+		  type: "GET",
+		  url: "/getLsDemandeurPers",
+
+		  success: function(msg){
+
+			var html = "<option value=''></option>";
+			var data = JSON.parse(msg);
+
+			//alert("test "+data);
+
+			for (var i = 0 ; i<data.length ; i++){
+			  html += "<option value='"+data[i].id_personne_demande+"'>"+data[i].id_personne_demande+" - "+data[i].appelation+"</option>";
+			}
+			$("#demandeur_select").html(html);
+		  },
+		  error: function (error) {
+			alert(error);
+		  }
+		});
+	}
+
+	function loadPriorite(){
+		$.ajax({
+		  type: "GET",
+		  url: "/getLsTypePriorite",
+
+		  success: function(msg){
+
+			var html = "<option value=''></option>";
+			var data = JSON.parse(msg);
+
+			//alert("test "+data);
+
+			for (var i = 0 ; i<data.length ; i++){
+			  html += "<option value='"+data[i].id_priorite+"'>"+data[i].libelle_priorite+"</option>";
+			}
+			$("#priorite_select").html(html);
+		  },
+		  error: function (error) {
+			alert(error);
+		  }
+		});
+	}
+
+	function loadTypeDemande(){
+		$.ajax({
+		  type: "GET",
+		  url: "/getLsTypeDemande",
+
+		  success: function(msg){
+
+			var html = "<option value=''></option>";
+			var data = JSON.parse(msg);
+
+			//alert("test "+data);
+
+			for (var i = 0 ; i<data.length ; i++){
+			  html += "<option value='"+data[i].id_type_intervention+"'>"+data[i].libelle+"</option>";
+			}
+			$("#type_select").html(html);
+		  },
+		  error: function (error) {
+			alert(error);
+		  }
+		});
+	}
+
+	function loadEtatDemande(){
+		$.ajax({
+		  type: "GET",
+		  url: "/getLsEtatDemande",
+
+		  success: function(msg){
+
+			var html = "<option value=''></option>";
+			var data = JSON.parse(msg);
+
+			//alert("test "+data);
+
+			for (var i = 0 ; i<data.length ; i++){
+			  html += "<option value='"+data[i].id_etat_demande+"'>"+data[i].libelle+"</option>";
+			}
+			$("#etat_demande_select").html(html);
+		  },
+		  error: function (error) {
+			alert(error);
+		  }
+		});
+	}
+</script>
+ <!------------------------------------------------  DEBUT TABLE GLOBALE ---------->
+<script type="text/javascript">
+	function loadDataTableG() {
+		var handleDataTableButtons_gl = function() {
+		  if ($("#table-globale").length) {
+			$("#table-globale").DataTable({
+			  dom: "Bfrtip",
+			  destroy: true,
+			  searching: false,
+			  paging: false,
+			  sort: false,
+			  "aLengthMenu": [[25, 50, 75, -1], [25, 50, 75, "All"]],
+			  "iDisplayLength": 25,
+			  buttons: [
+				{
+				  extend: "copy",
+				  className: "btn-sm"
+				},
+				{
+				  extend: "csv",
+				  className: "btn-sm"
+				},
+				{
+				  extend: "excel",
+				  className: "btn-sm"
+				},
+				{
+				  extend: "pdfHtml5",
+				  className: "btn-sm"
+				},
+				{
+				  extend: "print",
+				  className: "btn-sm"
+				},
+			  ],
+			  responsive: true
+			});
+		  }
+		};
+		TableManageButtons_gl= function() {
+		  "use strict";
+		  return {
+			init: function() {
+			  handleDataTableButtons_gl();
+			}
+		  };
+		}();
+		TableManageButtons_gl.init();
+	}
+
+	function CalculeDate2(seconde)
+	{
+		var totalSeconds = parseInt(seconde, 10);
+		var hours = Math.floor(totalSeconds / 3600);
+		var h = "";
+		if(hours.toString().length == 1)
+		  h = "0"+hours.toString();
+		else
+		  h = hours.toString();
+
+		totalSeconds %= 3600;
+		var minutes = Math.floor(totalSeconds / 60);
+		var mn = "";
+		if(minutes.toString().length == 1)
+		  mn = "0"+minutes.toString();
+		else
+		  mn = minutes.toString();
+
+		var seconds = totalSeconds % 60;
+		var s = "";
+		if(seconds.toString().length == 1)
+		  s = "0"+seconds.toString();
+		else
+		  s = seconds.toString();
+
+		if(isNaN(h) || isNaN(mn) || isNaN(s)){
+			return "-";
+		}
+		return h+":"+mn+":"+s;
+	}
+	
+	function CalculeDate(seconde)
+	{
+		var totalSeconds = parseInt(seconde, 10);
+		var hours = Math.floor(totalSeconds / 3600);
+		return hours;
+	}
+	
+	function CalculValeur(seconde)
+	{
+		var retourCalcul;
+		//    alert(seconde);
+		var h2=parseFloat(parseInt(seconde)/3600);
+		retourCalcul=h2;
+		return Number(retourCalcul.toFixed(2));
+	}
+  
+	function getGestionSousTache2()
+	{
+		$("#table-globale").dataTable().fnDestroy()
+		
+		//debut fin select
+		var debut = $("#debut_select").val();
+		var fin = $("#fin_select").val();
+		//fin debut fin select
+
+		$("#glob_gs").html("");
+		$("#table-globale").dataTable().fnDestroy()
+
+		$.ajax({
+			type: "GET",
+			url: "/AfficherDataProcessusTotal?debut="+debut+"&fin="+fin,
+			success: function(msg){
+				var application = JSON.parse(msg);
+				var htmll = "";
+				for (var i = 0 ; i<application.length ; i++){
+				
+					var delaiOK = 0;
+					var nbDemande = Number(application[i].nbdemande);
+					var cible_1 = delaiOK * 100 / nbDemande;
+				
+					var delaiAtteint = Number(application[i].delaiatteint);
+					var heureAppliBug = Number(application[i].heureapplibug); 
+					var cible_2 = delaiAtteint * 100 / heureAppliBug;   // somme taux d'atteinte demande (si 1 bug) / nb demande
+					
+					var cible_3 = 100 - cible_2; // (heure total bug - heure atteint (bug))*100 / heure consommé par apppli bug (+ autre demande)
+					
+					var appliBug = Number(application[i].applibug);
+					var appliTotal = Number(application[i].applitotal);
+					var cible_4 = appliBug * 100 / appliTotal; 
+					
+					var demandeBug = Number(application[i].demandebug);
+					var demandeTotal = Number(application[i].demandetotal);
+					var cible_5 = demandeBug * 100 / demandeTotal; 
+					
+					var totalTemps = Number(application[i].totaltemps);
+					var cible_6 = delaiAtteint * 100 / totalTemps;
+					
+					var cible_8_a = (Number(application[i].heureurgent) * 100) / Number(application[i].heuretotalurgent);
+					var cible_8_b = (Number(application[i].heureimportant) * 100) / Number(application[i].heuretotalimportant);
+					var cible_8_c = (Number(application[i].heurenormal) * 100) / Number(application[i].heuretotalnormal);
+					
+					var cible_9 = Number(application[i].applinew);
+					
+					var cible_10 = Number(application[i].applinewnbbug);
+					
+					var cible_11 = Number(application[i].appliupdate);
+					
+					var cible_12 = Number(application[i].appliupdatenbbug);
+					
+					var cible_13 = cible_10 + cible_12;
+					
+					var cible = 0;
+					switch (application[i].id) {
+						case 1:
+							cible = cible_1.toFixed(2);
+							break;
+						case 2:
+							cible = cible_2.toFixed(2);
+							break;
+						case 3:
+							cible = cible_3.toFixed(2);
+							break;
+						case 4:
+							cible = cible_4.toFixed(2);
+							break;
+						case 4:
+							cible = cible_4.toFixed(2);
+							break;
+						case 5:
+							cible = cible_5.toFixed(2);
+							break;
+						case 6:
+							cible = cible_6.toFixed(2);
+							break;
+						case 9:
+							cible = cible_8_a.toFixed(2);
+							break;
+						case 8:
+							cible = cible_8_b.toFixed(2);
+							break;
+						case 7:
+							cible = cible_8_c.toFixed(2);
+							break;
+						case 10:
+							cible = cible_9;
+							break;
+						case 11:
+							cible = cible_10;
+							break;
+						case 12:
+							cible = cible_11;
+							break;
+						case 13:
+							cible = cible_12;
+							break;
+						case 14:
+							cible = cible_13;
+							break;
+					}
+					if (isNaN(cible)){
+						cible = 0;
+					}
+					htmll += "<tr class='even pointer' data-toggle='collapse' data-target='#accordion' class='clickable'>"+
+					"<td  class=''>"+ (application[i].numero || " ") +"</td>"+
+					"<td  class=''>"+ (application[i].calcul || " ") +"</td>"+
+					"<td  class=''>"+ (application[i].indicateur || " ") +"</td>"+
+					"<td  class=''>"+ (application[i].cible || " ") +"</td>"+
+					"<td  class=''>"+ (cible) +"</td>";
+					
+					$("#glob_gs").html(htmll);
+				}
+				loadDataTableG();
+			},
+			error: function (error) {
+			  alert("error; " +error);
+			}
+		});
+	}
+	
+	//new process
+	function check_delai_ok(date_fin, delai){
+		var d1 = Date.parse(date_fin);
+		var d2 = Date.parse(delai);
+		if (d1 <= d2) {
+			return true;
+		}
+		return false;
+	}
+	
+	//GET DELAI QUALITE
+	function getDelaiQualite(dateDemandeTermine1, delai){
+		var dateDemandeTermine = new Date(Number(Date.parse(dateDemandeTermine1)));
+		var dateDemandeTermineMonth = dateDemandeTermine.getMonth() + 1;
+		var monthDateDemandeTermine = dateDemandeTermineMonth;
+		if(dateDemandeTermine.getMonth() < 10){
+			monthDateDemandeTermine = "0"+dateDemandeTermineMonth;
+		}
+		var dayDateDemandeTermine = dateDemandeTermine.getDate();
+		if(dateDemandeTermine.getDate() < 10){
+			dayDateDemandeTermine = "0"+dateDemandeTermine.getDate();
+		}
+		var dateDemandeTermine = dateDemandeTermine.getFullYear()+"-"+monthDateDemandeTermine+"-"+dayDateDemandeTermine;
+		if(isNaN(monthDateDemandeTermine)){
+			dateDemandeTermine = "-";
+		}
+		var dateFirst = new Date(dateDemandeTermine);
+		var dateSecond = new Date(delai);
+		var timeDiff = dateFirst.getTime() - dateSecond.getTime();
+		var delaiAfficher = "1";
+		
+		if ( timeDiff > 0)
+		{
+			delaiAfficher = "0";
+		}
+		return delaiAfficher;
+	}
+	
+	function getGestionSousTache() 
+	{
+		var debut = $("#debut_select").val();
+		var finVal = $("#fin_select").val();
+		
+		$.ajax({
+			type: "GET",
+			url: "/AfficherListeTachePrisTabGlobale?debut="+debut+"&fin="+finVal,
+			success: function(msg){
+				var application = JSON.parse(msg);
+				var htmll = "";
+				var total_heure = 0;
+				var total_heure_dem = 0;
+				
+				var total_temps_passe = 0;
+				var array_total_temps = [];
+				
+				// var process
+				var delaiOK = 0;
+				var nombre_demande = application.length;
+				
+				var nombre_delai_atteint = 0;//*
+				var nombre_heure_appli_bug = 0; //*
+				
+				var nombre_appli_bug = 0;
+				var nombre_appli_total = 0;
+				
+				var nombre_demade_bug = 0;
+				var nombre_demande_total = 0;
+				
+				var total_temps = 0; //*
+				
+				var nombre_heure_urgent = 0;
+				var nombre_total_heure_urgent = 0;
+				
+				var nombre_heure_important = 0;
+				var nombre_total_heure_important = 0;
+				
+				var nombre_heure_normal = 0;
+				var nombre_total_heure_normal = 0;
+				
+				var nombre_nombre_appli_new = 0;
+				var nombre_nombre_bug_appli_new = 0;
+				
+				var nombre_nombre_appli_update = 0;
+				var nombre_nombre_bug_appli_update = 0;
+				// fin var process
+				
+				for (var i = 0 ; i<application.length ; i++){
+					if(application[i].libelle_soustache)  //SOUS TACHES
+					{
+						var qualiteBugDev = "1";
+						if(application[i].type_intervention == "Bug"){
+							qualiteBugDev = "0";
+						}
+						
+						var afficher_delai_sous_tache = getDelaiQualite(application[i].date_fin_cr, application[i].delai);
+						if(application[i].num_dossier == "GESTIONS"){
+							afficher_delai_sous_tache = "1";
+						}
+						else{
+							var ii = i+1;
+							afficher_delai_sous_tache = "-";
+							if(ii !== application.length){
+								if(application[i].id_demande == application[ii].id_demande){
+									afficher_delai_sous_tache = "-";
+									
+								}
+								else{
+									afficher_delai_sous_tache = getDelaiQualite(application[i].date_fin_cr, application[i].delai);
+								}
+							}else{
+								afficher_delai_sous_tache = getDelaiQualite(application[i].date_fin_cr, application[i].delai);
+							}
+						}
+						
+						//estimation
+						var tempsPasse_estimation = application[i].estimation_dev;
+						if(application[i].estimation_dev == null){
+						  tempsPasse_estimation = "-";
+						}else{
+						  tempsPasse_estimation = CalculeDate(application[i].estimation_dev);
+						}
+						
+						var afficher_estimation_sous_tache = tempsPasse_estimation;
+						var ii = i+1;
+						afficher_estimation_sous_tache = "-";
+						if(ii !== application.length){
+							if(application[i].id_demande == application[ii].id_demande){
+								afficher_estimation_sous_tache = "-";
+							}
+							else{
+								afficher_estimation_sous_tache = tempsPasse_estimation;
+							}
+						}else{
+							afficher_estimation_sous_tache = tempsPasse_estimation;
+						}
+					
+						//COMBINAISON SOUS TACHE
+						var tempsPasse = application[i].temps_passe;
+						if(application[i].temps_passe == null){
+						  tempsPasse = 0;
+						}else{
+						  var sec_num = parseInt(tempsPasse, 10);
+						  var hours   = Math.floor(sec_num / 3600);
+						  var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+						  var seconds = sec_num - (hours * 3600) - (minutes * 60);
+						  if (hours   < 10) {hours   = "0"+hours;}
+						  if (minutes < 10) {minutes = "0"+minutes;}
+						  if (seconds < 10) {seconds = "0"+seconds;}
+						  total_heure_dem = total_heure_dem + sec_num;
+						  tempsPasse=application[i].temps_passe;
+						}
+						
+						var ii_combinaison = i+1;
+						if(ii_combinaison !== application.length){
+							if(application[i].id_soustache == application[ii_combinaison].id_soustache){
+								array_total_temps.push(parseInt(tempsPasse, 10));
+							}
+							else{
+								var temp_total_temps = 0;
+								if(array_total_temps.length != 0){
+									var total_temps_passe_2 = 0;
+									for(var a = 0; a<array_total_temps.length; a++){
+										total_temps_passe_2 = total_temps_passe_2 + array_total_temps[a];
+									}
+									temp_total_temps = CalculeDate(total_temps_passe_2 + parseInt(tempsPasse, 10));
+									array_total_temps = [];
+								}
+								else{
+									temp_total_temps = CalculeDate(parseInt(tempsPasse, 10));
+								}
+								
+								// PROCESSUS************************************************************************************************************************
+								if(check_delai_ok(date_fin, application[i].delai)){
+									delaiOK ++;
+									nombre_delai_atteint ++;
+								}
+								if(application[i].type_intervention == "Bug"){
+									nombre_heure_appli_bug = nombre_heure_appli_bug + temp_total_temps;
+								}
+								total_temps = total_temps + temp_total_temps;
+								
+							}
+						}else{
+							var temp_total_temps = 0;
+							if(array_total_temps.length != 0){
+								var total_temps_passe_2 = 0;
+								for(var a = 0; a<array_total_temps.length; a++){
+									total_temps_passe_2 = total_temps_passe_2 + array_total_temps[a];
+								}
+								temp_total_temps = CalculeDate(total_temps_passe_2 + parseInt(tempsPasse, 10));
+								array_total_temps = [];
+							}
+							else{
+								temp_total_temps = CalculeDate(parseInt(tempsPasse, 10));
+							}
+							
+							// PROCESSUS************************************************************************************************************************
+							if(check_delai_ok(date_fin, application[i].delai)){
+								delaiOK ++;
+								nombre_delai_atteint ++;
+							}
+							if(application[i].type_intervention == "Bug"){
+								nombre_heure_appli_bug = nombre_heure_appli_bug + temp_total_temps;
+							}
+							total_temps = total_temps + temp_total_temps;
+							
+						}
+					}
+					else
+					{
+						var qualiteBugDev = "1";
+						if(application[i].type_intervention == "Bug"){
+							qualiteBugDev = "0";
+						}
+						
+						var delaiQual = getDelaiQualite(application[i].date_fin_cr, application[i].delai);
+						if(application[i].num_dossier == "GESTIONS"){
+							delaiQual = "1";
+						}
+						
+						//estimation
+						var tempsPasse_estimation = application[i].estimation_dev;
+						if(application[i].estimation_dev == null){
+						  tempsPasse_estimation = "-";
+						}else{
+						  tempsPasse_estimation = CalculeDate(application[i].estimation_dev);
+						}
+						
+						var afficher_estimation_tache = tempsPasse_estimation;
+						
+						var ii = i+1;
+						afficher_estimation_tache = "-";
+						if(ii !== application.length){
+							if(application[i].id_demande == application[ii].id_demande){
+								afficher_estimation_tache = "-";
+							}
+							else{
+								afficher_estimation_tache = tempsPasse_estimation;
+							}
+						}else{
+							afficher_estimation_tache = tempsPasse_estimation;
+						}
+						
+						//TAUX RETARD
+						var nb_jrs_retard = 0;
+						var nb_jrs_prevus = 1;
+						var tauxRetard = "-";
+						if(application[i].id_etat_demande == 3)
+						{
+							if(application[i].date_fin_cr)
+							{
+								var date_debut = new Date(application[i].date_demande.substring(0,10));
+								var date_delai = new Date(application[i].delai);
+								var date_fin = new Date(Number(Date.parse(application[i].date_fin_cr)));
+								
+								if(date_delai.getTime() < date_fin.getTime()){
+									var diffTimeRetard = Math.abs(date_fin.getTime() - date_delai.getTime());
+									var diffDaysRetard = Math.ceil(diffTimeRetard / (1000 * 60 * 60 * 24)); 
+									nb_jrs_retard = diffDaysRetard;
+								}
+								
+								var diffTimePrevus = Math.abs(date_delai.getTime() - date_debut.getTime());
+								var diffDaysPrevus = Math.ceil(diffTimePrevus / (1000 * 60 * 60 * 24));
+								
+								nb_jrs_prevus = diffDaysPrevus; // delai - date_debut
+								if(diffDaysPrevus == 0){
+									nb_jrs_prevus = 1;
+								}
+								var tauxRetardtemp = 100 - ((nb_jrs_retard * 100) / nb_jrs_prevus);
+								
+								tauxRetard = (100 - ((nb_jrs_retard * 100) / nb_jrs_prevus)).toFixed(2);
+								if(tauxRetard < 0 ){
+									tauxRetard = 0;
+								}
+							}
+						}
+						
+						//COMBINAISON DEMANDE
+						var tempsPasse = application[i].temps_passe;
+						if(application[i].temps_passe == null){
+						  tempsPasse = 0;
+						}else{
+						  var sec_num = parseInt(tempsPasse, 10);
+						  var hours   = Math.floor(sec_num / 3600);
+						  var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+						  var seconds = sec_num - (hours * 3600) - (minutes * 60);
+						  if (hours   < 10) {hours   = "0"+hours;}
+						  if (minutes < 10) {minutes = "0"+minutes;}
+						  if (seconds < 10) {seconds = "0"+seconds;}
+						  total_heure_dem = total_heure_dem + sec_num;
+						  tempsPasse=application[i].temps_passe;
+						}
+						
+						var ii_combinaison = i+1;
+						
+						if(ii_combinaison !== application.length){
+							if(application[i].id_demande == application[ii_combinaison].id_demande){
+								array_total_temps.push(parseInt(tempsPasse, 10));
+							}
+							else{
+								var temp_total_temps = 0;
+								if(array_total_temps.length != 0){
+									var total_temps_passe_2 = 0;
+									for(var a = 0; a<array_total_temps.length; a++){
+										total_temps_passe_2 = total_temps_passe_2 + array_total_temps[a];
+									}
+									temp_total_temps = CalculeDate(total_temps_passe_2 + parseInt(tempsPasse, 10));
+									array_total_temps = [];
+								}
+								else{
+									temp_total_temps = CalculeDate(parseInt(tempsPasse, 10));
+								}
+								
+								// PROCESSUS************************************************************************************************************************
+								if(check_delai_ok(date_fin, application[i].delai)){
+									delaiOK ++;
+									nombre_delai_atteint ++;
+								}
+								if(application[i].type_intervention == "Bug"){
+									nombre_heure_appli_bug = nombre_heure_appli_bug + temp_total_temps;
+								}
+								total_temps = total_temps + temp_total_temps;
+								
+							}
+						}else{
+							var temp_total_temps = 0;
+							if(array_total_temps.length != 0){
+								var total_temps_passe_2 = 0;
+								for(var a = 0; a<array_total_temps.length; a++){
+									total_temps_passe_2 = total_temps_passe_2 + array_total_temps[a];
+								}
+								temp_total_temps = CalculeDate(total_temps_passe_2 + parseInt(tempsPasse, 10));
+								array_total_temps = [];
+							}
+							else{
+								temp_total_temps = CalculeDate(parseInt(tempsPasse, 10));
+							}
+							
+							// PROCESSUS************************************************************************************************************************
+							if(check_delai_ok(date_fin, application[i].delai)){
+								delaiOK ++;
+								nombre_delai_atteint ++;
+							}
+							if(application[i].type_intervention == "Bug"){
+								nombre_heure_appli_bug = nombre_heure_appli_bug + temp_total_temps;
+							}
+							total_temps = total_temps + temp_total_temps;
+						}
+					}
+				}
+				//alert(delaiOK + " ---------- " + nombre_heure_appli_bug + " ---------- " + total_temps);
+				getGestionSousTache2();
+			},           
+			error: function (error) {
+			  alert("error; " +error);
+			}
+		});
+	}
+</script>
+</body>
+</html>

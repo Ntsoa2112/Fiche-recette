@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<!-- Page d'authentification-->
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<!-- Meta, title, CSS, favicons, etc. -->
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>Recette application | Authentification</title>
+		<meta name="generator" content="Bootply" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/stylesLogin.css" rel="stylesheet">
+		<link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+		<script src="js/jquery.min.js"></script>
+
+	</head>
+
+	<body>
+		
+	<br/><br/><center><img src="images/bg.png" style="height:100px; padding-top:10px;"/></center>
+		<div class="container">
+			<div class="container">
+				<div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+				
+					<div class="panel panel-info" >
+					
+						<div class="panel-heading">
+							<div class="panel-title" align="center"><h3><span><i class="fa fa-bars"></i>   Fiche recette - Authentification</span></h3></div> <!-- list -->
+						</div>
+
+						<div style="padding-top:30px" class="panel-body" >
+							<div class="alert alert-danger" style="display:<%=display %>">
+							  <strong>Erreur!</strong> <%= msg %>.
+							</div>
+							<form method="POST" action="/login" class="form-horizontal" role="form">
+
+								<div style="margin-bottom: 25px" class="input-group">
+									<span class="input-group-addon"><i class="fa fa-user"></i></span>
+									<input id="email" name="email" type="name" class="form-control" placeholder="Numero matricule" required />
+								</div>
+
+								<div style="margin-bottom: 25px" class="input-group">
+									<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+									<input id="password" name="password" type="password" class="form-control" placeholder="Mot de passe" required />
+								</div>
+								<button id="btn-fblogin" type="submit" class="btn btn-md btn-primary btn-block ">Connexion</button>
+								<div id="boutonConnecter"></div>
+							</form>
+							</br>
+							<!--<button type="button" class="btn btn-primary waves-attach" id="mail" onclick="entrerEmail()">Mail</button>-->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+			<!-- script -->
+		<script src="/js/base.min.js"></script>
+		<script src="/js/project.min.js"></script>
+
+		
+
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/scripts.js"></script>
+		
+	</body>
+</html>
+

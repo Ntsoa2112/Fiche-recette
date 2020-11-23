@@ -1,0 +1,14 @@
+{
+  "generators": {
+    "modules": {
+		"scaffold": "sails-generate-scaffold"
+	}
+  },
+    "paths": {
+          "public": "assets"
+      },
+
+       "hooks": {
+          //"grunt": false
+      }
+}

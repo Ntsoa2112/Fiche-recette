@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<title>Fiche recette</title>
+		<meta name="generator" content="Bootply" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/styles.css" rel="stylesheet">
+		<link href="fonts/css/font-awesome.css" rel="stylesheet">
+		<link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+		<script type="text/javascript" src="js/paging.js"></script>
+		
+		<link rel="stylesheet" href="css/bootstrap-duration-picker.css">
+		
+		<style>
+			a.disabled {
+			  color: gray;
+			  pointer-events: none;
+			}
+		</style>
+	</head>
+	<body onload = "loadAll()">
+		<!-- HEADER -->
+		<% include ../header.ejs %>
+		<!-- /HEADER -->
+		<% var disable = "";
+		if(req.session.droit == 0){
+			disable = "hidden";}
+		%>
+		<!-- Main -->
+		<div class="container-fluid">
+			<div class="row">
+				<div id="menuCenter">
+
+					<div class="row"> <!-- CONTAINER -->
+						<div class="">
+							
+							<!--<a href = "/toExcelCR" class=" "><button type="button" class="btn btn-primary collapse-link <%= disable %>">Exporter CR</button></a>-->
+							<!--Form group de colone principale-->
+							
+						
+							<%
+							if(req.session.droit == 1){
+							%>
+								<div class="page-title">
+								  <div class="title_left">
+									<h2>
+									  Fiche recette
+									  <small>
+										Ma page
+									  </small>
+									</h2>
+								  </div>
+								</div>
+								</br>
+								
+								<div class="form-group col-md-10">
+									<div class="form-group col-md-2">
+										<label for="tc_select">Total heures : </label>
+										<input type="text" min="0" class="form-control" id="total_input" name="total_input" disabled></input>
+									</div>
+								</div>
+								<br/>
+								<br/>
+								<br/>
+								
+								<div class="form-group col-md-10">
+								  <div class="form-group col-md-2">
+									<label for="tc_select">Num semaine</label>
+									<input type="number" min="0" class="form-control" id="num_semaine_input" name="num_semaine_input" ></input>
+								  </div>
+								  <div class="form-group col-md-2">
+									<label for="motif_appel_select">Année</label>
+									<input type="text" class="form-control" id="annee_input" name="annee_input"></input>
+								  </div>
+								  <div class='form-group col-md-2' >
+								  <label for="tc_select">.</label>
+										<a class="form-control btn btn-primary" href="#" role="button" onclick = "getCR()">OK</a>
+								  </div>
+								</div>
+								
+								</br>
+								</br>
+								<div class="col-md-12">
+								  <table class="table" id="table-globale">
+									<thead>
+									  <tr>
+										<th>ID</th>
+										<th>DEV</th>
+										<th>DEMANDEUR</th>
+										<th>PROJET</th>
+										<th>APPLICATION</th>
+										<th>DATE DEMANDE</th>
+										<th>DEMANDE</th>
+										<th>AVANCEMENT(%)</th>
+										<th>DEADLINE</th>
+										<th>DATE CR</th>
+										<th>TEMPS PASSE</th>
+										<th>TYPE</th>
+										<th>PRIORITE</th>
+										<th>ETAT</th>
+										<th>SUPPRIMER</th>
+										<!--<th>Reprise</th>-->
+									  </tr>
+									</thead>
+									<tbody id="glob_cr">
+									  <tr>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									  </tr>
+									</tbody>
+								  </table>
+								</div>
+							
+							</div>
+						<%}
+				
+						else{
+
+						%>
+						
+							<div class="page-title">
+							  <div class="title_left">
+								<h2>
+								  Fiche recette
+								  <small>
+									Liste et avancement des demandes
+								  </small>
+								</h2>
+							  </div>
+							</div>
+							</br>
+							<div class="form-group col-md-10 hidden">
+								  <div class="form-group col-md-2">
+									<label for="tc_select">Num semaine</label>
+									<input type="number" min="0" class="form-control" id="num_semaine_input" name="num_semaine_input" ></input>
+								  </div>
+								  <div class="form-group col-md-2">
+									<label for="motif_appel_select">Année</label>
+									<input type="text" class="form-control" id="annee_input" name="annee_input"></input>
+								  </div>
+								  <div class='form-group col-md-2' >
+								  <label for="tc_select">.</label>
+										<a class="form-control btn btn-primary" href="#" role="button" onclick = "getCR()">OK</a>
+								  </div>
+							</div>
+							
+							<!--div de selection --->
+							<div class="">
+							  <div class="form-group col-md-2">
+								<label for="date_ecoute">Etat demande</label>
+								<select class="form-control" id="etat_demande_select" name="etat_demande_select" onchange="getAjaxFiltreTachePris();">
+								  <option value="">-</option>
+								</select>
+							  </div>
+							</div>
+							<div class=" hidden ">
+							  <div class="form-group col-md-2 ">
+								<label for="date_ecoute">Dev</label>
+								<!--<input type="number" class="form-control" id="dev_select" name="dev_select" oninput="getAjaxFiltreTachePris();"></input>-->
+								<select class="form-control" id="dev_select" name="dev_select" onchange="getAjaxFiltreTachePris();">
+								  <option value="">-</option>
+								</select>
+							  </div>
+							</div>
+					
+							<% include ../dossierAppDemande.ejs %>
+							
+							<div class="form-group col-md-2 hidden">
+								<label for="tc_select">Dead line</label>
+								<input type="date" class="form-control" id="dead_line_select" name="dead_line_select" onchange="getAjaxFiltreTachePris()" oninput="getAjaxFiltreTachePris();"></input>
+							</div>
+							<div class="form-group col-md-2">
+								<label for="tc_select">Type demande</label>
+								<select class="form-control" id="type_select" name="type_select" onchange="getAjaxFiltreTachePris();">
+								  <option value="">-</option>
+								</select>
+							</div>
+							<div class="form-group col-md-2">
+								<label for="tc_select">Priorité</label>
+								<select class="form-control" id="priorite_select" name="priorite_select" onchange="getAjaxFiltreTachePris();">
+								  <option value="">-</option>
+								</select>
+							</div>
+							
+							<div class="form-group col-md-2 hidden">
+								<label for="tc_select">Début</label>
+								<input type="date" class="form-control" id="debut_select" name="debut_select" onchange="getAjaxFiltreTachePris();" oninput="getAjaxFiltreTachePris();"></input>
+							</div>
+							
+							<div class="form-group col-md-2 hidden">
+								<label for="tc_select">Fin</label>
+								<input type="date" class="form-control" id="fin_select" name="fin_select" onchange="getAjaxFiltreTachePris();" oninput="getAjaxFiltreTachePris();"></input>
+							</div>
+					
+					<!--fin div de selection --->
+						<div id="lstTache" class = ""> 
+		
+						</div>
+					
+							
+						<!--<table id="resultAvancement" class="table table-striped table-bordered table-hover table-condensed hidden">
+							<thead>
+								<tr class="headings">
+								  <th class="">  <i class="fa fa-snowflake-o fa-spin"  style="color:#0da2fb"></i>ID</th>
+								  <th class=""> <i class="fa fa-folder"  style="color:#0da2fb"></i> Dossiers</th>
+								  <th class="">  <i class="fa fa-cube fa-spin"  style="color:#fb6c04"></i>Applications</th>
+								  <th class="">  <i class="fa fa-cube fa-spin"  style="color:#fb6c04"></i>Demande</th>
+								  <th class="">  <i class="fa fa-cube fa-spin"  style="color:#fb6c04"></i>Date demande</th>
+								  <th class=""> <i class="fa fa-paperclip fa-spin" style="color:#15fbaf"></i>DEV</th>
+								  <th class="">  <i class="fa fa-filter" style="color:#fbd53e"></i> Priorité </th>
+								  <th class="">  <i class="fa fa-filter" style="color:#fbd53e"></i> Deadline </th>
+								  <th class="">  <i class="fa fa-filter" style="color:#fbd53e"></i> Estimation </th>
+								  <th class="">  <i class="fa fa-filter" style="color:#fbd53e"></i> Temps passé </th>
+								  <th class="">  <i class="fa fa-filter" style="color:#fbd53e"></i> Etat </th>
+								  <th class=""> <i class="fa fa-filter" style="color:#fbd53e"></i> Avancement </th>
+								</tr>
+							</thead>
+							
+							
+							<tbody id="avancement_table">
+							  <tr>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+							  </tr>
+							</tbody>
+							
+						</table>
+						</br>
+						</br>
+						</br>
+						</br>
+						</br>
+						</br>-->
+						
+						<%}%>
+						
+						<!--<div id="pageNavPosition"></div>-->
+						
+						</br>
+						</br>
+						</br>
+						</br>
+						</br>
+						</br>
+					  <!-- Notifications -->
+					  <% include ../notifications.ejs %>   <!-- include menu à gauche -->
+					  <!-- /Notifications -->
+					</div>
+				</div>
+			</div>
+		</div>
+		</br>
+		</br>
+		</br>
+		</br>
+		<form>
+			<input type="hidden" id="bug" name="bug" value = "<%=bug%>">
+			<input type="hidden" id="dev" name="dev" value = "<%=dev%>">
+			<input type="hidden" id="assistance" name="assistance" value = "<%=assistance%>">
+			<input type="hidden" id="newApp" name="newApp" value = "<%=newApp%>">
+		</form>
+		
+		<!-- /Main -->
+		<center><% include ../footer.ejs %></center>
+
+		<script src="/js/base.min.js"></script>
+		
+		<!--<script src="/js/project.min.js"></script>-->
+
+		<!--<script src="js/jquery.min.js"></script>-->
+		<script src="/js/jquery-1.12.4.js"></script>
+
+		<script src="js/bootstrap.min.js"></script>
+		
+		<script src="js/scripts.js"></script>
+		<script src="js/bootstrap-datepicker.js"></script>
+		<!-- NEW -->
+		<script type="text/javascript" src="js/raphael-min.js"></script>
+		<script type="text/javascript" src="js/morris-min.js"></script>
+
+		<script type="text/javascript" src="js/bootstrap-duration-picker-debug.js"></script>
+		<script src="js/year-select.js"></script>
+		<script src="/js/bootbox.min.js"></script>
+		
+		<!-- DOSSIER ETAPE APPLICATION -->
+		<script src="js/dossierEtapeApp.js"></script>
+		
+		<!--DATATABLE-->
+		<script src="/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+		<script src="/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+		<script src="/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/buttons.flash.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/buttons.html5.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/buttons.print.min.js"></script>
+		<script src="/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+		<script src="/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+		<script src="/vendors/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+		<script src="/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
+		<script src="/vendors/datatables.net-scroller/js/datatables.scroller.min.js"></script>
+		<script src="/vendors/jszip/dist/jszip.min.js"></script>
+		<script src="/vendors/pdfmake/build/pdfmake.min.js"></script>
+		<script src="/vendors/pdfmake/build/vfs_fonts.js"></script>
+		<!--FIN DATATABLE-->
+		
+		
+		
+		
+		
+		<!-- SCRIPT CR -->
+		<script language="javascript">
+		//alert(unescape("Mise%20%E0%20jour%20des%20demandes%20de%20types%20gestions%20"));
+		$(function() {
+			 $('#annee_input').yearselect({order: 'desc'});
+		} );
+		
+		function loadAll() {
+			getCR();
+			//getAvancement();
+			
+			getLsDossier();
+			loadDev();
+			loadPriorite();
+			loadEtatDemande();
+			loadTypeDemande();
+			getAjaxFiltreTachePris();
+		}
+		
+		//Load
+		function loadDev(){
+			$.ajax({
+			  type: "GET",
+			  url: "/getLsDevPers",
+	 
+			  success: function(msg){
+				
+				var html = "<option value=''></option>";
+				var data = JSON.parse(msg);
+	 
+				//alert("test "+data);
+				
+				for (var i = 0 ; i<data.length ; i++){
+				  html += "<option value='"+data[i].id_pers+"'>"+data[i].id_pers+" - "+data[i].appelation+"</option>";
+				}
+				$("#dev_select").html(html);
+			  },
+			  error: function (error) {
+				alert(error);
+			  }
+			});
+		}
+		
+		function loadPriorite(){
+			$.ajax({
+			  type: "GET",
+			  url: "/getLsTypePriorite",
+	 
+			  success: function(msg){
+				
+				var html = "<option value=''></option>";
+				var data = JSON.parse(msg);
+	 
+				//alert("test "+data);
+				
+				for (var i = 0 ; i<data.length ; i++){
+				  html += "<option value='"+data[i].id_priorite+"'>"+data[i].libelle_priorite+"</option>";
+				}
+				$("#priorite_select").html(html);
+			  },
+			  error: function (error) {
+				alert(error);
+			  }
+			});
+		}
+		
+		function loadTypeDemande(){
+			$.ajax({
+			  type: "GET",
+			  url: "/getLsTypeDemande",
+	 
+			  success: function(msg){
+				
+				var html = "<option value=''></option>";
+				var data = JSON.parse(msg);
+	 
+				//alert("test "+data);
+				
+				for (var i = 0 ; i<data.length ; i++){
+				  html += "<option value='"+data[i].id_type_intervention+"'>"+data[i].libelle+"</option>";
+				}
+				$("#type_select").html(html);
+			  },
+			  error: function (error) {
+				alert(error);
+			  }
+			});
+		}
+		
+		function loadEtatDemande(){
+			$.ajax({
+			  type: "GET",
+			  url: "/getLsEtatDemande",
+	 
+			  success: function(msg){
+				
+				var html = "<option value=''></option>";
+				var data = JSON.parse(msg);
+	 
+				//alert("test "+data);
+				
+				for (var i = 0 ; i<data.length ; i++){
+				  html += "<option value='"+data[i].id_etat_demande+"'>"+data[i].libelle+"</option>";
+				}
+				$("#etat_demande_select").html(html);
+			  },
+			  error: function (error) {
+				alert(error);
+			  }
+			});
+		}
+		
+		/*function loadAllDemande(){
+		loadDataTableG();
+		getLsDossier();
+		loadDev();
+		loadPriorite();
+		loadEtatDemande();
+		loadTypeDemande();
+		getAjaxFiltreTachePris();
+		getGestionSousTache();
+		}*/
+		
+		function CalculeDate(seconde)
+		  {
+			var totalSeconds = parseInt(seconde, 10);
+			var hours = Math.floor(totalSeconds / 3600);
+			var h = "";
+			if(hours.toString().length == 1)
+			  h = "0"+hours.toString();
+			else
+			  h = hours.toString();
+
+			totalSeconds %= 3600;
+			var minutes = Math.floor(totalSeconds / 60);
+			var mn = "";
+			if(minutes.toString().length == 1)
+			  mn = "0"+minutes.toString();
+			else
+			  mn = minutes.toString();
+
+			var seconds = totalSeconds % 60;
+			var s = "";
+			if(seconds.toString().length == 1)
+			  s = "0"+seconds.toString();
+			else
+			  s = seconds.toString();
+
+			return h+":"+mn+":"+s;
+		  }
+		
+		//getAvancementAll PROD
+		function getAvancement() {
+			var id_etat_demande = $("#etat_demande_select").val();
+			var id_priorite = $("#priorite_select").val();
+		
+			$.ajax({
+			  type: "GET",
+			  url: "/getAvancementAll",
+			  
+			  success: function(msg){
+				var data = JSON.parse(msg);
+				console.log(data);
+				var htmll = ""
+;					for (var i = 0 ; i<data.length ; i++){
+						var bgcolor_priorite="";
+						if(data[i].id_priorite==null)
+						{
+							bgcolor_priorite='';
+							data[i].priorite='';
+						}
+						if(data[i].id_priorite==1)
+						{
+						   bgcolor_priorite="bgcolor=#F78181";
+						}
+						else
+						if(data[i].id_priorite==2)
+						{
+							bgcolor_priorite="bgcolor=#F5DA81";
+						}
+						else if(data[i].id_priorite==3)
+						{
+						  bgcolor_priorite="bgcolor=#9FF781";
+						}
+						if(data[i].id_priorite==null)
+                        {
+                          bgcolor_priorite="bgcolor=#A9E2F3";
+                        }
+						
+						
+						var start = new Date(Number(Date.parse(data[i].date_demande)));
+						var month = start.getMonth();
+						if(start.getMonth() < 10){
+							month = "0"+start.getMonth();
+						}
+						var day = start.getDate();
+						if(start.getDate() < 10){
+							day = "0"+start.getDate();
+						}
+						
+						var dateDemande = start.getFullYear()+"-"+month+"-"+day;
+						
+						var tempsPasse = CalculeDate(data[i].temps_passe);
+						var tempsPasse_estimation = CalculeDate(data[i].estimation_dev);
+						
+						if(tempsPasse == "NaN:NaN:NaN"){
+							tempsPasse = "-";
+						}
+						if(tempsPasse_estimation == "NaN:NaN:NaN"){
+							tempsPasse_estimation = "-";
+						}
+						
+					  htmll += "<tr>" +
+						"<td "+bgcolor_priorite+" class='td_ec'>"+(data[i].id_demande || '-')+"</td>"+
+						"<td "+bgcolor_priorite+" class='td_ec'>"+data[i].num_dossier+"</td>"+
+						"<td "+bgcolor_priorite+"  class='td_ec'>"+data[i].nom_application+"</td>"+
+						"<td "+bgcolor_priorite+"  class='td_ec'>"+data[i].description+"</td>"+
+						"<td "+bgcolor_priorite+"  class='td_ec'>"+(dateDemande || '-')+"</td>"+
+						"<td "+bgcolor_priorite+"  class='td_ec'>"+(data[i].appelation || '-')+"</td>"+
+						"<td "+bgcolor_priorite+"  class='td_ec'>"+(data[i].libelle_priorite || '-')+" </td>"+
+						"<td "+bgcolor_priorite+"  class='td_ec'>"+(data[i].delai || '-')+"</td>"+
+						"<td "+bgcolor_priorite+"  class='td_ec'>"+(tempsPasse_estimation || '-')+"</td>"+
+						"<td "+bgcolor_priorite+"  class='td_ec'>"+(tempsPasse || '-')+"</td>"+
+						"<td "+bgcolor_priorite+"  class='td_ec'>"+(data[i].etat_demande || '-')+"</td>"+
+						"<td "+bgcolor_priorite+"  class='td_ec'>"+(data[i].avancement_dev || '-')+" % </td>";
+
+						$("#avancement_table").html(htmll);
+					}
+			  },
+			  error: function (error) {
+
+			  }
+			});
+		}
+		
+		// from liste tache ------------------------------------------------------------------------------------------------------------------------------------
+	function getAjaxFiltreTachePris()
+    {
+		//param
+		var id_etat_demande = $("#etat_demande_select").val();
+		var id_dev = $("#dev_select").val();
+		var id_dossier = $("#dossierDash").val();
+		
+		var id_application = "a";
+		if($("#applicationDash").val()){
+			id_application = $("#applicationDash").val();
+		}
+		
+		var dead_line = $("#dead_line_select").val();
+		var id_type_intervention = $("#type_select").val();
+		var id_priorite = $("#priorite_select").val();
+	
+		$.ajax({
+			type: "GET",
+			url: "/AfficherListeTachePrisTabProd?id_etat_demande="+id_etat_demande+"&id_dev="+id_dev+"&id_dossier="+id_dossier+"&id_application="+id_application+"&dead_line="+dead_line+"&id_type_intervention="+id_type_intervention+"&id_priorite="+id_priorite,
+			success: function(msg){
+			  $("#lstTache").html(msg);
+			},           
+			error: function (error) {
+			  alert("error; " +error);
+			}
+		});
+    }
+	
+	function getAjaxFiltreTachePrisDossier(sel)
+    {
+		getval(sel);
+		$("#applicationDash").val("a");
+		
+		//alert("1     "+ id_application);
+		
+		//param
+		var id_etat_demande = $("#etat_demande_select").val();
+		var id_dev = $("#dev_select").val();
+		var id_dossier = $("#dossierDash").val();
+		
+		var id_application = "a";
+		if($("#applicationDash").val()){
+			id_application = $("#applicationDash").val();
+		}
+		
+		
+		var dead_line = $("#dead_line_select").val();
+		var id_type_intervention = $("#type_select").val();
+		var id_priorite = $("#priorite_select").val();
+	
+		//alert("2     "+id_application);
+	
+		$.ajax({
+			type: "GET",
+			url: "/AfficherListeTachePrisTabProd?id_etat_demande="+id_etat_demande+"&id_dev="+id_dev+"&id_dossier="+id_dossier+"&id_application="+id_application+"&dead_line="+dead_line+"&id_type_intervention="+id_type_intervention+"&id_priorite="+id_priorite,
+			success: function(msg){
+			  $("#lstTache").html(msg);
+			},           
+			error: function (error) {
+			  alert("error; " +error);
+			}
+		});
+    }
+		//---------------------------------------------------------------------------------------------------------------------------------------------------
+		
+		
+		function loadDataTableG() {
+    //datatable-buttons_det
+			var handleDataTableButtons_gl = function() {
+			  if ($("#table-globale").length) {
+				$("#table-globale").DataTable({
+				  dom: "Bfrtip",
+				  destroy: true,
+				  searching: false,
+				  paging: false,
+				  sort: false,
+				  "aLengthMenu": [[25, 50, 75, -1], [25, 50, 75, "All"]],
+				  "iDisplayLength": 25,
+				  buttons: [
+					{
+					  extend: "copy",
+					  className: "btn-sm"
+					},
+					{
+					  extend: "csv",
+					  className: "btn-sm"
+					},
+					{
+					  extend: "excel",
+					  className: "btn-sm"
+					},
+					{
+					  extend: "pdfHtml5",
+					  className: "btn-sm"
+					},
+					{
+					  extend: "print",
+					  className: "btn-sm"
+					},
+				  ],
+				  responsive: true
+				});
+			  }
+			};
+
+			TableManageButtons_gl= function() {
+			  "use strict";
+			  return {
+				init: function() {
+				  handleDataTableButtons_gl();
+				}
+			  };
+			}();
+			TableManageButtons_gl.init();
+		  }
+		  
+		  function unicodeUnEscape(string) {
+			  return string.replace(/%u([\dA-Z]{4})|%([\dA-Z]{2})/g, function(_, m1, m2) {
+				return String.fromCharCode(parseInt("0x" + (m1 || m2)));
+			  })
+			}
+
+			function supprimerCR(id_cr){ 
+				var id_cr = id_cr;
+				bootbox.confirm({
+					title: "Supprimer CR",
+					message: "Etes-vous certain de vouloir supprimer cette CR?",
+					buttons: {
+						cancel: {
+							label: '<i class="fa fa-times"></i> Annuler'
+						},
+						confirm: {
+							label: '<i class="fa fa-check"></i> Supprimer'
+						}
+					},
+					callback: function (result) {
+						if (result == true){
+							//alert(id_cr);
+							window.location = "supprimerCR?idCR=" + id_cr;
+						}
+						else{
+
+						}
+					}
+			});
+		 }
+		  
+		   function getCR() {
+				$("#table-globale").dataTable().fnDestroy()
+				
+				//alert("tesq");
+				var num_semaine = $("#num_semaine_input").val();
+				
+				var annee = $("#annee_input").val().substring(0,4);
+				//alert(annee + " "+ num_semaine);
+		   
+				$("#glob_cr").html("");
+				$("#table-globale").dataTable().fnDestroy()
+				
+				////?date_deb="+date_deb+"&date_fin="+date_fin+"&sql_vg="+sql_vg+"&sql_ce="+sql_ce
+				
+				$.ajax({
+				  type: "GET",
+				  url: "/getCRAll?num_semaine="+num_semaine+"&annee="+annee,
+				  
+				  success: function(msg){
+				  
+					var data = JSON.parse(msg);
+					//alert(data);
+					console.log(data);
+					var htmll = "";
+					
+					var total_heure = 0;
+					var total_heure_dem = 0;
+					
+;					for (var i = 0 ; i<data.length ; i++){
+						if(data[i].libelle_soustache){
+							var res =  "-";
+							if(data[i].heure){
+								var sec_num = parseInt(data[i].heure, 10); // don't forget the second param
+								var hours   = Math.floor(sec_num / 3600);
+								var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+								var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+								if (hours   < 10) {hours   = "0"+hours;}
+								if (minutes < 10) {minutes = "0"+minutes;}
+								if (seconds < 10) {seconds = "0"+seconds;}
+								
+								res =  hours+":"+minutes+":"+seconds;
+								
+								total_heure = total_heure + sec_num;
+							}
+						
+							/*htmll += "<tr>" +
+							"<td class='td_ec'>"+(data[i].appelation || '-')+"</td>"+
+							"<td class='td_ec'>"+(data[i].num_dossier || '-')+"</td>"+
+							"<td class='td_ec'>"+(data[i].nom_application|| '-')+"</td>"+
+							"<td class='td_ec'>"+(data[i].libelle_soustache|| '-')+"</td>"+
+							"<td class='td_ec'>"+(res || '-')+"</td>"+
+							"<td class='td_ec'>"+(data[i].avancement || '-')+"</td>"+
+							"<td class='td_ec'>"+(data[i].delai_dem || '-')+"</td>"+  //Deadline
+							"<td class='td_ec'>"+(data[i].type_intervention || '-')+"</td>"+ //type
+							"<td class='td_ec'>"+(data[i].delai_cr || '-')+"</td>"+ //delai
+							"<td class='td_ec'>"+(data[i].qualite || '-')+"</td>"+
+							"<td class='td_ec'>-</td>"; //type app ( new/update)*/
+							
+							/*<th>DEV</th>
+										<th>DEMANDEUR</th>
+										<th>PROJET</th>
+										<th>APPLICATION</th>
+										<th>DATE DEMANDE</th>
+										<th>DEMANDE</th>
+										<th>AVANCEMENT(%)</th>
+										<th>DEADLINE</th>
+										<th>ESTIMATION</th>
+										<th>TYPE</th>
+										<th>PRIORITE</th>
+										<th>ETAT</th>*/
+							var heure_estimation = "";
+							if(data[i].heure){
+								var sec_num = parseInt(data[i].heure, 10); // don't forget the second param
+								var hours   = Math.floor(sec_num / 3600);
+								var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+								var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+								if (hours   < 10) {hours   = "0"+hours;}
+								if (minutes < 10) {minutes = "0"+minutes;}
+								if (seconds < 10) {seconds = "0"+seconds;}
+								
+								//heure_estimation =  hours+":"+minutes+":"+seconds;
+								heure_estimation =  parseFloat(parseInt(data[i].heure, 10) / 3600);
+							}
+							
+							var start = new Date(Number(Date.parse(data[i].date_demande)));
+							var date = start.getDate();
+							
+							var moisTemp = start.getMonth() + 1;
+							var mois = moisTemp;
+							
+							if(date < 10){
+								date = "0"+start.getDate();
+							}
+							if(mois < 10){
+								mois = "0"+ moisTemp;
+							}
+							
+							var dateDemande = start.getFullYear()+"-"+mois+"-"+date;
+							
+							var libelle_sous_tache = data[i].libelle_soustache;
+							var libelle_sous_tache_unescape = unicodeUnEscape(String(libelle_sous_tache));
+							//alert(libelle_sous_tache_unescape);
+							
+							htmll += "<tr>" +
+							"<td class='td_ec'>"+(data[i].id_demande || '-')+"</td>"+
+							"<td class='td_ec'>"+(data[i].appelation || '-')+"</td>"+
+							"<td class='td_ec'>"+(data[i].demandeur || '-')+"</td>"+
+							"<td class='td_ec'>"+(data[i].num_dossier || '-')+"</td>"+
+							"<td class='td_ec'>"+(data[i].nom_application|| '-')+"</td>"+
+							"<td class='td_ec'>"+(dateDemande|| '-')+"</td>"+
+							"<td class='td_ec'>"+(unescape(libelle_sous_tache_unescape) || '-')+"</td>"+
+							"<td class='td_ec'>"+(data[i].avancement || '-')+" %</td>"+
+							"<td class='td_ec'>"+(data[i].delai_dem || '-')+"</td>"+  //Deadline
+							"<td class='td_ec'>"+(data[i].date_cr || '-')+"</td>"+  //Date cr
+							"<td class='td_ec'>"+(Number(heure_estimation.toFixed(2)) || '-')+"</td>"+  //Deadline
+							"<td class='td_ec'>"+(data[i].type_intervention || '-')+"</td>"+ //type
+							"<td class='td_ec'>"+(data[i].libelle_priorite || '-')+"</td>"+ 
+							"<td class='td_ec'>"+(data[i].libelle || '-')+"</td>"+ //etat
+							"<td class='td_ec'><a href='#' class='btn btn-primary' onclick = 'supprimerCR("+data[i].id_cr+")' >supprimer</a></td>"; 
+							
+							
+							
+						} else{
+							var res =  "-";
+							if(data[i].heure){
+								var sec_num = parseInt(data[i].heure, 10); // don't forget the second param
+								var hours   = Math.floor(sec_num / 3600);
+								var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+								var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+								if (hours   < 10) {hours   = "0"+hours;}
+								if (minutes < 10) {minutes = "0"+minutes;}
+								if (seconds < 10) {seconds = "0"+seconds;}
+								
+								res =  hours+":"+minutes+":"+seconds;
+								
+								total_heure_dem = total_heure_dem + sec_num;
+								
+							}
+							/*htmll += "<tr>" +
+							"<td class='td_ec'>"+(data[i].appelation || '-')+"</td>"+
+							"<td class='td_ec'>"+(data[i].num_dossier || '-')+"</td>"+
+							"<td class='td_ec'>"+(data[i].nom_application|| '-')+"</td>"+
+							"<td class='td_ec'>"+(data[i].description|| '-')+"</td>"+
+							"<td class='td_ec'>"+(res || '-')+"</td>"+
+							"<td class='td_ec'>"+(data[i].avancement_dev || '-')+"</td>"+
+							"<td class='td_ec'>"+(data[i].delai_dem || '-')+"</td>"+
+							"<td class='td_ec'>"+(data[i].type_intervention || '-')+"</td>"+
+							"<td class='td_ec'>"+(data[i].delai_cr || '-')+"</td>"+
+							"<td class='td_ec'>"+(data[i].qualite || '-')+"</td>"+
+							"<td class='td_ec'>-</td>";*/
+							var heure_estimation = "";
+							if(data[i].heure){
+								var sec_num = parseInt(data[i].heure, 10); // don't forget the second param
+								var hours   = Math.floor(sec_num / 3600);
+								var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+								var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+								if (hours   < 10) {hours   = "0"+hours;}
+								if (minutes < 10) {minutes = "0"+minutes;}
+								if (seconds < 10) {seconds = "0"+seconds;}
+								
+								//heure_estimation =  hours+":"+minutes+":"+seconds;
+								heure_estimation =  parseFloat(parseInt(data[i].heure, 10) / 3600);
+							}
+							var start = new Date(Number(Date.parse(data[i].date_demande)));
+							var date = start.getDate();
+							
+							var moisTemp = start.getMonth() + 1;
+							var mois = moisTemp;
+							
+							if(date < 10){
+								date = "0"+start.getDate();
+							}
+							if(mois < 10){
+								mois = "0"+moisTemp;
+							}
+							
+							var dateDemande = start.getFullYear()+"-"+mois+"-"+date;
+							
+							htmll += "<tr>" +
+							"<td class='td_ec'>"+(data[i].id_demande || '-')+"</td>"+
+							"<td class='td_ec'>"+(data[i].appelation || '-')+"</td>"+
+							"<td class='td_ec'>"+(data[i].demandeur || '-')+"</td>"+
+							"<td class='td_ec'>"+(data[i].num_dossier || '-')+"</td>"+
+							"<td class='td_ec'>"+(data[i].nom_application|| '-')+"</td>"+
+							"<td class='td_ec'>"+(dateDemande|| '-')+"</td>"+
+							"<td class='td_ec'>"+(unescape(unescape(data[i].description)) || '-')+"</td>"+
+							"<td class='td_ec'>"+(data[i].avancement_dev || '-')+" %</td>"+
+							"<td class='td_ec'>"+(data[i].delai_dem || '-')+"</td>"+  //Deadline
+							"<td class='td_ec'>"+(data[i].date_cr || '-')+"</td>"+  //Date cr
+							"<td class='td_ec'>"+(Number(heure_estimation.toFixed(2)) || '-')+"</td>"+  //Deadline
+							"<td class='td_ec'>"+(data[i].type_intervention || '-')+"</td>"+ //type
+							"<td class='td_ec'>"+(data[i].libelle_priorite || '-')+"</td>"+ 
+							"<td class='td_ec'>"+(data[i].libelle || '-')+"</td>"+ //etat
+							"<td class='td_ec'><a href='#' class='btn btn-primary' onclick = 'supprimerCR("+data[i].id_cr+")' >supprimer</a></td>";  
+						}
+						
+						if(data[i].last_week){
+							$("#num_semaine_input").val(data[i].last_week);
+						}
+						
+						$("#glob_cr").html(htmll);
+					}
+					
+					var total = total_heure + total_heure_dem;
+					var sec_num = parseInt(total, 10); // don't forget the second param
+					var hours   = Math.floor(sec_num / 3600);
+					var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+					var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+					if (hours   < 10) {hours   = "0"+hours;}
+					if (minutes < 10) {minutes = "0"+minutes;}
+					if (seconds < 10) {seconds = "0"+seconds;}
+					
+					var res_total =  hours+":"+minutes+":"+seconds;
+					//alert(res_total);
+					var totalH = parseFloat(sec_num/3600);
+					$("#total_input").val(Number(totalH.toFixed(2)));
+					
+					loadDataTableG();
+				  },
+				  error: function (error) {
+
+				  }
+				});
+			 }
+			 
+		</script>	
+		<!-- FIN SCRIPT CR -->
+		
+		
+		
+		
+		<script language="javascript">
+			function BootboxContent(){    
+				//var frm_str = '<input class="form-control" id="duration" type="text" name="duration" /></input>';
+				var frm_str = '<form id="some-form">'
+							   + '<div class="form-group">'
+								  + '<label for="date">Date</label>'    
+								  + '<input id="date" class="date span2 form-control input-sm" size="16" placeholder="dd-mm-yy" type="text">'
+								  + '</div>'
+							   + '</form>';
+
+				var object = $('<div/>').html(frm_str).contents();
+
+				object.find('.date').datepicker({
+					format: 'yyyy-mm-dd',
+					autoclose: true}).on('changeDate', function (ev) {
+					   $(this).blur();
+					   $(this).datepicker('hide');
+				});
+
+				 return object
+			}
+		
+			function terminerDemande(idDemande, id_type, idApplication) {
+				var msg = '<input class="form-control" id="duration1" type="text" name="duration1" placeholder="00:00:00" onchange="" required ></input>';
+				var titre = "Temps passé :"
+				if(id_type == 4){
+					msg = '<input class="form-control" id="duration1" type="text" name="duration1" placeholder="00:00:00" onchange="" required ></input></br>'+
+						  '<input class="form-control" id="chemin1" type="text" name="chemin1" placeholder="Chemin application" onchange="" required ></input>';
+					titre = "Temps passé et chemin :";
+				}
+				
+			
+				
+				bootbox.dialog({
+					message: msg,
+					title: titre,
+					//inputType: 'date',
+					buttons: {
+						annuler: {
+						  label: "Annuler",
+						  className: "btn-default",
+						  callback: function () {
+							//alert("not ok");
+						  }
+					   },
+					   main: {
+						  label: "Valider",
+						  className: "btn-primary",
+						  callback: function () {
+							var hms = $( "#duration1" ).val();
+							var isValid = /^(?:2[0-4]|0[0-9]):[0-5][0-9]:[0-5][0-9]$/.test(hms);
+							
+							var chemin = $( "#chemin1" ).val();
+							
+							if (isValid) {
+								var a = hms.split(':');
+								var duration = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]);
+								//alert(duration);
+								window.location = "terminerDemande?idDemande="+idDemande+"&idApplication="+idApplication+"&tempsPasse="+duration+"&chemin="+chemin+"&idType="+id_type;  
+							} else {
+								alert("Format temps passé invalide");
+							}
+						  }
+					   }
+					   
+					}
+				});
+			}
+		</script>
+		
+		<script language="javascript">
+			  $(function() {
+				$('#duration').durationPicker({
+					lang: 'en',
+					//showDays : false,  $('#duration').durationPicker();
+					showSeconds: true
+				}); //DURATION                  <<========================
+			  } );
+		</script>
+		
+		
+		<!-- CHART JS -->
+		<script>
+		
+			var barTest = Morris.Bar({
+				element: 'bar-tempsPasse',
+				data: [
+					{y: 'Bug', a: 10},
+					{y: 'Dev', a: 20},
+					{y: 'Assistance', a: 30},
+					{y: 'App', a: 30}
+				],
+				barColors: function(row, series, type) {
+					var letters = '0123456789ABCDEF'.split('');
+					var color = '#';
+					for (var i = 0; i < 6; i++ ) {
+						color += letters[Math.floor(Math.random() * 16)];
+					}
+					return color;
+				},
+				xkey: 'y',
+				ykeys: ['a'],
+				labels: ['Temps passé']
+			});
+			
+		//Data activite
+			var bug = $("#bug").val();
+			var dev = $("#dev").val();
+			var assistance = $("#assistance").val();
+			var newApp = $("#newApp").val();
+			//alert(bug + "  " + dev + "  " + assistance + "  " + newApp);
+		//fin data activite
+			
+			var barActivite = Morris.Bar({
+				element: 'bar-activite',
+				data: [
+					{y: 'Bug', a: bug},
+					{y: 'Dev', a: dev},
+					{y: 'Assistance', a: assistance},
+					{y: 'App', a: newApp}
+				],
+				barColors: function(row, series, type){
+					var letters = '0123456789ABCDEF'.split('');
+					var color = '#';
+					for (var i = 0; i < 6; i++ ){
+						color += letters[Math.floor(Math.random() * 16)];
+					}
+					return color;
+				},
+				xkey: 'y',
+				ykeys: ['a'],
+				labels: ['Nombre']
+			});
+		</script>
+		<!-- /CHART JS -->
+		
+		<script type="text/javascript"><!--
+			var pager = new Pager('resultsAppPris', 10);
+			pager.init();
+			pager.showPageNav('pager', 'pageNavPosition');
+			pager.showPage(1);
+		</script>
+		
+	</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <title>Fiche recette</title>
+  <meta name="generator" content="Bootply" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/styles.css" rel="stylesheet">
+  <link href="fonts/css/font-awesome.css" rel="stylesheet">
+  <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+
+  <link href="css/pieChart.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="/timepickerRonny/bootstrap-material-datetimepicker.css" />
+  <link href='/timepickerRonny/font1.css' rel='stylesheet' type='text/css'>
+  <link href="/timepickerRonny/font2.css" rel="stylesheet">
+
+
+  <script type="text/javascript" src="/timepickerRonny/material.js"></script>
+  <script type="text/javascript" src="/timepickerRonny/moment_local.js"></script>
+  <script type="text/javascript" src="/timepickerRonny/bootstrap-material-datetimepicker.js"></script>
+
+  <script src="js/sails.io.js"></script>
+  <script type="text/javascript">
+    io.sails.url = 'http://localhost:1337';
+  </script>
+
+
+	<link href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.0/animate.min.css" rel="stylesheet">
+    <link href="css/styleNotif.css" rel="stylesheet">
+
+	<script type="text/javascript" src="js/paging.js"></script>
+
+  <!--<style>
+    /* The Modal (background) */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Sit on top */
+      padding-top: 100px; /* Location of the box */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgb(0,0,0); /* Fallback color */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    /* Modal Content */
+    .modal-content {
+      background-color: #fefefe;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+    }
+
+    /* The Close Button */
+    .close {
+      color: #aaaaaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: #000;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  </style>-->
+
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta charset="utf-8">
+	<title>Recette - Liste des nouvelles demandes</title>
+	<meta name="generator" content="Bootply" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/styles.css" rel="stylesheet">
+	<link href="fonts/css/font-awesome.css" rel="stylesheet">
+	<link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+
+	<script type="text/javascript" src="js/paging.js"></script>
+
+</head>
+<body onLoad="onLoadDemande();"> <!-- getLsDossier -->
+
+	<!-- HEADER -->
+	<% include ../header.ejs %>
+	<!-- /HEADER -->
+	<!-- Menu GAUCHE -->
+	<% var disable = "";
+	if(req.session.droit == 0){
+	  disable = "hidden";}
+	%>
+	<!-- /MENU GAUCHE -->
+	<!-- Main -->
+	<div class="container-fluid">
+		<div id = "dash">
+			<div class="row">
+				<div id="menuCenter">
+					<!-- avant container -->
+
+					<!-- include menu à gauche -->
+					<!-- /avant container-->
+
+					<div class="row"> <!-- CONTAINER -->
+
+					  <div class="">
+						<div class="page-title">
+						  <div class="title_left">
+							<h2>
+							  Fiche recette
+							  <small>
+								Liste des nouvelles demandes
+							  </small>
+							</h2>
+						  </div>
+						</div>
+						<!--div id = "stat"></div-->
+
+						<!---------------------------------- STAT ----------------------------------------->
+
+						<div class="row"> <!-- LISTE TEST EN ATTENTE -->
+						  <div class="col-md-12 col-sm-12 col-xs-12">
+							<div class="x_panel">
+							  <div class="x_title">
+								<div class="clearfix"></div>
+							  </div>
+							  <div class="x_content"><!--table table-striped responsive-utilities jambo_table-->
+								<h4><b>Demande intervention :</b></h4>
+								<div>
+								  <div id="List_Application_Demande">
+								  </div>
+								</div>
+							  </div>
+							  </br>
+							  </br>
+							  <!--<div class="x_content">
+								<h4><b>Demande nouvelle application :</b></h4>
+								<div>
+								  <div id="List_Nouvelle_Application_Demande">
+								  </div>
+								</div>
+							  </div>-->
+							</div>
+							<br/>
+							<br/>
+							<br/>
+							<br/>
+							<br/>
+							<br/>
+							<br/>
+						  </div>
+						</div>
+					  </div>
+
+					</div>
+					<!--/row-->
+
+					<!-- Notifications -->
+					<% include ../notifications.ejs %>
+				</div>
+			</div>
+		</div>
+	</div>
+  <!-- Footer -->
+  <center><% include ../footer.ejs %></center>
+  <!-- /Footer -->
+
+  <!--<script type="text/javascript">
+    $(document).ready(function()
+    {
+      $('#date_delai').bootstrapMaterialDatePicker
+      ({
+        format: 'DD/MM/YYYY HH:mm'
+      });
+      $.material.init();
+      alert("OK");
+    });
+  </script>-->
+
+
+  <!-- script  -->
+  <script src="/js/base.min.js"></script>
+  <script src="/js/project.min.js"></script>
+
+  <script src="/js/jquery.min.js"></script>
+  <!--<script src="/js/bootbox.min.js"></script>-->
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/js/jquery-ui.min.js"></script>
+  <script src="/js/scripts.js"></script>
+
+
+  <!-- DOSSIER ETAPE APPLICATION -->
+  <script src="js/dossierEtapeApp.js"></script>
+</body>
+</html>

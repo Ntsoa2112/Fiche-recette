@@ -1,0 +1,57 @@
+<html>
+<head>
+<title>ProfileController.js</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: rgb(0,0,0); font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); font-style: italic; }
+.s1 { }
+.s2 { color: rgb(0,0,128); font-weight: bold; }
+.s3 { color: rgb(0,128,0); font-weight: bold; }
+</style>
+</head>
+<BODY BGCOLOR="#ffffff">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#C0C0C0" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+ProfileController.js</FONT>
+</center></TD></TR></TABLE>
+<pre>
+
+<span class="s0">/** 
+ * Created by 8032 on 04/03/2016.ss 
+ */</span><span class="s1"> 
+ 
+module.exports = { 
+  getApplication: </span><span class="s2">function</span><span class="s1">(req, res) 
+  { 
+    </span><span class="s2">if </span><span class="s1">(!req.session.user) </span><span class="s2">return </span><span class="s1">res.redirect(</span><span class="s3">'/login'</span><span class="s1">); 
+ 
+    Application.find({}, </span><span class="s2">function</span><span class="s1">(err, found){ 
+      </span><span class="s2">if</span><span class="s1">(err){ 
+        console.log(err); 
+      } 
+      console.log(found); 
+ 
+      User.findOne({ id: req.session.user}, </span><span class="s2">function </span><span class="s1">(err, user){ 
+        </span><span class="s2">if </span><span class="s1">(err) </span><span class="s0">//ra mis erreur</span><span class="s1"> 
+        { 
+          console.log(err); 
+        } 
+        </span><span class="s2">if </span><span class="s1">(!user) </span><span class="s0">// si l'email n'exuiste pas</span><span class="s1"> 
+        { 
+          console.log(</span><span class="s3">'Tsis user.'</span><span class="s1">); </span><span class="s0">//afficher email invalide</span><span class="s1"> 
+          </span><span class="s2">return </span><span class="s1">res.redirect(</span><span class="s3">'/login'</span><span class="s1">); 
+        } 
+        </span><span class="s2">var </span><span class="s1">retVal = []; 
+        retVal[</span><span class="s3">'applications'</span><span class="s1">] = found; 
+        retVal[</span><span class="s3">'users'</span><span class="s1">] = user; 
+        res.view( </span><span class="s3">'user/profile'</span><span class="s1">, retVal ); 
+      }); 
+    }); 
+  }, 
+}; 
+ 
+</span></pre>
+</body>
+</html>

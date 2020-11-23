@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<title>Recette - Ajout application</title>
+		<meta name="generator" content="Bootply" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<!-- Include Bootstrap Datepicker -->
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.min.css" />
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker3.min.css" />
+		<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.min.js"></script>
+
+		<link href="css/styles.css" rel="stylesheet">
+		<link href="fonts/css/font-awesome.css" rel="stylesheet">
+		<link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+
+		<!--<link href="css/duration-picker.css" rel="stylesheet">-->
+		<link href="css/bootstrap-duration-picker.css" rel="stylesheet">
+		
+		<style>
+		.file {
+		  visibility: hidden;
+		  position: absolute;
+		}
+		</style>
+	</head>
+	<body onLoad="loadAllData();">
+		<!-- HEADER -->
+		<% include ../header.ejs %>
+		<!-- /HEADER -->
+		<!-- Menu GAUCHE -->
+		<% var disable = "";
+		if(req.session.droit == 0){
+			disable = "hidden";}
+		%>
+
+		<!-- CONTAINER -->
+		<div class="container-fluid">
+			<div class="row">
+				<div id="menuCenter">
+					<!-- avant container -->
+
+           <!-- include menu à gauche -->
+					<!-- /avant container-->
+					<div class="row"> <!-- CONTAINER -->
+						<div class="">
+							<div class="page-title">
+								  <div class="title_left">
+									<h2>
+									  Fiche recette
+									  <small>
+										Nouvelle demande
+									  </small>
+									</h2>
+								  </div>
+							</div>
+							</br>
+
+							<div class="clearfix"></div>
+
+							<!-- Type d'intervention -->
+							<div class="form-group">
+								<a href = "/statistiqueDemande" ><button type="button" class="btn btn-primary collapse-link hidden">Statistique des interventions</button></a>
+								<a href = "/ListeDemandeApp" ><button type="button" class="btn btn-primary collapse-link <%= disable %> " >Liste des demandes</button></a>
+								<a href = "#" onclick = "rechercheDev()"><button type="button" class="btn btn-primary collapse-link <%= disable %> ">Recherche et développement</button></a>
+							</div>
+							</br>
+
+							<% include ../dossierApp.ejs %>
+
+							<br/>
+							<br/>
+
+
+							<!--<div class="form-group">
+								<div class="col-lg-1">
+								  <h4 style="color: black">  Type: </h4>
+								</div>
+								<div class="col-lg-2">
+								  <select class="form-control" tabindex="-1" id="typeIntervention" name="typeIntervention"  onchange="onChangeType();" placeholder = "Dossier">
+										<option value="0">-</option>
+								  </select>
+								</div>
+							</div>-->
+
+							<div class="row hidden" id="demandeIntervention" name="demandeIntervention" >
+								<div class="col-md-12 col-sm-12 col-xs-12">
+									<div class="x_panel">
+										<div class="x_content">
+											<div class="x_panel">
+												<div class="x_title">
+													<div class="clearfix"></div>
+												</div>
+												<div class="x_content">
+													<br />
+													<h4 style="margin-left:450px">Demande intervention : </h4>
+													<br />
+													<br />
+													<form method="POST" action="/insertDemandeIntervention" id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" style="margin-left:150px" enctype="multipart/form-data">
+													   <input type='text'  id='id_type_intervention' name='id_type_intervention' required='required' class='form-control col-md-7 col-xs-12 hidden' value="">
+
+															<div class="form-group">
+																<label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name" >Demandeur: <span class="required"></span>
+																</label>
+																<div class="col-md-6 col-sm-6 col-xs-12">
+																  <select class="form-control" tabindex="-1" id="demandeur" name="demandeur"  onchange="onChangeType();" placeholder = "Dossier" required="required">
+																		<option value="0">-</option>
+																  </select>
+																</div>
+															</div>
+															
+															<div class="form-group">
+																<label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name" >Type intervention: <span class="required"></span>
+																</label>
+																<div class="col-md-6 col-sm-6 col-xs-12">
+																  <select class="form-control" tabindex="-1" id="typeIntervention" name="typeIntervention"  onchange="onChangeType();" placeholder = "Dossier">
+																		<option value="0">-</option>
+																		<% typeInterventions.forEach(function(typeIntervention){ %>
+																			<%if(typeIntervention.id_type_intervention < 4 || typeIntervention.id_type_intervention>=10 || typeIntervention.id_type_intervention==7){%>
+																				<option value="<%= typeIntervention.id_type_intervention %>"><%= typeIntervention.libelle %></option>
+																			<%}%>
+
+																		<% }); %>
+																  </select>
+																</div>
+															</div>
+                            <!--<div class="form-group">
+                              <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name" >Priorite: <span class="required"></span>
+                              </label>
+                              <div class="col-md-6 col-sm-6 col-xs-12">
+                                <select class="form-control" tabindex="-1" id="priorite" name="priorite">
+                                  <% priorite.forEach(function(priorites){ %>
+                                   <option value="<%= priorites.id_priorite %>"><%= priorites.libelle_priorite %></option>
+                                   <% }); %>
+                                </select>
+                              </div>
+                            </div>-->
+
+															<div class="form-group hidden">
+																<label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name" >ID dossier :<span class="required"></span>
+																</label>
+																<div class="col-md-6 col-sm-6 col-xs-12">
+																	<input type="text" id="dossierNum2" required="required" name="dossier_num2" class="form-control col-md-7 col-xs-12" value=" " >
+																</div>
+															</div>
+
+															<div  class="form-group hidden">
+																<label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name" >ID application :<span class="required"></span>
+																</label>
+																<div class="col-md-6 col-sm-6 col-xs-12">
+																	<input type="text" id="application" required="required" name="idApplication" class="form-control col-md-7 col-xs-12" value=" " >
+																</div>
+															</div>
+
+															<div class="form-group">
+																<label class="control-label col-md-3 col-sm-3 col-xs-12" for="comment">Description :<span class="required"></span>
+																</label>
+																<div class="col-md-6 col-sm-6 col-xs-12">
+																	<textarea type="text" id="description" required="required" name="description" class="form-control col-md-7 col-xs-12"></textarea>
+																</div>
+															</div>
+
+															<div class="form-group hidden">
+																<label class="control-label col-md-3 col-sm-3 col-xs-12" for="comment">Delai :<span class="required"></span>
+																</label>
+																<div class="col-md-6 col-sm-6 col-xs-12">
+																	<input type="text" id="elai" name="delai" class="form-control col-md-7 col-xs-12" placeholder = "jj/mm/aaaa"></textarea>
+																</div>
+															</div>
+															
+															<div class="form-group">
+																<label class="control-label col-md-3 col-sm-3 col-xs-12" for="comment">Delai55 :<span class="required"></span>
+																</label>
+																<div class="col-md-6 col-sm-6 col-xs-12">
+																	<input type="date" id="delai_prod" name="delai_prod" class="form-control col-md-7 col-xs-12" placeholder = "jj/mm/aaaa"></textarea>
+																</div>
+															</div>
+
+															<div class="form-group">
+																<label class="control-label col-md-3 col-sm-3 col-xs-12" for="abaque">Abaque :<span class="required"></span>
+																</label>
+																<div class="col-md-6 col-sm-6 col-xs-12">
+																	<input type="file" id="abaque" name="abaque" >
+																</div>
+															</div>
+	
+															<div class="form-group">
+																<label class="control-label col-md-3 col-sm-3 col-xs-12" for="cTest">Cahier de test :<span class="required"></span>
+																</label>
+																<div class="col-md-6 col-sm-6 col-xs-12">
+																	<input type="file" id="cTest" name="cTest" >
+																</div>
+															</div>
+
+															<div class="form-group">
+																<div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+																	<button type="submit" class="btn btn-primary">Envoyer</button>
+																</div>
+																<br/><br/><br/><br/><br/><br/>
+															</div>
+													</form>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="row hidden" id="demandeApp" name="demandeApp" >
+								<div class="col-md-12 col-sm-12 col-xs-12">
+									<div class="x_panel">
+										<div class="x_content">
+											<div class="x_panel">
+												<div class="x_title">
+													<div class="clearfix"></div>
+												</div>
+												<div class="x_content">
+													<br />
+													<h4 style="margin-left:450px">Demande nouvelle application : </h4>
+													<br />
+													<br />
+													<form method="POST" action="/demandeApplication" id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" style="margin-left:150px" enctype="multipart/form-data">
+													   	 <input type='text'  id='nb_fonctionnalite' name='nb_fonctionnalite' required='required' class='form-control col-md-7 col-xs-12 hidden' value="">
+														<div class="form-group">
+															<label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name" >Demandeur: <span class="required"></span>
+															</label>
+															<div class="col-md-6 col-sm-6 col-xs-12">
+															  <select class="form-control" tabindex="-1" id="demandeur_application" name="demandeur_application"  onchange="onChangeType();" placeholder = "Dossier" required>
+																	<option value="0">-</option>
+															  </select>
+															</div>
+														</div>
+															
+													   <div id="form-0">
+													    <div class="form-group">
+															<label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Nom application :<span class="required"></span>
+															</label>
+															<div class="col-md-6 col-sm-6 col-xs-12">
+																<input type="text" id="nom_application" required="required" name="nom_application" class="form-control col-md-7 col-xs-12">
+															</div>
+														</div>
+														<div class="form-group">
+															<label class="control-label col-md-3 col-sm-3 col-xs-12" for="comment">Description de l'application :<span class="required"></span>
+															</label>
+															<div class="col-md-6 col-sm-6 col-xs-12">
+																<textarea type="text" id="description" required="required" name="description" class="form-control col-md-7 col-xs-12"></textarea>
+															</div>
+														</div>
+														<div class="form-group hidden">
+															<label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">ID dossier :<span class="required"></span>
+															</label>
+															<div class="col-md-6 col-sm-6 col-xs-12">
+																<input type="text" id="dossierNum" required="required" name="dossier_num" class="form-control col-md-7 col-xs-12" value=" ">
+															</div>
+														</div>
+														<div class="form-group hidden">
+															<label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Chemin :<span class="required"></span>
+															</label>
+															<div class="col-md-6 col-sm-6 col-xs-12">
+																<input type="text"  id="chemin" name="chemin" required="required" class="form-control col-md-7 col-xs-12" value = "-">
+															</div>
+														</div>
+														
+														<div class="form-group">
+																<label class="control-label col-md-3 col-sm-3 col-xs-12" for="comment">Delai 111:<span class="required"></span>
+																</label>
+																<div class="col-md-6 col-sm-6 col-xs-12">
+																	<input type="date" id="delai_prod_app" name="delai_prod_app" class="form-control col-md-7 col-xs-12" placeholder = "jj/mm/aaaa"></textarea>
+																</div>
+														</div>
+
+
+														<div class="form-group">
+															<label class="control-label col-md-3 col-sm-3 col-xs-12" for="abaque">Abaque 11:<span class="required"></span>
+															</label>
+															<div class="col-md-6 col-sm-6 col-xs-12">
+																<input type="file" id="abaque" name="abaque" >
+															</div>
+														</div>
+
+														<div class="form-group">
+															<label class="control-label col-md-3 col-sm-3 col-xs-12" for="cTest">Cahier de test :<span class="required"></span>
+															</label>
+															<div class="col-md-6 col-sm-6 col-xs-12">
+																<input type="file" id="cTest" name="cTest" >
+															</div>
+														</div>
+
+														<!-- UPLOAD FILE -->
+														<!--  <div class="form-group">
+															<input type="file" name="img[]" class="file" id="fileInput" onchange="getPath(this, 'fileInput');">
+															<label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name"> <span class="required"></span>
+															</label>
+															<div class="input-group col-md-6 col-sm-6 col-xs-12">
+															  <span class="input-group-addon"><i class="fa fa-file"></i></span>
+															  <input type="text" class="form-control input-md" disabled placeholder="Ajouter fichier">
+															  <span class="input-group-btn">
+																<button class="browse btn btn-primary input-md" type="button"><i class="fa fa-search"></i> Ajouter fichier</button>
+															  </span>
+															</div>
+														  </div> -->
+														<!-- /UPLOAD FILE -->
+
+														<div class="ln_solid"></div>
+														<div class="form-group">
+															<div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+																<div class="row">
+																	<h3 class="col-md-4 col-sm-4 col-xs-12">Les Fonctionnalités</h3>
+																	<a href="#" onclick= "addFonctionnalite();" class="col-xs-12"><i class="fa fa-plus fa-3x"></i></a>
+																</div>
+															</div>
+                                                        </div>
+													   </div>
+
+														<div class="form-group">
+															<div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+																<button type="submit" class="btn btn-primary">Envoyer</button>
+															</div>
+															<br/><br/><br/><br/><br/><br/>
+														</div>
+
+													</form>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<br/>
+								<br/>
+								<br/>
+								<br/>
+							</div>
+						</div>
+					</div>
+					<!--<input type="text" class="form-control" id="duration2">-->
+
+					<!-- Notifications -->
+					<% include ../notifications.ejs %>
+					<!-- /Notifications -->
+				</div>
+			</div>
+		</div>
+		<!-- /CONTAINER -->
+
+		<!-- Footer -->
+		<center><% include ../footer.ejs %></center>
+		<!-- /Footer -->
+
+
+		<!-- script  -->
+		<!-- SCRIPT UPLOAD FILE -->
+		<script>
+			function getPath(oFileInput, sTargetID) {
+				document.getElementById(sTargetID).value = oFileInput.value;
+				alert('Selected file: ' + oFileInput.value);
+			}
+
+			document.getElementById('fileInput').onchange = function () {
+			  alert('Selected file: ' + this.value);
+			}
+
+			$(document).on('click', '.browse', function(){
+			  var file = $(this).parent().parent().parent().find('.file') ;
+			  file.trigger('click');
+			});
+			$(document).on('change', '.file', function(){
+			  $(this).parent().find('.form-control').val($(this).val().replace(/C:\\fakepath\\/i, ''));
+			});
+		</script>
+		<!-- SCRIPT UPLOAD FILE -->
+		
+
+		<script src="/js/base.min.js"></script>
+		
+		<script src="/js/project.min.js"></script>
+
+		<script src="js/jquery.min.js"></script>
+
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/jquery-ui.min.js"></script>
+		<script src="js/scripts.js"></script>
+
+		<!-- DOSSIER ETAPE APPLICATION -->
+		<script src="js/dossierEtapeApp.js"></script>
+
+		<script src="js/bootstrap-datepicker.js"></script>
+		
+		<script src="js/bootstrap-duration-picker-debug.js"></script>
+		<!-- <script src="js/duration-picker.js"></script>
+		<script src="js/jquery-3.1.1.slim.min.js"></script> -->
+
+
+		<script>
+			$('#duration2').durationPicker({
+			  showSeconds: true,
+			  template: 'modal',
+			  onChanged: function (newVal) {
+				alert(newVal);
+			  }
+			});
+			
+			function loadAllData(){
+				getLsDossier();
+				loadDemandeur();
+			}
+		
+			function checkDifference(){
+				var date1 = new Date("2018-10-15");
+				var date2 = new Date("2018-10-19");
+				var timeDiff = Math.abs(date2.getTime() - date1.getTime());
+				var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
+				alert(diffDays);
+			}
+		
+			function rechercheDev() {
+				//var msg = '<label class="control-label col-md-3 col-sm-3 col-xs-12" for="comment"><span class="required"></span></label>';
+
+				var msg ='<label>Description:</label><textarea class="form-control" id="descriptionRecherche" type="text" name="descriptionRecherche" placeholder="Description ... " onchange="" required ></textarea>'+
+				
+				'</br><label>Estimation:</label><input class="form-control" id="estimationRecherche" type="number" name="estimationRecherche" placeholder="" onchange="" required ></input>'+
+				
+				//'</br><label>Estimation:</label><input type="text" id="duration" name="duration">'+
+				//'</br><label>Estimation:</label><input type="text" class="form-control" id="duration2">'+
+				
+				'</br><label>Deadline:</label><input class="form-control" id="delaiRecherche" type="date" name="delaiRecherche" onchange="" required ></input>'+
+				'</br><label>Type demande:</label>'+
+				'<select class="form-control" tabindex="-1" id="typeRecherche" name="typeRecherche">' +
+				  <% typeInterventions.forEach(function(typeIntervention){ %>
+				  <%if(typeIntervention.id_type_intervention > 4 && typeIntervention.id_type_intervention !== 10 ){%>
+					' <option value="<%= typeIntervention.id_type_intervention %>"><%= typeIntervention.libelle %></option> ' +
+				  <%}%>
+				  <% }); %>
+				  '</select>'+
+				  '<br><label for="abaque">Abaque :<span class="required"></span></label><input type="file" id="abaque" name="abaque" >'+
+				  '<br><label for="cTest">Cahier de test :<span class="required"></span></label><input type="file" id="cTest" name="cTest" >';
+
+				var titre = "Recherche et developpement :";
+				
+				/*var input = $("#duration");
+				input.durationPicker();*/
+			
+				bootbox.dialog({
+					message: msg,
+					title: titre,
+					//inputType: 'date',
+					buttons: {
+						annuler: {
+						  label: "Annuler",
+						  className: "btn-default",
+						  callback: function () {
+							//alert("not ok");
+						  }
+					   },
+					   main: {
+						  label: "Valider",
+						  className: "btn-primary",
+						  callback: function () {
+							var hms = $( "#estimationRecherche" ).val();
+							
+							//var isValid = /^(?:[0-9][0-9]|[01]?[0-9]):[0-5][0-9]:[0-5][0-9]$/.test(hms);
+
+							var description = escape($( "#descriptionRecherche" ).val());
+
+							//alert(description);
+							var delai = $( "#delaiRecherche" ).val();
+
+							var type = $( "#typeRecherche" ).val();
+
+							//if (isValid) {
+								//var a = hms.split(':');
+								//var duration = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]);
+								var duration = parseFloat(hms) * 3600;
+								window.location = "rechercheDeveloppements?descriptionRecherche="+description+"&estimationRecherche="+duration+"&delaiRecherche="+delai+"&typeIntervention="+type;
+								
+							/*} else {
+								alert("Format temps passé invalide");
+							}*/
+						  }
+					   }
+
+					}
+				});
+			}
+		</script>
+
+
+		<script>
+			function onClickNewApp(){
+				var idType = $("#typeIntervention option:selected").val();
+				var num = $("#dossierDash option:selected").text();
+				var idDossier = $("#dossierDash option:selected").val();
+				$("#dossierNum").val(idDossier);
+
+				$("#id_type_intervention").val(idType);
+				$("#demandeApp").removeClass("hidden");
+				$("#demandeIntervention").addClass("hidden");
+            };
+
+			function onChangeApp(){
+				var idType = $("#typeIntervention option:selected").val();
+
+				var idDossier = $("#dossierDash option:selected").val();
+				var idApp = $("#applicationDash option:selected").val();
+				$("#dossierNum2").val(idDossier);
+				$("#application").val(idApp);
+
+				$("#id_type_intervention").val(idType);
+				$("#demandeIntervention").removeClass("hidden");
+				$("#demandeApp").addClass("hidden");
+            };
+
+			function onChangeType(){
+				var idType = $("#typeIntervention option:selected").val();
+				//alert(idType);
+            };
+
+            var i = 1;
+            function addFonctionnalite(){
+			//alert("add fonctionnalite");
+
+                $("<div class='form-group'>"+
+                    "<label class='control-label col-md-3 col-sm-3 col-xs-12' for='last-name'>Fonctionnalité-"+i+" :<span class='required'></span></label>"+
+                        "<div class='form-group'>"+
+                            "<div class='col-md-3 col-sm-3 col-xs-12'>"+
+                                "<input type='text'  id='libelle-"+i+"' name='libelle-"+i+"' required='required' class='form-control col-md-2 col-xs-6' placeholder='Titre'>"+
+                            "</div>"+
+                            "<div class='col-md-3 col-sm-3 col-xs-12 hidden'>"+
+                                "<div class='input-group date' id='datetimepicker1'><input type='text'  id='delai-"+i+"' name='delai-"+i+"' class='form-control col-md-2 col-xs-6' placeholder='Delai - jj/mm/aaaa' value = ' '><span class='input-group-addon'><span class='glyphicon glyphicon-calendar'></span></span></div>"+
+
+                            "</div>"+
+
+                        "</div>"+
+                    "</div>"+
+                 "<div class='form-group'>"+
+                    "<label class='control-label col-md-3 col-sm-3 col-xs-12' for='last-name'><span class='required'></span></label>"+
+                        "<div class='form-group'>"+
+                            "<div class='col-md-3 col-sm-3 col-xs-12'>"+
+                                "<textarea type='text'  id='entree-"+i+"' name='entree-"+i+"' required='required' class='form-control col-md-2 col-xs-6' placeholder='Entrée'></textarea>"+
+                            "</div>"+
+                            "<div class='col-md-3 col-sm-3 col-xs-12'>"+
+                                "<textarea type='text'  id='sortie-"+i+"' name='sortie-"+i+"' required='required' class='form-control col-md-2 col-xs-6' placeholder='Sortie'></textarea>"+
+                            "</div>"+
+
+                        "</div>"+
+                    "</div>")
+                 .attr("id", "form-"+i)
+                 .attr("name", "form-"+i)
+                 .appendTo("#form-0");
+
+				$("#nb_fonctionnalite").val(i);
+                i++;
+            };
+
+			function get_nb_fonctionnalite(){
+                alert("valeur de i = "+i);
+				/*var j;
+				for(j=1; j<i;j++){
+					alert("Valeur "+j+"   ===>  "+document.getElementById('nom-'+j).value);
+					var libelle = document.getElementById('nom-'+j).value;
+					var entree = document.getElementById('entree-'+j).value;
+					var sortie = document.getElementById('sortie-'+j).value;
+					var delai = document.getElementById('delai-'+j).value;
+					//window.location = "ajoutApplicationFonctionnalite?idFonctionnalite=";
+				}*/
+            };
+
+			function loadForm(val) {
+				$.ajax({
+				  type: "GET",
+				  url: "/ajoutApplicationFonctionnalite?type="+val,
+				  beforeSend: function(xhr){
+				  },
+				  success: function(msg){
+					$("#forms").html(msg);
+				  },
+				  error: function (error) {
+					//alert('error; ' +error);
+				  }
+				});
+			}
+			
+			function loadDemandeur(){
+				
+				$.ajax({
+					type: "GET",
+					url: "/getListeDemandeur",
+					success: function(msg){
+						var html = "<option value=''></option>";
+						html += "<option value='0' selected disabled></option>";
+						var data = JSON.parse(msg);
+						for (var i = 0 ; i<data.length ; i++){
+						   var temp = data[i].get_demandeurs_fr.toString().split(','); // (10,Tsiry)
+						   var matricule = temp[0].replace(/[()]/g,'');
+						   var appelation = temp[1].replace(/[()]/g,'');
+						   var prenom = temp[2].replace(/[()]/g,'');
+						   var departement = temp[3].replace(/[()]/g,'');
+						   html += "<option value='"+matricule+"'> " +matricule+" - " +appelation+ " [ " +departement+ " ]</option>";
+						}
+						$("#demandeur").html(html);
+						$("#demandeur_application").html(html);
+					},
+					error: function (error) {
+						alert("ERROR GET VEHICULE");
+					}
+				});
+			}
+        </script>
+	</body>
+</html>

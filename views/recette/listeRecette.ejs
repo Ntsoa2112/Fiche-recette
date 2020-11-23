@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <title>Recette - Liste des recettes</title>
+  <meta name="generator" content="Bootply" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/styles.css" rel="stylesheet">
+  <link href="fonts/css/font-awesome.css" rel="stylesheet">
+  <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body>
+<!-- HEADER -->
+<% include ../header.ejs %>
+<!-- /HEADER -->
+<% var disable = "";
+		if(req.session.droit == 0){
+			disable = "hidden";}
+		%>
+
+<!-- Container -->
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-9">
+      <!-- avant container -->
+      
+      </br>
+      <hr>    <!-- include menu à gauche -->
+      <!-- /avant container-->
+
+      <div class="row"> <!-- CONTAINER -->
+        <div class="">
+          <div class="page-title">
+            <div class="title_left">
+              <h2>
+                Fiche recette
+                <small>
+                  Liste des recettes
+                </small>
+              </h2>
+            </div>
+
+          </div>
+          </br>
+          <div class="clearfix"></div>
+
+          <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="x_panel">
+                <div class="x_title">
+                  <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                  <table id="example" class="table table-striped responsive-utilities jambo_table">
+                    <thead>
+                    <tr class="headings">
+                      <th>ID</th>
+                      <th><i class="fa fa-file"></i> Titre </th>
+                      <th><i class="fa fa-paperclip"></i> Status </th>
+                      <th class=" no-link last"><i class="fa fa-file-text"></i> Détails</span>
+                      </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <% recettes.forEach(function(recette){ %>
+                    <tr class="even pointer">
+                      <td class=" "><%= recette.id_recette %></td>
+                      <td class=" "><%= recette.titre_recette %></td>
+                      <td class=" "><%= recette.status_recette %></td>
+                      <td class=" last"><a href="/recetteById?id=<%= recette.id_recette %>">Voir détails</a>
+                      </td>
+                    </tr>
+                    <% }); %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <br />
+            <br />
+            <br />
+          </div>
+        </div>
+      </div>
+      <!--/row-->
+
+
+      <!-- Notifications -->
+      <% include ../notifications.ejs %>
+      <!-- /Notifications -->
+
+    </div>
+    <!--/col-span-9-->
+  </div>
+</div>
+<!-- /Container -->
+<!-- Footer -->
+		<center><% include ../footer.ejs %></center>
+		<!-- /Footer -->
+
+<!-- script  -->
+<script src="/js/base.min.js"></script>
+<script src="/js/project.min.js"></script>
+
+<script src="js/jquery.min.js"></script>
+
+<script src="js/bootstrap.min.js"></script>
+<script src="js/scripts.js"></script>
+</body>
+</html>

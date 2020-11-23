@@ -1,0 +1,155 @@
+<html>
+<head>
+<title>AuthController.js</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: rgb(0,0,0); font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); font-style: italic; }
+.s1 { }
+.s2 { color: rgb(0,0,128); font-weight: bold; }
+.s3 { color: rgb(0,128,0); font-weight: bold; }
+.s4 { color: rgb(0,0,255); }
+</style>
+</head>
+<BODY BGCOLOR="#ffffff">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#C0C0C0" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+AuthController.js</FONT>
+</center></TD></TR></TABLE>
+<pre>
+
+<span class="s0">/** 
+ * Created by 8032 on 26/02/2016. 
+ */</span><span class="s1"> 
+ 
+</span><span class="s2">var </span><span class="s1">passport = require(</span><span class="s3">'passport'</span><span class="s1">); </span><span class="s0">//include passport</span><span class="s1"> 
+ 
+</span><span class="s0">//include session********************</span><span class="s1"> 
+</span><span class="s2">var </span><span class="s1">session = require(</span><span class="s3">'express-session'</span><span class="s1">); 
+</span><span class="s2">var </span><span class="s1">RedisStore = require(</span><span class="s3">'connect-redis'</span><span class="s1">)(session); 
+bcrypt = require(</span><span class="s3">'bcryptjs'</span><span class="s1">); 
+</span><span class="s0">//fin include session**************************</span><span class="s1"> 
+ 
+</span><span class="s0">///Controlleur d'authentificationetr</span><span class="s1"> 
+module.exports = { 
+ 
+  _config: { 
+    actions: </span><span class="s2">false</span><span class="s1">, 
+    shortcuts: </span><span class="s2">false</span><span class="s1">, 
+    rest: </span><span class="s2">false</span><span class="s1"> 
+  }, 
+ 
+  </span><span class="s0">///_______________________________Fonction login(connexion)</span><span class="s1"> 
+  login: </span><span class="s2">function</span><span class="s1">(req, res) 
+  { 
+    </span><span class="s0">//select fr_utilisateur.id_utilisateur, r_personnel.id_pers from fr_utilisateur join r_personnel on fr_utilisateur.id_pers = r_personnel.id_pers where r_personnel.id_pers = 1 and r_personnel.mdp = '1';</span><span class="s1"> 
+    </span><span class="s0">//User.findOne({ id: parseInt(req.param('email',null)) }, function (err, user) // mtady an le user</span><span class="s1"> 
+    </span><span class="s2">var </span><span class="s1">email = parseInt(req.param(</span><span class="s3">'email'</span><span class="s1">,</span><span class="s2">null</span><span class="s1">)); 
+    console.log(</span><span class="s3">'Email ===============================&gt; '</span><span class="s1">+email); 
+    </span><span class="s2">var </span><span class="s1">query = </span><span class="s3">'select fr_utilisateur.* from fr_utilisateur join r_personnel on fr_utilisateur.id_pers = r_personnel.id_pers where fr_utilisateur.id_pers = '</span><span class="s1">+email+</span><span class="s3">''</span><span class="s1">; 
+ 
+   </span><span class="s0">/* Utilisateur.findOne({ id_pers: parseInt(req.param('email',null))}, function (err, utilisateur){ 
+      if (err) //ra mis erreur 
+      { 
+        console.log(err);  // le erreur n retournena 
+      } 
+      if (!utilisateur) // si l'email n'exuiste pas 
+      { 
+        console.log('Email invalide utilisateur.'); //afficher email invalide 
+        return res.redirect('/login'); 
+      } 
+      console.log('QUERY =======================  '+query); 
+ 
+      if(utilisateur) 
+      {*/</span><span class="s1"> 
+        User.findOne({ id: parseInt(req.param(</span><span class="s3">'email'</span><span class="s1">,</span><span class="s2">null</span><span class="s1">))}, </span><span class="s2">function </span><span class="s1">(err, user){ 
+          </span><span class="s2">if </span><span class="s1">(err) </span><span class="s0">//ra mis erreur</span><span class="s1"> 
+          { 
+            console.log(err); 
+          } 
+          </span><span class="s2">if </span><span class="s1">(!user) </span><span class="s0">// si l'email n'exuiste pas</span><span class="s1"> 
+          { 
+            console.log(</span><span class="s3">'Email invalide user.'</span><span class="s1">); </span><span class="s0">//afficher email invalide</span><span class="s1"> 
+            </span><span class="s2">return </span><span class="s1">res.redirect(</span><span class="s3">'/login'</span><span class="s1">); 
+          } 
+          </span><span class="s2">if</span><span class="s1">(req.param(</span><span class="s3">'password'</span><span class="s1">,</span><span class="s2">null</span><span class="s1">)!=user.password) 
+          { 
+            console.log(</span><span class="s3">'Mot de passe invalide:'</span><span class="s1">+user.password+</span><span class="s3">'='</span><span class="s1">+req.param(</span><span class="s3">'password'</span><span class="s1">,</span><span class="s2">null</span><span class="s1">)); 
+            </span><span class="s2">var </span><span class="s1">message = </span><span class="s3">&quot;blabla&quot;</span><span class="s1">; 
+            </span><span class="s2">return </span><span class="s1">res.redirect(</span><span class="s3">'/login'</span><span class="s1">); 
+          } 
+          </span><span class="s2">else</span><span class="s1"> 
+          { 
+            </span><span class="s2">if</span><span class="s1">(user.id != </span><span class="s4">1</span><span class="s1">) 
+            { 
+              req.session.user = user.id  </span><span class="s0">//Le id an le user n atao ao anatin le req.session</span><span class="s1"> 
+              req.session.authenticated = </span><span class="s2">true</span><span class="s1"> 
+              </span><span class="s0">//mandefa an le req.ression affichena any am accueil, redirection vers accueil</span><span class="s1"> 
+              res.redirect(</span><span class="s3">'/accueilT'</span><span class="s1">); 
+            } 
+            </span><span class="s2">else</span><span class="s1"> 
+            { 
+              req.session.user = user.id  </span><span class="s0">//Le id an le user n atao ao anatin le req.session</span><span class="s1"> 
+              req.session.authenticated = </span><span class="s2">true</span><span class="s1"> 
+              </span><span class="s0">//mandefa an le req.ression affichena any am accueil, redirection vers accueil</span><span class="s1"> 
+              res.redirect(</span><span class="s3">'/dashboard'</span><span class="s1">); 
+            } 
+          } 
+        }); 
+      </span><span class="s0">//}</span><span class="s1"> 
+    </span><span class="s0">//});</span><span class="s1"> 
+    </span><span class="s0">/*passport.authenticate('local', function(err, user, info)//appel an le fonction &quot;function(err, user, info)&quot; ao am passport, mi-retourner Use 
+    { 
+      if (((err) || !user))//ra tsis user retournen le fonction 
+      { 
+          return res.send({ //manndefa an le resultat 
+            //message: info.message, 
+            user: user, 
+            message: err, 
+          }); 
+      } 
+      //else ra mis user 
+      req.logIn(user, function(err) { 
+        if (err)//ra misy erreur d mandefa an le erreur any am resultat 
+        { 
+          res.send(err); 
+        } 
+        else // sinon 
+        { 
+          //debut session**************************** 
+            /*app.use(session({ 
+              store: new RedisStore(options), 
+              secret: 'keyboard cat' 
+            }));*/</span><span class="s1"> 
+ 
+ 
+          </span><span class="s0">//fin session******************************</span><span class="s1"> 
+ 
+          </span><span class="s0">/*return res.send({ //mandefa an le resultat 
+            message: info.message, 
+            user: user 
+          });*/</span><span class="s1"> 
+       </span><span class="s0">/* } 
+      }); 
+    })(req, res);*/</span><span class="s1"> 
+  }, 
+  </span><span class="s0">///_______________________________fin login</span><span class="s1"> 
+ 
+ 
+  </span><span class="s0">///________________________________Fonction logout(deconnexion)</span><span class="s1"> 
+  logout: </span><span class="s2">function</span><span class="s1">(req, res) 
+  { 
+    req.session.user = </span><span class="s2">null</span><span class="s1">; 
+    req.session.authenticated = </span><span class="s2">false</span><span class="s1">; 
+    req.logout(); 
+    res.redirect(</span><span class="s3">'/login'</span><span class="s1">); 
+  }, 
+  </span><span class="s0">///________________________________fin logout</span><span class="s1"> 
+ 
+}; 
+ 
+ 
+</span></pre>
+</body>
+</html>

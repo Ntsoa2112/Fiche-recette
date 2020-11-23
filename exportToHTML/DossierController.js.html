@@ -1,0 +1,163 @@
+<html>
+<head>
+<title>DossierController.js</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: rgb(0,0,0); font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); font-style: italic; }
+.s1 { color: rgb(128,128,128); font-weight: bold; font-style: italic; }
+.s2 { }
+.s3 { color: rgb(0,0,128); font-weight: bold; }
+.s4 { color: rgb(0,128,0); font-weight: bold; }
+.s5 { color: rgb(0,0,255); }
+</style>
+</head>
+<BODY BGCOLOR="#ffffff">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#C0C0C0" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+DossierController.js</FONT>
+</center></TD></TR></TABLE>
+<pre>
+
+<span class="s0">/** 
+ * DossierController 
+ * 
+ * </span><span class="s1">@description </span><span class="s0">:: Server-side logic for managing dossiers 
+ * </span><span class="s1">@help        </span><span class="s0">:: See http://sailsjs.org/#!/documentation/concepts/Controllers 
+ */</span><span class="s2"> 
+ 
+module.exports = { 
+  findDossier: </span><span class="s3">function</span><span class="s2">(req, res) 
+  { 
+    </span><span class="s0">// if (!req.session.user) return res.redirect('/login');</span><span class="s2"> 
+ 
+    </span><span class="s0">//var pagination = {DossierTop : 0, DossierLimit:100};rde</span><span class="s2"> 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+    </span><span class="s3">var </span><span class="s2">retVal = []; 
+    </span><span class="s3">var </span><span class="s2">b = </span><span class="s5">0</span><span class="s2">; 
+    </span><span class="s0">//console.log('status='+req.param(&quot;search&quot;,100));</span><span class="s2"> 
+ 
+    Dossier.query(</span><span class="s4">'select * from p_dossier order by id_dossier'</span><span class="s2">, </span><span class="s3">function</span><span class="s2">(err, found){ 
+      </span><span class="s3">if</span><span class="s2">(err){ 
+        console.log(err); 
+      } 
+      console.log(found.rows); 
+      res.view( </span><span class="s4">'dossier/listeDossier'</span><span class="s2">, {dossiers: found.rows} ); 
+    }); 
+ 
+    </span><span class="s0">/*Dossier.find().paginate({page: pagination.DossierTop, limit: pagination.DossierLimit}).exec(function (error, found) { 
+ 
+      retVal['dossiers'] = found; 
+ 
+      if(req.param(&quot;search&quot;,100)==100) 
+      { 
+        retVal['search_result'] = []; 
+        retVal['search_result_project'] = []; 
+        retVal['search'] = b; 
+        return res.view('dossier/listeDossier', retVal); 
+      } 
+      else 
+      { 
+        b= 1; 
+        retVal['search'] = b; 
+        Projection.find({id_auditorium:req.param(&quot;search&quot;,100)}).exec(function (er, project) { 
+          var filmProject = []; 
+          var projection = []; 
+          var compteur = 0; 
+          for(var i = 0; i&lt;project.length;i++){ 
+            for(var j = 0 ; j&lt;film.length;j++ ){ 
+              if(film[j].id==project[i].id_cinema){ 
+                filmProject[compteur] = film[j]; 
+                projection[compteur] = project[i]; 
+                compteur++; 
+              } 
+            } 
+          } 
+          return res.view('dossier/listeDossier', retVal); 
+        }); 
+      } 
+ 
+      if(err){ 
+        console.log(err); 
+      } 
+      console.log(found); 
+      res.view( 'dossier/listeDossier', {dossiers: found} ); 
+    });*/</span><span class="s2"> 
+  }, 
+  findDossierT: </span><span class="s3">function</span><span class="s2">(req, res) 
+  { 
+    </span><span class="s0">// if (!req.session.user) return res.redirect('/login');</span><span class="s2"> 
+ 
+    </span><span class="s0">//var pagination = {DossierTop : 0, DossierLimit:100};rde</span><span class="s2"> 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+    </span><span class="s3">var </span><span class="s2">retVal = []; 
+    </span><span class="s3">var </span><span class="s2">b = </span><span class="s5">0</span><span class="s2">; 
+    </span><span class="s0">//console.log('status='+req.param(&quot;search&quot;,100));</span><span class="s2"> 
+ 
+    Dossier.query(</span><span class="s4">'select * from p_dossier order by id_dossier'</span><span class="s2">, </span><span class="s3">function</span><span class="s2">(err, found){ 
+      </span><span class="s3">if</span><span class="s2">(err){ 
+        console.log(err); 
+      } 
+      console.log(found.rows); 
+      res.view( </span><span class="s4">'testeur/listeDossierTesteur'</span><span class="s2">, {dossiers: found.rows} ); 
+    }); 
+  }, 
+ 
+  </span><span class="s0">//____________________________________________debut fonctionn FIND BY ID dossier</span><span class="s2"> 
+  findDossierById: </span><span class="s3">function</span><span class="s2">(req, res) 
+  { 
+    </span><span class="s3">if </span><span class="s2">(!req.session.user) </span><span class="s3">return </span><span class="s2">res.redirect(</span><span class="s4">'/login'</span><span class="s2">); 
+ 
+    </span><span class="s3">var </span><span class="s2">id=req.param(</span><span class="s4">'id'</span><span class="s2">,</span><span class="s3">null</span><span class="s2">); 
+    </span><span class="s3">var </span><span class="s2">retVal = []; 
+ 
+    Dossier.findOne(id).exec(</span><span class="s3">function </span><span class="s2">(err, dossier) 
+    { 
+      </span><span class="s3">if </span><span class="s2">(err) 
+      { 
+        </span><span class="s3">return </span><span class="s2">res.negotiate(err); 
+      } 
+      </span><span class="s3">if </span><span class="s2">(!id) 
+      { 
+        </span><span class="s3">return </span><span class="s2">res.notFound(</span><span class="s4">'Could not find sorry.'</span><span class="s2">); 
+      } 
+      retVal[</span><span class="s4">'dossier'</span><span class="s2">] = dossier; 
+      </span><span class="s0">//Redirection</span><span class="s2"> 
+      res.view( </span><span class="s4">'application/ajoutApplicationDossier'</span><span class="s2">, retVal ); 
+    }); 
+  }, 
+  </span><span class="s0">//____________________________________________fin fonctionn FIND BY ID dossier</span><span class="s2"> 
+ 
+  </span><span class="s0">//_____________________________________________Debut PAGINATION</span><span class="s2"> 
+  </span><span class="s0">/*Reload: function (req, res) { 
+    //if (!req.session.user) return res.redirect('/login'); 
+ 
+    var retVal = []; 
+    var filtre = (pagination.filtre==null)?{}:pagination.filtre; 
+    var sortParam = pagination.FilmOrder + ' ' + pagination.FilmOrderDirection; 
+ 
+    Film.find(filtre).paginate({page: pagination.FilmTop, limit: pagination.FilmLimit}).sort(sortParam).exec(function (error, Film) { 
+      if (error) return res.serverError(error); 
+      return res.view('dossier/listeDossier', retVal); 
+    }) 
+  }, 
+ 
+  show: function (req, res) { 
+    //if (!req.session.user) return res.redirect('/login'); 
+ 
+    var pagination = {FilmTop : 0, FilmLimit:120}; 
+    var retVal = []; 
+ 
+    Film.find().paginate({page: pagination.FilmTop, limit: pagination.FilmLimit}).exec(function (error, film) { 
+      retVal['film'] = film; 
+      retVal['pagination'] = pagination; 
+      return res.view('dossier/listeDossier', retVal); 
+    }) 
+  },*/</span><span class="s2"> 
+  </span><span class="s0">//_____________________________________________Fin PAGINATION</span><span class="s2"> 
+}; 
+ 
+</span></pre>
+</body>
+</html>

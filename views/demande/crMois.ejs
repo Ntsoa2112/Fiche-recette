@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <title>Fiche Recette</title>
+  <meta name="generator" content="Bootply" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/styles.css" rel="stylesheet">
+  <link href="fonts/css/font-awesome.css" rel="stylesheet">
+  <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+  <!--script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script-->
+  <script type="text/javascript" src="js/paging.js"></script>
+
+  <link rel="stylesheet" href="css/bootstrap-duration-picker.css">
+
+  <style>
+    a.disabled {
+      color: gray;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body onload="loadAllDemande();">
+<!-- HEADER -->
+<% include ../header.ejs %>
+<!-- /HEADER -->
+<% var disable = "";
+if(req.session.droit == 0){
+  disable = "hidden";}
+
+ var disableDev = "hidden";
+ if(req.session.user == 177 || req.session.user == 487 || req.session.user == 1020){
+  disableDev = "";
+  }
+
+  var showTable = "hidden";
+  var showTableGlobale = "hidden";
+  if(req.session.user == 177){
+	showTableGlobale = "";
+  }else{
+	showTable = " ";
+  }
+
+  var disableExport = "";
+
+%>
+
+<%
+	var onChangeTab = "onChange();";
+
+
+%>
+
+<!-- Main -->
+<div class="container-fluid">
+  <div class="row">
+    <div id="menuCenter">
+    <%
+      function CalculeDate(seconde)
+      {
+        var totalSeconds = parseInt(seconde, 10);
+        var hours = Math.floor(totalSeconds / 3600);
+        var h = "";
+        if(hours.toString().length == 1)
+          h = "0"+hours.toString();
+        else
+          h = hours.toString();
+
+        totalSeconds %= 3600;
+        var minutes = Math.floor(totalSeconds / 60);
+        var mn = "";
+        if(minutes.toString().length == 1)
+          mn = "0"+minutes.toString();
+        else
+          mn = minutes.toString();
+
+        var seconds = totalSeconds % 60;
+        var s = "";
+        if(seconds.toString().length == 1)
+          s = "0"+seconds.toString();
+        else
+          s = seconds.toString();
+
+        return h+":"+mn+":"+s;
+      }
+    %>
+      <div class="row"> <!-- CONTAINER -->
+        <div class="">
+          <div class="page-title">
+            <div class="title_left">
+              <h2>
+                Fiche recette
+                <small>
+					Export CR 
+                </small>
+              </h2>
+            </div>
+          </div>
+
+
+          <div class="row">
+
+
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="x_panel">
+                <div class="x_content <%= disable %>">
+					
+				  </br>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+
+					<div class="form-group col-md-2 ">
+						<label for="tc_select">Début</label>
+						<input type="date" class="form-control" id="debut_select" name="debut_select" onchange="<%= onChangeTab %>" oninput="<%= onChangeTab %>"></input>
+					</div>
+
+					<div class="form-group col-md-2 ">
+						<label for="tc_select">Fin</label>
+						<input type="date" class="form-control" id="fin_select" name="fin_select" onchange="<%= onChangeTab %>" oninput="<%= onChangeTab %>"></input>
+					</div>
+
+					<!--fin div de selection --->
+						<br/>
+						<br/>
+						<br/>
+						<br/>
+						<br/>
+
+
+
+					<% var disable = "";
+						if(req.session.droit == 0){
+						  disable = "hidden";}
+					%>
+
+					<%
+					  function CalculeDate(seconde)
+					  {
+						var totalSeconds = parseInt(seconde, 10);
+						var hours = Math.floor(totalSeconds / 3600);
+						var h = "";
+						if(hours.toString().length == 1)
+						  h = "0"+hours.toString();
+						else
+						  h = hours.toString();
+
+						totalSeconds %= 3600;
+						var minutes = Math.floor(totalSeconds / 60);
+						var mn = "";
+						if(minutes.toString().length == 1)
+						  mn = "0"+minutes.toString();
+						else
+						  mn = minutes.toString();
+
+						var seconds = totalSeconds % 60;
+						var s = "";
+						if(seconds.toString().length == 1)
+						  s = "0"+seconds.toString();
+						else
+						  s = seconds.toString();
+
+						return h+":"+mn+":"+s;
+					  }
+					%>
+
+
+					<!------------------------------------------------ DEBUT TABLE GLOBALE TABLEAU ---------->
+							<div id ="lstTacheGlobale" class="col-md-12">
+							  <table class="table" id="table-globale">
+								<thead>
+								  <tr>
+									<th> DEV </th>
+									<th> TOTAL </th>
+									<th> CONGE </th>
+									
+									<th> Application en cours </th>
+									<th> Application terminé </th>
+									<th> Temps plannifié </th>
+									
+									<th>Assistance</th>
+									<th>Developpement </th>
+									<th>Gestion </th>
+									<th>Temps Bug</th>
+									<th>Recherche </th>
+									<th>Réunion </th>
+									
+									<!--<th>Nb Assistance </th>
+									<th>Nb Developpement </th>
+									<th>Nb Gestion </th>
+									
+									<th>Nb Recherche </th>-->
+									
+									<th>Nb Bug</th>
+									
+									<th>DLL OK </th>
+									<th>DLL NOK </th>
+									<!--<th>Qualite OK </th>
+									<th>Qualite NOK </th>-->
+									
+								  </tr>
+								</thead>
+								<tbody id="glob_gs">
+								  <tr>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<!--<td></td>
+									<td></td>
+									<td></td>
+									<td></td>-->
+									<!--<td></td>
+									<td></td>-->
+								  </tr>
+								</tbody>
+							  </table>
+							</div>
+
+							<input type="hidden" id="applications" name="applications" value = "<%=applications%>">
+							<!------------------------------------------------  FIN DEBUT TABLE GLOBALE ---------->
+
+                    <div id="pageNavPosition"></div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </br>
+        </br>
+        </br>
+        <!-- Notifications -->
+        <% include ../notifications.ejs %>   <!-- include menu à gauche -->
+        <!-- /Notifications -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<form>
+  <input type="hidden" id="bug" name="bug" value = "<%=bug%>">
+  <input type="hidden" id="dev" name="dev" value = "<%=dev%>">
+  <input type="hidden" id="assistance" name="assistance" value = "<%=assistance%>">
+  <input type="hidden" id="newApp" name="newApp" value = "<%=newApp%>">
+</form>
+
+<!-- /Main -->
+<center><% include ../footer.ejs %></center>
+<script src="/js/base.min.js"></script>
+<script src="/js/jquery-1.12.4.js"></script>
+
+
+<script src="/js/project.min.js"></script>
+
+<script src="/js/bootbox.min.js"></script>
+
+<!--<script src="/js/jquery.min.js"></script>-->
+<script src="js/bootstrap.min.js"></script>
+<script src="js/scripts.js"></script>
+<script src="js/bootstrap-datepicker.js"></script>
+
+<script type="text/javascript" src="js/raphael-min.js"></script>
+<script type="text/javascript" src="js/morris-min.js"></script>
+
+<script type="text/javascript" src="js/bootstrap-duration-picker-debug.js"></script>
+
+<!-- DOSSIER ETAPE APPLICATION -->
+<script src="js/dossierEtapeApp.js"></script>
+
+
+<!--DATATABLE-->
+		<script src="/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+		<script src="/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+		<script src="/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/buttons.flash.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/buttons.html5.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/buttons.print.min.js"></script>
+		<script src="/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+		<script src="/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+		<script src="/vendors/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+		<script src="/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
+		<script src="/vendors/datatables.net-scroller/js/datatables.scroller.min.js"></script>
+		<script src="/vendors/jszip/dist/jszip.min.js"></script>
+		<script src="/vendors/pdfmake/build/pdfmake.min.js"></script>
+		<script src="/vendors/pdfmake/build/vfs_fonts.js"></script>
+<!--FIN DATATABLE-->
+
+<!---------------------------------------FONCTION TABLE EXPORT ------------------------------->
+
+<script language="javascript">
+	function onChange(){
+		getGestionSousTache();
+	}
+
+	function loadAllDemande(){
+		loadDataTableG();
+		getLsDossier();
+		loadDev();
+		loadDemandeur();
+		loadPriorite();
+		loadEtatDemande();
+		loadTypeDemande();
+		getGestionSousTache();
+	}
+
+	//Load
+	function loadDev(){
+		$.ajax({
+		  type: "GET",
+		  url: "/getLsDevPers",
+
+		  success: function(msg){
+
+			var html = "<option value=''></option>";
+			var data = JSON.parse(msg);
+
+			//alert("test "+data);
+
+			for (var i = 0 ; i<data.length ; i++){
+			  html += "<option value='"+data[i].id_pers+"'>"+data[i].id_pers+" - "+data[i].appelation+"</option>";
+			}
+			$("#dev_select").html(html);
+		  },
+		  error: function (error) {
+			alert(error);
+		  }
+		});
+	}
+
+	//DEMANDEUR
+	function loadDemandeur(){
+		$.ajax({
+		  type: "GET",
+		  url: "/getLsDemandeurPers",
+
+		  success: function(msg){
+
+			var html = "<option value=''></option>";
+			var data = JSON.parse(msg);
+
+			//alert("test "+data);
+
+			for (var i = 0 ; i<data.length ; i++){
+			  html += "<option value='"+data[i].id_personne_demande+"'>"+data[i].id_personne_demande+" - "+data[i].appelation+"</option>";
+			}
+			$("#demandeur_select").html(html);
+		  },
+		  error: function (error) {
+			alert(error);
+		  }
+		});
+	}
+
+	function loadPriorite(){
+		$.ajax({
+		  type: "GET",
+		  url: "/getLsTypePriorite",
+
+		  success: function(msg){
+
+			var html = "<option value=''></option>";
+			var data = JSON.parse(msg);
+
+			//alert("test "+data);
+
+			for (var i = 0 ; i<data.length ; i++){
+			  html += "<option value='"+data[i].id_priorite+"'>"+data[i].libelle_priorite+"</option>";
+			}
+			$("#priorite_select").html(html);
+		  },
+		  error: function (error) {
+			alert(error);
+		  }
+		});
+	}
+
+	function loadTypeDemande(){
+		$.ajax({
+		  type: "GET",
+		  url: "/getLsTypeDemande",
+
+		  success: function(msg){
+
+			var html = "<option value=''></option>";
+			var data = JSON.parse(msg);
+
+			//alert("test "+data);
+
+			for (var i = 0 ; i<data.length ; i++){
+			  html += "<option value='"+data[i].id_type_intervention+"'>"+data[i].libelle+"</option>";
+			}
+			$("#type_select").html(html);
+		  },
+		  error: function (error) {
+			alert(error);
+		  }
+		});
+	}
+
+	function loadEtatDemande(){
+		$.ajax({
+		  type: "GET",
+		  url: "/getLsEtatDemande",
+
+		  success: function(msg){
+
+			var html = "<option value=''></option>";
+			var data = JSON.parse(msg);
+
+			//alert("test "+data);
+
+			for (var i = 0 ; i<data.length ; i++){
+			  html += "<option value='"+data[i].id_etat_demande+"'>"+data[i].libelle+"</option>";
+			}
+			$("#etat_demande_select").html(html);
+		  },
+		  error: function (error) {
+			alert(error);
+		  }
+		});
+	}
+</script>
+ <!------------------------------------------------  DEBUT TABLE GLOBALE ---------->
+<script type="text/javascript">
+	function loadDataTableG() {
+		var handleDataTableButtons_gl = function() {
+		  if ($("#table-globale").length) {
+			$("#table-globale").DataTable({
+			  dom: "Bfrtip",
+			  destroy: true,
+			  searching: false,
+			  paging: false,
+			  sort: false,
+			  "aLengthMenu": [[25, 50, 75, -1], [25, 50, 75, "All"]],
+			  "iDisplayLength": 25,
+			  buttons: [
+				{
+				  extend: "copy",
+				  className: "btn-sm"
+				},
+				{
+				  extend: "csv",
+				  className: "btn-sm"
+				},
+				{
+				  extend: "excel",
+				  className: "btn-sm"
+				},
+				{
+				  extend: "pdfHtml5",
+				  className: "btn-sm"
+				},
+				{
+				  extend: "print",
+				  className: "btn-sm"
+				},
+			  ],
+			  responsive: true
+			});
+		  }
+		};
+		TableManageButtons_gl= function() {
+		  "use strict";
+		  return {
+			init: function() {
+			  handleDataTableButtons_gl();
+			}
+		  };
+		}();
+		TableManageButtons_gl.init();
+	}
+
+	function CalculeDate(seconde)
+	{
+		var totalSeconds = parseInt(seconde, 10);
+		var hours = Math.floor(totalSeconds / 3600);
+		var h = "";
+		if(hours.toString().length == 1)
+		  h = "0"+hours.toString();
+		else
+		  h = hours.toString();
+
+		totalSeconds %= 3600;
+		var minutes = Math.floor(totalSeconds / 60);
+		var mn = "";
+		if(minutes.toString().length == 1)
+		  mn = "0"+minutes.toString();
+		else
+		  mn = minutes.toString();
+
+		var seconds = totalSeconds % 60;
+		var s = "";
+		if(seconds.toString().length == 1)
+		  s = "0"+seconds.toString();
+		else
+		  s = seconds.toString();
+
+		if(isNaN(h) || isNaN(mn) || isNaN(s)){
+			return "-";
+		}
+		return h+":"+mn+":"+s;
+	}
+  function CalculValeur(seconde)
+  {
+      var retourCalcul;
+  //    alert(seconde);
+    var h2=parseFloat(parseInt(seconde)/3600);
+    retourCalcul=h2;
+    return Number(retourCalcul.toFixed(2));
+  }
+  
+  
+  
+	function getGestionSousTache()
+	{
+		$("#table-globale").dataTable().fnDestroy()
+		
+		//debut fin select
+		var debut = $("#debut_select").val();
+		var fin = $("#fin_select").val();
+		//fin debut fin select
+
+		$("#glob_gs").html("");
+		$("#table-globale").dataTable().fnDestroy()
+
+		$.ajax({
+			type: "GET",
+			url: "/AfficherDataCRtotal?debut="+debut+"&fin="+fin,
+			success: function(msg){
+				var application = JSON.parse(msg);
+				var htmll = "";
+				var total_heure = 0;
+				var total_heure_dem = 0;
+
+				
+				var debutC = "";
+				var finC = "";
+				if (debut !== "" && fin == ""){
+					var debutFormat = new Date(debut);
+					var monthD = debutFormat.getMonth() + 1;
+					var debutC = debutFormat.getDate()  + '/' + monthD  + '/' + debutFormat.getFullYear();
+				}
+				if (debut == "" && fin !== ""){
+					var finFormat = new Date(fin);
+					var monthF = finFormat.getMonth()  + 1;
+					finC = finFormat.getDate()  + '/' + monthF +  '/' + finFormat.getFullYear();
+				}
+				if (debut !== "" && fin !== ""){
+					var debutFormat = new Date(debut);
+					var finFormat = new Date(fin);
+					var monthD = debutFormat.getMonth() + 1;
+					var monthF = finFormat.getMonth()  + 1;
+					debutC = debutFormat.getDate()  + '/' + monthD  + '/' + debutFormat.getFullYear();
+					finC = finFormat.getDate()  + '/' + monthF +  '/' + finFormat.getFullYear();
+				}
+				
+				<!-- //alert (debutC + "       =>" + finC); d -->
+				
+				for (var i = 0 ; i<application.length ; i++){
+					
+					var nbConge = function () {
+						var tmp = null;
+						$.ajax({
+							'async': false,
+							'type': "POST",
+							'global': false,
+							'dataType': 'html',
+							'url': "/AfficherDataConge?debut="+debutC+"&fin="+finC+"&idPers="+application[i].id_personne_dev,
+							'data': { 'request': "", 'target': 'arrange_url', 'method': 'method_target' },
+							'success': function (data) {
+								var data2 = JSON.parse(data);
+								tmp = data2[0].sum;
+							}
+						});
+						return tmp;
+					}();
+				
+					//var nbConge = getNbConge(application[i].id_personne_dev, debutC, finC);
+					//alert(nbConge);
+					
+					//var afficheConge = nbConge*8;
+					//var total = CalculValeur(application[i].developpement + application[i].nouvelle + application[i].assistance + application[i].gestion + application[i].bug + application[i].recherche + application[i].reunion + application[i].redaction + application[i].test + application[i].formation) + afficheConge;
+					//var totalGestion = CalculValeur(application[i].gestion + application[i].reunion + application[i].redaction + application[i].test + application[i].formation);
+					
+					
+					var afficheConge = nbConge*8;
+					var total = CalculValeur(application[i].developpement + application[i].nouvelle + application[i].assistance + application[i].gestion + application[i].bug + application[i].recherche + application[i].reunion + application[i].redaction + application[i].test + application[i].formation  + application[i].analyse) + afficheConge ;
+					
+					var tempsPlanifie = application[i].tempsestime;
+					if(application[i].tempspasse){
+						tempsPlanifie = application[i].tempsestime - application[i].tempspasse;
+					}
+					
+					
+					htmll += "<tr class='even pointer' data-toggle='collapse' data-target='#accordion' class='clickable'>"+
+					"<td  class=''>"+application[i].appelation +"</td>"+
+					"<td  class=''>"+(total.toFixed(2) || "-")+"</td>"+
+					"<td  class=''>"+(afficheConge || "-")+"</td>"+
+					
+					"<td  class=''>"+(application[i].appencours || "-")+"</td>"+
+					"<td  class=''>"+(application[i].apptermine || "-")+"</td>"+
+					"<td  class=''>"+(CalculValeur(tempsPlanifie) || "-")+"</td>"+
+					
+					"<td  class=''>"+(CalculValeur(application[i].assistance) || "-") +"</td>"+
+					"<td  class=''>"+(CalculValeur(application[i].developpement + application[i].nouvelle + application[i].analyse) || "-")  +"</td>"+
+					"<td  class=''>"+(CalculValeur(application[i].gestion + application[i].reunion + application[i].redaction + application[i].test + application[i].formation) || "-") +"</td>"+
+					"<td  class=''>"+(CalculValeur(application[i].bug) || "-") +"</td>"+
+					"<td  class=''>"+(CalculValeur(application[i].recherche) || "-") +"</td>"+
+					"<td  class=''>"+(CalculValeur(application[i].reunion) || "-") +"</td>"+
+					
+					///"<td  class=''>"+(application[i].assistancenb || "-") +"</td>"+
+					//"<td  class=''>"+(application[i].developpementnb || "-")  +"</td>"+
+					//"<td  class=''>"+(application[i].gestionnb || "-") +"</td>"+
+					
+					"<td  class=''>"+(application[i].bugnb || "-") +"</td>"+
+					
+					//"<td  class=''>"+(application[i].recherchenb || "-") +"</td>"+
+					
+					"<td  class=''>"+(application[i].delaiok || "-")+"</td>"+
+					"<td  class=''>"+(application[i].delainok || "-")+"</td>";
+					
+					/*"<td  class=''>-</td>"+
+					"<td  class=''>-</td>";*/
+
+					$("#glob_gs").html(htmll);
+				}
+				loadDataTableG();
+			},
+			error: function (error) {
+			  alert("error; " +error);
+			}
+		});
+	}
+</script>
+</body>
+</html>
+
+<!--function getAjaxFiltreTachePrisDossierGlobale(sel)
+    {
+		$("#table-globale").dataTable().fnDestroy()
+
+		getval(sel);
+		$("#applicationDash").val("a");
+
+		$("#glob_gs").html("");
+		$("#table-globale").dataTable().fnDestroy()
+		$.ajax({
+			type: "GET",
+			url: "/AfficherDataCRtotal",
+			success: function(msg){
+				var application = JSON.parse(msg);
+				//alert(application);
+				var htmll = "";
+				var total_heure = 0;
+				var total_heure_dem = 0;
+
+				for (var i = 0 ; i<application.length ; i++){
+				
+					var total = CalculValeur(application[i].developpement + application[i].nouvelle + application[i].assistance + application[i].gestion + application[i].bug + application[i].recherche + application[i].reunion + application[i].redaction + application[i].test);
+					
+					htmll += "<tr class='even pointer' data-toggle='collapse' data-target='#accordion' class='clickable'>"+
+					"<td  class=''>"+application[i].appelation +"</td>"+
+					"<td  class=''>"+(total || "-")+"</td>"+
+					"<td  class=''>"+(CalculValeur(application[i].assistance) || "-") +"</td>"+
+					"<td  class=''>"+(CalculValeur(application[i].developpement + application[i].nouvelle) || "-")  +"</td>"+
+					"<td  class=''>"+(CalculValeur(application[i].gestion + application[i].reunion + application[i].redaction + application[i].test) || "-") +"</td>"+
+					"<td  class=''>"+(CalculValeur(application[i].bug) || "-") +"</td>"+
+					"<td  class=''>"+(CalculValeur(application[i].recherche) || "-") +"</td>"+
+					
+					//"<td  class=''>"+(application[i].assistancenb || "-") +"</td>"+
+					//"<td  class=''>"+(application[i].developpementnb || "-")  +"</td>"+
+					//"<td  class=''>"+(application[i].gestionnb || "-") +"</td>"+
+					"<td  class=''>"+(application[i].bugnb || "-") +"</td>"+
+					//"<td  class=''>"+(application[i].recherchenb || "-") +"</td>"+
+					
+					"<td  class=''>"+(application[i].delaiok || "-")+"</td>"+
+					"<td  class=''>"+(application[i].delainok || "-")+"</td>";
+					//"<td  class=''>-</td>"+
+					//"<td  class=''>-</td>";
+
+					$("#glob_gs").html(htmll);
+				}
+				loadDataTableG();
+			},
+			error: function (error) {
+			  alert("error; " +error);
+			}
+		});
+    }-->

@@ -1,0 +1,148 @@
+<script>
+  var Liste_ID_Dev=[];
+  var i = 0
+  <% Liste_Dev.forEach(function(dev){ %>
+  Liste_ID_Dev[i] = <%= dev.id_pers %>;
+  i++;
+  <% }) %>
+//alert(Liste_ID_Dev);
+  function acceptDevApplication(id_pers,id_dem,id_app,delai)
+  {
+  //  var $p = jQuery.noConflict();
+  //  $('#modal_ronny').appendTo("body").modal('show');
+      var id_pers=id_pers;
+      var id_demande=id_dem;
+	  var id_application = id_app;
+      var date_delai=delai;
+    //  alert("id_pers="+id_pers);
+    //  alert("id_appli="+id_appli);
+    //  alert("date_delai="+date_delai);
+      $.ajax({
+        type: "POST",
+        url: "/Assigner_New_Application_Dev?id_pers_dev="+id_pers+"&id_demande="+id_demande+"&id_application="+id_application+"&delai="+date_delai, 
+        success: function(msg){
+          alert(JSON.stringify(msg));
+          window.location = "/ListeDemandeApp";
+        },
+        error: function (error) {
+          alert('error; ' +JSON.stringify(error));
+        }
+      });
+  }
+  function check_verif_dev(matricule,id_demande,id_application,index_delai)
+  {
+ //alert("debut tt");
+    var new_delai= document.getElementById("nouveau_delai"+index_delai).value;
+    //alert(new_delai);
+    var id_matricule=matricule;
+    var status_condition=true;
+    for(i=0;i<Liste_ID_Dev.length;i++)
+    {
+        if(Liste_ID_Dev[i] == id_matricule)
+          {
+            status_condition=true;
+            break;
+          }
+         else
+          {
+              status_condition=false;
+          }
+    }
+   if(status_condition==false)
+    {
+      window.location = "/ListeDemandeApp";
+    }
+    else
+    {
+      acceptDevApplication(matricule,id_demande,id_application,new_delai);
+    }
+  }
+</script>
+<div>
+  <table id="resultsTestAttente" class="table table-striped table-bordered table-hover table-condensed">
+    <thead>
+    <tr class="headings">
+      <th class="">  <i class="fa fa-snowflake-o fa-spin"  style="color:#0da2fb"></i>ID</th>
+      <th class=""> <i class="fa fa-folder"  style="color:#0da2fb"></i> Dossiers</th>
+      <th class="">  <i class="fa fa-cube fa-spin"  style="color:#fb6c04"></i>Application</th>
+      <th class=""> <i class="fa fa-paperclip fa-spin" style="color:#15fbaf"></i>Demandée par</th>
+      <th class="">  <i class="fa fa-filter" style="color:#fbd53e"></i> Date demande </th>
+      <th class=""> <i class="fa fa-filter" style="color:#fbd53e"></i> Description </th>
+      <th class=""> <i class="fa fa-cog fa-spin" style="color:#ba5bfb"></i> Prendre Projet </th>
+    </tr>
+    </thead>
+    <tbody id = "ListTest_Application_Demande">
+    <%
+	var counter=0;
+    Liste_demande_new_app.forEach(function(demande){%>
+    <tr class="even pointer">
+		<%
+			var start = new Date(Number(Date.parse(demande.date_ajout)));
+			var month = new Array();
+			month[0] = "Janvier";
+			month[1] = "Février";
+			month[2] = "Mars";
+			month[3] = "Avril";
+			month[4] = "Mai";
+			month[5] = "Juin";
+			month[6] = "Juillet";
+			month[7] = "Aout";
+			month[8] = "Septembre";
+			month[9] = "Octobre";
+			month[10] = "Novembre";
+			month[11] = "Décembre";
+			var n = month[start.getMonth()];
+
+		%>
+      <td class=" "><%= demande.id_application %></td>
+      <td class=" "><%= demande.num_dossier %></td>
+      <td class=" "><%= demande.nom_application %></td>
+      <td class=" "><%= demande.appelation%></td>
+      <td class=" "><%= start.getDate() %>  <%= n %>  <%= start.getFullYear() %></td>
+      <td class=" "><%= demande.description_application%></td>
+      <!-- The Modal -->
+      <div id="Modal_delai<%= demande.id_application%>" class="modal">
+		<div class="modal-content">
+          <span class="close">&times;</span>
+          Delai :  <input type="text" id="nouveau_delai<%= counter %>">
+          <button type="button" onclick="check_verif_dev(<%= req.session.user %>,<%= demande.id_application%>,<%= counter %>)">OK</button>
+        </div>
+      </div>
+      <script>
+        // Get the modal
+        var modal = document.getElementById('Modal_delai<%= demande.id_application%>');
+        // Get the button that opens the modal
+        var btn = document.getElementById("form_delai<%= demande.id_application%>");
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal
+        btn.onclick = function() {
+          modal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+          modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+          if (event.target == modal) {
+            modal.style.display = "none";
+          }
+        }
+      </script>
+      <td id="form_delai<%= demande.id_application%>" class = "green center" style="width:200px;color: green;text-align: center"><a href="#" title="Ex&#233;cuter"><i class="fa fa-2x fa-play green"></i></a>
+      </td>
+    </tr>
+    <%
+    counter++;
+    }) %>
+    </tbody>
+  </table>
+
+
+</div>
+

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <title>Recette - Ajout test spécifique</title>
+  <meta name="generator" content="Bootply" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/styles.css" rel="stylesheet">
+  <link href="fonts/css/font-awesome.css" rel="stylesheet">
+  <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body onLoad="getLsDossier()">
+<!-- HEADER -->
+<% include ../header.ejs %>
+<!-- /HEADER -->
+<!-- Menu GAUCHE -->
+		<% var disable = "";
+		if(req.session.droit == 0){
+			disable = "hidden";}
+		%>
+
+<!-- Container -->
+<div class="container-fluid">
+  <div class="row">
+    <div id="menuCenter">
+      <!-- avant container -->
+	  <% include ../dossierEtapeApp.ejs %>
+	  
+      </br>
+      </br>
+          <!-- include menu à gauche -->
+      <!-- /avant container-->
+
+      <div class="row">
+        <div class="">
+          <div class="page-title">
+            <div class="title_left">
+              <h2>
+                Fiche recette
+                <small>
+                  Générer PDF
+                </small>
+              </h2>
+            </div>
+          </div>
+          </br>
+          <div class="clearfix"></div>
+
+          <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="x_panel">
+                <div class="x_title">
+                  <div class="clearfix"></div>
+                  <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                  <br />
+                  <form method="POST" action="/apercuPdf" id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" style="margin-left:150px">
+                    <div class="form-group">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name" id="typeTest">Nom de l'application :<span class="required"></span>
+                      </label>
+                      <div class="col-md-6 col-sm-6 col-xs-12">
+                        <!-- <select class="select2_single form-control" tabindex="-1" id="idApplication" name="idApplication">
+                          <% applications.forEach(function(application){ %>
+                          <option value="<%= application.id_application %>" ><%= application.nom_application %></option>
+                          <% }); %>
+                        </select>-->
+							<select class="form-control" tabindex="-1" id="application" name="idApplication" placeholder = "Application">
+							</select>
+                      </div>
+                    </div>
+                    <div class="ln_solid"></div>
+                    <div class="form-group">
+                      <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                        <button type="submit" class="btn btn-primary waves-attach" data-backdrop="static" data-toggle="modal" href="#doc_dialog_example_alert" id="doc_snackbar_toggle_1">aperçu PDF</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Notifications -->
+      <% include ../notifications.ejs %>
+      <!-- /Notifications -->
+    </div>
+  </div>
+</div>
+<!-- /container -->
+<!-- Footer -->
+		<center><% include ../footer.ejs %></center>
+		<!-- /Footer -->
+<!-- script -->
+<script src="/js/base.min.js"></script>
+<script src="/js/project.min.js"></script>
+
+<script src="js/jquery.min.js"></script>
+
+<script src="js/bootstrap.min.js"></script>
+<script src="js/scripts.js"></script>
+
+<!-- DOSSIER ETAPE APPLICATION -->
+	<script src="js/dossierEtapeApp.js"></script>
+</body>
+</html>

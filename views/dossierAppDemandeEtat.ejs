@@ -1,0 +1,17 @@
+<% 
+	var onChangeDossier = "getAjaxFiltreTachePrisDossier(this);";
+	var onChangeApp = "getGestionSousTache();";
+%>
+
+<div class="form-group col-md-2">
+	<label for="tc_select">Dossier</label>
+	<select class="form-control" id="dossierDash" name="dossier_select" onchange="<%= onChangeDossier %>">
+	  <option value="">-</option>
+	</select>
+</div>
+<div class="form-group col-md-2">
+	<label for="tc_select">Application</label>
+	<select class="form-control" id="applicationDash" name="application_select" onchange="<%= onChangeApp %>">
+	  <option value="">-</option>
+	</select>
+</div>

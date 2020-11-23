@@ -1,0 +1,201 @@
+<html>
+<head>
+<title>PdfController.js</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: rgb(0,0,0); font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); font-style: italic; }
+.s1 { }
+.s2 { color: rgb(0,0,128); font-weight: bold; }
+.s3 { color: rgb(0,128,0); font-weight: bold; }
+.s4 { color: rgb(0,0,255); }
+</style>
+</head>
+<BODY BGCOLOR="#ffffff">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#C0C0C0" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+PdfController.js</FONT>
+</center></TD></TR></TABLE>
+<pre>
+
+<span class="s0">/** 
+ * Created by 8032 on 21/03/2016. 
+ */</span><span class="s1"> 
+</span><span class="s2">var </span><span class="s1">fs = require(</span><span class="s3">'fs'</span><span class="s1">); 
+</span><span class="s2">var </span><span class="s1">pdf = require(</span><span class="s3">'html-pdf'</span><span class="s1">); 
+</span><span class="s2">var </span><span class="s1">html = fs.readFileSync(</span><span class="s3">'./views/application/pdfTest.ejs'</span><span class="s1">, </span><span class="s3">'utf8'</span><span class="s1">); 
+</span><span class="s2">var </span><span class="s1">options = { format: </span><span class="s3">'Letter'</span><span class="s1">, border: </span><span class="s3">'top:2in,right:2in,bottom:2in,left:2in' </span><span class="s1">}; 
+ 
+module.exports = { 
+ 
+  </span><span class="s0">//fonction apercu PDFdf</span><span class="s1"> 
+  apercuPdf: </span><span class="s2">function</span><span class="s1">(req, res) { 
+ 
+    </span><span class="s2">if </span><span class="s1">(!req.session.user) </span><span class="s2">return </span><span class="s1">res.redirect(</span><span class="s3">'/login'</span><span class="s1">); 
+ 
+    </span><span class="s2">var </span><span class="s1">id = req.param(</span><span class="s3">'idApplication'</span><span class="s1">); 
+    </span><span class="s2">var </span><span class="s1">retVal = []; 
+ 
+    Application.findOne(id).exec(</span><span class="s2">function </span><span class="s1">(err, application) 
+    { 
+      </span><span class="s2">if </span><span class="s1">(err) 
+      { 
+        </span><span class="s2">return </span><span class="s1">res.negotiate(err); 
+      } 
+      </span><span class="s2">if </span><span class="s1">(!id) 
+      { 
+        </span><span class="s2">return </span><span class="s1">res.notFound(</span><span class="s3">'Could not find sorry.'</span><span class="s1">); 
+      } 
+      </span><span class="s2">var </span><span class="s1">listtest; 
+      Test.query(</span><span class="s3">'SELECT fr_test.nom_test,fr_type_test.nom_type_test FROM fr_test JOIN fr_type_test ON fr_test.id_type_test = fr_type_test.id_type_test where fr_test.id_type_test &lt; 4 and fr_test.suppr = false'</span><span class="s1">, </span><span class="s2">function</span><span class="s1">(eror, test) 
+      { 
+        </span><span class="s2">if </span><span class="s1">(eror) 
+        { 
+          </span><span class="s2">return </span><span class="s1">res.negotiate(eror); 
+        } 
+        </span><span class="s0">//query jointure</span><span class="s1"> 
+        TestApp.query(</span><span class="s3">'SELECT fr_test.nom_test,fr_type_test.nom_type_test FROM fr_test JOIN fr_type_test ON fr_test.id_type_test = fr_type_test.id_type_test JOIN fr_test_application ON fr_test_application.id_test = fr_test.id_test where fr_test_application.id_application = '</span><span class="s1">+id+</span><span class="s3">' and fr_test.suppr = false'</span><span class="s1">, </span><span class="s2">function</span><span class="s1">(erorSpec, testSpec) { 
+          </span><span class="s2">if </span><span class="s1">(erorSpec) 
+          { 
+            </span><span class="s2">return </span><span class="s1">res.negotiate(erorSpec); 
+          } 
+          sails.log(</span><span class="s3">'Found &quot;%s&quot;'</span><span class="s1">, testSpec); 
+          sails.log(</span><span class="s3">'Found &quot;%s&quot;'</span><span class="s1">, test); 
+ 
+          Application.query(</span><span class="s3">'select fr_application.id_dossier, p_dossier.num_dossier from fr_application join p_dossier on p_dossier.id_dossier = '</span><span class="s1">+application.id_dossier+</span><span class="s3">''</span><span class="s1">, </span><span class="s2">function</span><span class="s1">(err, numDossier){ 
+            </span><span class="s2">if</span><span class="s1">(err){ 
+              console.log(err); 
+            } 
+            console.log(numDossier.rows); 
+ 
+            retVal[</span><span class="s3">'applications'</span><span class="s1">] = application; 
+            retVal[</span><span class="s3">'list_tests'</span><span class="s1">] = test.rows; 
+            retVal[</span><span class="s3">'list_tests_specifiques'</span><span class="s1">] = testSpec.rows; </span><span class="s0">//test specifique</span><span class="s1"> 
+            retVal[</span><span class="s3">'numeroDossier'</span><span class="s1">] = numDossier.rows; 
+ 
+            </span><span class="s0">//Redirection</span><span class="s1"> 
+            res.view( </span><span class="s3">'application/apercuPdf'</span><span class="s1">, retVal ); 
+          }); 
+ 
+        }); 
+      }); 
+      sails.log(</span><span class="s3">'Found &quot;%s&quot;'</span><span class="s1">, id); 
+    }); 
+  }, 
+  </span><span class="s0">//fin fonction apercu PDF</span><span class="s1"> 
+ 
+ 
+  </span><span class="s0">//fonction pour generer le pdf</span><span class="s1"> 
+  generatePdf: </span><span class="s2">function</span><span class="s1">(req, res) { 
+ 
+    </span><span class="s2">if </span><span class="s1">(!req.session.user) </span><span class="s2">return </span><span class="s1">res.redirect(</span><span class="s3">'/login'</span><span class="s1">); 
+ 
+    </span><span class="s2">var </span><span class="s1">id = req.param(</span><span class="s3">'idApplication'</span><span class="s1">); 
+    </span><span class="s2">var </span><span class="s1">nom = req.param(</span><span class="s3">'nomApplication'</span><span class="s1">); </span><span class="s0">// variable pour recuperer le nom d l'application</span><span class="s1"> 
+    </span><span class="s2">var </span><span class="s1">dossier = req.param(</span><span class="s3">'dossierApplication'</span><span class="s1">); </span><span class="s0">// variable pour recuperer le dossier d l'application</span><span class="s1"> 
+    </span><span class="s2">var </span><span class="s1">description = req.param(</span><span class="s3">'descriptionApplication'</span><span class="s1">); </span><span class="s0">// variable pour recuperer la description d l'application</span><span class="s1"> 
+ 
+    Test.query(</span><span class="s3">'SELECT fr_test.nom_test,fr_type_test.nom_type_test FROM fr_test JOIN fr_type_test ON fr_test.id_type_test = fr_type_test.id_type_test where fr_test.id_type_test &lt; 4 and fr_test.suppr = false'</span><span class="s1">, </span><span class="s2">function</span><span class="s1">(eror, tests) 
+    { 
+      </span><span class="s2">if </span><span class="s1">(eror) 
+      { 
+        </span><span class="s2">return </span><span class="s1">res.negotiate(eror); 
+      } 
+      </span><span class="s0">//query jointure</span><span class="s1"> 
+      TestApp.query(</span><span class="s3">'SELECT fr_test.nom_test,fr_type_test.nom_type_test FROM fr_test JOIN fr_type_test ON fr_test.id_type_test = fr_type_test.id_type_test JOIN fr_test_application ON fr_test_application.id_test = fr_test.id_test where fr_test_application.id_application = '</span><span class="s1">+id+</span><span class="s3">' and fr_test.suppr = false'</span><span class="s1">, </span><span class="s2">function</span><span class="s1">(erorSpec, testSpec) { 
+          </span><span class="s2">if </span><span class="s1">(erorSpec) 
+          { 
+            </span><span class="s2">return </span><span class="s1">res.negotiate(erorSpec); 
+          } 
+          sails.log(</span><span class="s3">'Found &quot;%s&quot;'</span><span class="s1">, testSpec); 
+          sails.log(</span><span class="s3">'Found &quot;%s&quot;'</span><span class="s1">, tests); 
+ 
+        </span><span class="s2">var </span><span class="s1">testAffiche = tests.rows; </span><span class="s0">//variable tests à afficher</span><span class="s1"> 
+        </span><span class="s2">var </span><span class="s1">testSpecAffiche = testSpec.rows;  </span><span class="s0">//variable tests specifique à afficher</span><span class="s1"> 
+ 
+        </span><span class="s2">for</span><span class="s1">(</span><span class="s2">var </span><span class="s1">i = </span><span class="s4">0</span><span class="s1">; i &lt; testAffiche.length;i++){ 
+          console.log(</span><span class="s3">&quot;***************************************************   &quot;</span><span class="s1">+testAffiche[i].nom_test); 
+          console.log(</span><span class="s3">&quot;***************************************************   &quot;</span><span class="s1">+testAffiche[i].nom_type_test); 
+        } 
+ 
+    </span><span class="s2">var </span><span class="s1">html2 = </span><span class="s3">&quot;&lt;head&gt;&lt;style&gt;table, td, th {border: 1px solid #ddd;text-align: left;}table {border-collapse: collapse;width: 100%;}th, td {padding: 15px;} h4{color:#0085AE;}&lt;/style&gt;&quot;</span><span class="s1">+</span><span class="s3">&quot;&lt;/head&gt;&quot;</span><span class="s1"> 
+        +</span><span class="s3">&quot;&lt;body&gt;&quot;</span><span class="s1"> 
+          +</span><span class="s3">&quot;&lt;/br&gt;&quot;</span><span class="s1"> 
+          +</span><span class="s3">&quot;&lt;h3&gt;&quot;</span><span class="s1">+nom+</span><span class="s3">&quot; &lt;/h3&gt;&quot;</span><span class="s1"> 
+          +</span><span class="s3">&quot;&lt;h4&gt;DESCRIPTION DE L'APPLICATION:&lt;/h4&gt;&lt;/u&gt;&quot;</span><span class="s1"> 
+          +</span><span class="s3">&quot;&lt;p&gt;&lt;strong&gt; Nom de l'application : &lt;/strong&gt;&quot;</span><span class="s1">+nom+</span><span class="s3">&quot;&lt;/p&gt;&quot;</span><span class="s1"> 
+          +</span><span class="s3">&quot;&lt;p&gt;&lt;strong&gt; Dossier : &lt;/strong&gt;&quot;</span><span class="s1">+dossier+</span><span class="s3">&quot;&lt;/p&gt;&quot;</span><span class="s1"> 
+          +</span><span class="s3">&quot;&lt;p&gt;&lt;strong&gt; Description : &lt;/strong&gt;&quot;</span><span class="s1">+description+</span><span class="s3">&quot;&lt;/p&gt;&quot;</span><span class="s1"> 
+          +</span><span class="s3">&quot;&lt;p&gt;&lt;h4&gt;RESULTATS DES TESTS:&lt;/h4&gt;&lt;/p&gt;&quot;</span><span class="s1"> 
+          +</span><span class="s3">&quot;&lt;table&gt;&quot;</span><span class="s1"> 
+            +</span><span class="s3">&quot;&lt;thead&gt;&quot;</span><span class="s1"> 
+              +</span><span class="s3">&quot;&lt;tr&gt;&quot;</span><span class="s1"> 
+                +</span><span class="s3">&quot;&lt;th&gt;Titre test &lt;/th&gt;&quot;</span><span class="s1"> 
+                +</span><span class="s3">&quot;&lt;th&gt;Type test&lt;/th&gt;&quot;</span><span class="s1"> 
+                +</span><span class="s3">&quot;&lt;th&gt;Testeur&lt;/th&gt;&quot;</span><span class="s1"> 
+                +</span><span class="s3">&quot;&lt;th&gt;Date&lt;/th&gt;&quot;</span><span class="s1"> 
+                +</span><span class="s3">&quot;&lt;th&gt;Resultat &lt;/th&gt;&quot;</span><span class="s1"> 
+              +</span><span class="s3">&quot;&lt;/tr&gt;&quot;</span><span class="s1"> 
+            +</span><span class="s3">&quot;&lt;/thead&gt;&quot;</span><span class="s1"> 
+            +</span><span class="s3">&quot;&lt;tbody&gt;&quot;</span><span class="s1">; 
+              </span><span class="s2">for</span><span class="s1">(</span><span class="s2">var </span><span class="s1">i = </span><span class="s4">0</span><span class="s1">; i &lt; testAffiche.length;i++){ 
+      html2=html2+</span><span class="s3">&quot;&lt;tr&gt;&quot;</span><span class="s1"> 
+                  +</span><span class="s3">&quot;&lt;td&gt;&quot;</span><span class="s1">+testAffiche[i].nom_test+</span><span class="s3">&quot;&lt;/td&gt;&quot;</span><span class="s1"> 
+                  +</span><span class="s3">&quot;&lt;td&gt;&quot;</span><span class="s1">+testAffiche[i].nom_type_test+</span><span class="s3">&quot;&lt;/td&gt;&quot;</span><span class="s1"> 
+                  +</span><span class="s3">&quot;&lt;td&gt;-&lt;/td&gt;&quot;</span><span class="s1"> 
+                  +</span><span class="s3">&quot;&lt;td&gt;-&lt;/td&gt;&quot;</span><span class="s1"> 
+                  +</span><span class="s3">&quot;&lt;td&gt;-&lt;/td&gt;&quot;</span><span class="s1"> 
+                +</span><span class="s3">&quot;&lt;/tr&gt;&quot;</span><span class="s1">; 
+              } 
+      html2=html2+</span><span class="s3">&quot;&lt;/tbody&gt;&quot;</span><span class="s1"> 
+          +</span><span class="s3">&quot;&lt;/table&gt;&quot;</span><span class="s1"> 
+ 
+          +</span><span class="s3">&quot;&lt;p&gt;&lt;h4&gt;RESULTATS DES TESTS SPECIFIQUES:&lt;/h4&gt;&lt;/p&gt;&quot;</span><span class="s1"> 
+          +</span><span class="s3">&quot;&lt;table&gt;&quot;</span><span class="s1"> 
+            +</span><span class="s3">&quot;&lt;thead&gt;&quot;</span><span class="s1"> 
+              +</span><span class="s3">&quot;&lt;tr&gt;&quot;</span><span class="s1"> 
+                +</span><span class="s3">&quot;&lt;th&gt;Titre test &lt;/th&gt;&quot;</span><span class="s1"> 
+                +</span><span class="s3">&quot;&lt;th&gt;Type test&lt;/th&gt;&quot;</span><span class="s1"> 
+                +</span><span class="s3">&quot;&lt;th&gt;Testeur&lt;/th&gt;&quot;</span><span class="s1"> 
+                +</span><span class="s3">&quot;&lt;th&gt;Date&lt;/th&gt;&quot;</span><span class="s1"> 
+                +</span><span class="s3">&quot;&lt;th&gt;Resultat &lt;/th&gt;&quot;</span><span class="s1"> 
+              +</span><span class="s3">&quot;&lt;/tr&gt;&quot;</span><span class="s1"> 
+            +</span><span class="s3">&quot;&lt;/thead&gt;&quot;</span><span class="s1"> 
+            +</span><span class="s3">&quot;&lt;tbody&gt;&quot;</span><span class="s1">; 
+              </span><span class="s2">for</span><span class="s1">(</span><span class="s2">var </span><span class="s1">i = </span><span class="s4">0</span><span class="s1">; i &lt; testSpecAffiche.length;i++){ 
+      html2=html2+</span><span class="s3">&quot;&lt;tr&gt;&quot;</span><span class="s1"> 
+                  +</span><span class="s3">&quot;&lt;td&gt;&quot;</span><span class="s1">+testSpecAffiche[i].nom_test+</span><span class="s3">&quot;&lt;/td&gt;&quot;</span><span class="s1"> 
+                  +</span><span class="s3">&quot;&lt;td&gt;&quot;</span><span class="s1">+testSpecAffiche[i].nom_type_test+</span><span class="s3">&quot;&lt;/td&gt;&quot;</span><span class="s1"> 
+                  +</span><span class="s3">&quot;&lt;td&gt;-&lt;/td&gt;&quot;</span><span class="s1"> 
+                  +</span><span class="s3">&quot;&lt;td&gt;-&lt;/td&gt;&quot;</span><span class="s1"> 
+                  +</span><span class="s3">&quot;&lt;td&gt;-&lt;/td&gt;&quot;</span><span class="s1"> 
+                +</span><span class="s3">&quot;&lt;/tr&gt;&quot;</span><span class="s1">; 
+              } 
+      html2=html2+</span><span class="s3">&quot;&lt;/tbody&gt;&quot;</span><span class="s1"> 
+          +</span><span class="s3">&quot;&lt;/table&gt;&quot;</span><span class="s1"> 
+ 
+        +</span><span class="s3">&quot;&lt;body&gt;&quot;</span><span class="s1">; </span><span class="s0">//variable qui contient le code htmltffvf</span><span class="s1"> 
+ 
+ 
+        console.log(</span><span class="s3">'______________________________________________________________________***********'</span><span class="s1">+nom); 
+ 
+ 
+        pdf.create(html2, options).toFile(</span><span class="s3">'./assets/PDF/'</span><span class="s1">+nom+</span><span class="s3">'.pdf'</span><span class="s1">, </span><span class="s2">function </span><span class="s1">(err, resp) {  </span><span class="s0">//creation du pdf</span><span class="s1"> 
+          </span><span class="s2">if </span><span class="s1">(err) 
+          { 
+            </span><span class="s2">return </span><span class="s1">console.log(err); </span><span class="s0">//si erreur, afficher l'erreur dans la console</span><span class="s1"> 
+          } 
+          </span><span class="s2">else </span><span class="s0">//sinon</span><span class="s1"> 
+          { 
+            console.log(res); 
+            res.redirect(sails.getBaseUrl()+</span><span class="s3">'/PDF/'</span><span class="s1">+nom+</span><span class="s3">'.pdf'</span><span class="s1">); </span><span class="s0">//rediriger vers la vue pdfOk.ejs</span><span class="s1"> 
+          } 
+        }); 
+      }); 
+    }); 
+  } 
+} 
+</span></pre>
+</body>
+</html>

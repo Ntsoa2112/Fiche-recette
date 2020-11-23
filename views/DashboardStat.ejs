@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<form>
+	<input type="hidden" id="valideStat" name="valideStat" value = "<%= valideApp %>"> <!-- app -->
+	<input type="hidden" id="nonValideStat" name="nonValideStat" value =  "<%= nonValideApp %>">
+	<input type="hidden" id="attenteStat" name="attenteStat" value =  "<%= attenteApp %>">
+	
+	<input type="hidden" id="valideTest" name="valideTest" value = "<%= valideTest %>"> <!-- test -->
+	<input type="hidden" id="nonValideTest" name="nonValideTest" value =  "<%= nonValideTest %>">
+	<input type="hidden" id="attenteTest" name="attenteTest" value =  "<%= attenteTest %>">
+</form>
+
+<!--
+oe nombre ana dossier mis ao amle test
+de fir n dossier en attente valide sns
+distinct dossier amle test zan 
+-->
+<div class="page-title">
+  <div class="title_left">
+	<h2>
+	  Fiche recette
+	  <small>
+		<%= numeroDossier %>
+	  </small>
+	</h2>
+  </div>
+</div>
+</br>
+
+<div class="panel panel-default col-lg-12" style="height:440px">
+  <div class="panel-heading">
+		<h1 class="panel-title"><i class="fa fa-bar-chart" style="color:#fb6c04"></i></h1>
+  </div>
+  <div class="panel-body">
+		<div class="col-md-5">
+			<p><b>TEST</b></p>
+			<div id="bar-test" style="height: 300px;"></div>
+		</div>
+		<div class="col-md-1"></div>
+		<div class="col-md-5">
+			<p><b>APPLICATION</b></p>
+			<div id="bar-app" style="height: 250px;"></div>
+		</div>
+		<!--<div class="col-md-1"></div>
+		<div class="col-md-3">
+			<p><b>DOSSIER</b></p>
+			<div id="pie" style="height: 250px;"></div> 
+		</div> test -->
+  </div>
+</div>
+<script type="text/javascript" src="js/raphael-min.js"></script>
+<script type="text/javascript" src="js/morris-min.js"></script>
+<script>
+	//alert($("#valideStat").val())
+	
+	var valideStatApp = $("#valideStat").val(); // app
+	var nonValideStatApp = $("#nonValideStat").val();
+	var attenteStatApp = $("#attenteStat").val();
+	
+	var valideStatTest = $("#valideTest").val(); // test
+	var nonValideStatTest = $("#nonValideTest").val();
+	var attenteStatTest = $("#attenteTest").val();
+	
+	var dataUpdate = [                 //update application
+		 {label: "App validés", value: valideStatApp},   //&#233;
+		 {label: "App non validés", value: nonValideStatApp},
+		 {label: "App en attente", value: attenteStatApp}
+		];
+	
+	var barApp = Morris.Donut({
+		element: 'bar-app',
+		data: dataUpdate,
+		 colors: [
+		'#31985E',
+		'#57BD83',
+		'#80DBA8'
+	  ],
+		//resize: true
+	  });
+	barApp.setData(dataUpdate);
+	
+	var barTest = Morris.Bar({
+		element: 'bar-test',
+		data: [
+			{y: 'Validés', a: valideStatTest},
+			{y: 'Non validés', a: nonValideStatTest},
+			{y: 'En attente', a: attenteStatTest}
+		],
+		xkey: 'y',
+		ykeys: ['a'],
+		labels: ['Nombre']
+	});
+	
+	
+	$(function () {
+		var pie = {
+			element: 'pie',
+			hideHover: 'auto',
+			resize: true,
+			data: dataUpdate,
+			formatter: function (y) {
+				return y + " "
+			}
+		}
+		donut1 = Morris.Donut(pie)
+	}); 
+	
+</script>

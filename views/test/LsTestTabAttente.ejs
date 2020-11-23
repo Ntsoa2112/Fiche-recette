@@ -1,0 +1,34 @@
+<div>
+<table id="resultsTestAttente" class="table table-striped table-bordered table-hover table-condensed">
+	<thead>
+		<tr class="headings">
+			<th class="fa-2x"> <h3> <i class="fa fa-snowflake-o fa-spin"  style="color:#0da2fb"></i> ID</h3> </th>
+			<th class="fa-2x"> <h3> <i class="fa fa-folder"  style="color:#0da2fb"></i> Dossiers</h3> </th>
+			<th class="fa-2x"> <h3> <i class="fa fa-cube fa-spin"  style="color:#fb6c04"></i> Applications </h3></th>
+			<th class="fa-2x"> <h3><i class="fa fa-paperclip fa-spin" style="color:#15fbaf"></i> Tests</h3> </th>
+			<th class="fa-2x"> <h3> <i class="fa fa-filter" style="color:#fbd53e"></i> Type test </h3></th>
+			<th class="fa-2x"> <h3><i class="fa fa-cog fa-spin" style="color:#ba5bfb"></i>  Ex&#233;cuter</h3> </th>
+		</tr>
+	</thead>
+	<tbody id = "testListAttente">
+		<% tests.forEach(function(test){ %>
+		<tr class="even pointer">
+			<td class=" "><%= test.id_test %></td>
+			<td class=" "><%= test.num_dossier %></td>
+			<td class=" "><%= test.nom_application %></td>
+			<td class=" "><%= test.nom_test %></td>
+			<td class=" "><%= test.nom_type_test %></td>
+			<td class = "green center" style="width:200px;color: green;text-align: center"><a href="/appByIdTest?id=<%= test.id_application %>" title="Ex&#233;cuter"><i class="fa fa-2x fa-play green"></i></a>
+			</td>
+		</tr>
+		<% }); %>
+	</tbody>
+</table>
+<div id="pageNavPosition"></div>
+</div>
+<script type="text/javascript">
+	var pager = new Pager('resultsTestAttente', 10);
+	pager.init();
+	pager.showPageNav('pager', 'pageNavPosition');
+	pager.showPage(1);
+</script>

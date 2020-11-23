@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<title>Recette - Accueil</title>
+		<meta name="generator" content="Bootply" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/styles.css" rel="stylesheet">
+		<link href="fonts/css/font-awesome.css" rel="stylesheet">
+		<link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+
+		<link href="css/pieChart.css" rel="stylesheet">
+
+
+		<!-- include du js socket sails :p -->
+      <script src="js/sails.io.js"></script>
+      <script type="text/javascript">
+          io.sails.url = 'http://localhost:1337';
+      </script>
+
+
+	  <!-- STYLE SNOTIFICATION -->
+	  <!--<link href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.0/animate.min.css" rel="stylesheet">
+	  <link href="css/styleNotif.css" rel="stylesheet">-->
+
+	</head>
+	<body onLoad="onLoadDossierStat(); entrerEmail();"> <!-- getLsDossier -->
+		<!-- HEADER -->
+		<% include header.ejs %>
+		<!-- /HEADER -->
+		<!-- Menu GAUCHE -->
+		<% var disable = "";
+		if(req.session.droit == 0){
+			disable = "hidden";}
+		%>
+		<!-- /MENU GAUCHE -->
+		<!-- Main -->
+		<div class="container-fluid">
+
+		<div id = "dash">
+			<div class="row">
+				<div id="menuCenter">
+					<!-- avant container -->
+					<% include dossierEtapeApp.ejs %>
+					</br>
+					</br>
+              <!-- include menu à gauche -->
+					<!-- /avant container-->
+
+					<div class="row"> <!-- CONTAINER -->
+
+						<div class="">
+							<div id = "stat"></div>
+							
+							  <!---------------------------------- STAT ----------------------------------------->
+
+							<div class="row"> <!-- LISTE TEST EN ATTENTE -->
+								<div class="col-md-12 col-sm-12 col-xs-12">
+									<div class="x_panel">
+										<div class="x_title">
+											<div class="clearfix"></div>
+										</div>
+										<br>
+										<div class="x_content"><!--table table-striped responsive-utilities jambo_table-->
+											<div>
+												<h4>Tests à exécuter</h4>
+												<div id="testListAttente">
+												</div>
+											</div>
+										</div>
+									</div>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+									<br/>
+								</div>
+							</div>
+						</div>
+
+					</div>
+					<!--/row-->
+
+					<!-- Notifications -->
+					<% include notifications.ejs %>   <!-- include menu à gauche -->
+					<!-- /Notifications -->
+				</div>
+				<!--/col-span-9-->
+			</div>
+		</div>
+		<!-- Footer -->
+		<center><% include footer.ejs %></center>
+		<!-- /Footer -->
+
+		<!-- /Main -->
+
+		<form>
+			<input type="hidden" id="valide" name="valide" value = "<%=valide%>">
+			<input type="hidden" id="nonValide" name="nonValide" value = "<%=nonValide%>">
+			<input type="hidden" id="attente" name="attente" value = "<%=attente%>">
+
+			<input type="hidden" id="valideTest" name="valideTest" value = "<%=valideTest%>">
+			<input type="hidden" id="nonValideTest" name="nonValideTest" value = "<%=nonValideTest%>">
+		</form>
+		
+		<input type="text"  class="hidden" id="modalEmail" value="<%=req.session.emailUser%>" />
+
+</br>
+<!-- New chart -->
+		<script type="text/javascript" src="js/raphael-min.js"></script>
+		<script type="text/javascript" src="js/morris-min.js"></script>
+		
+		<script>
+		  function entrerEmail()
+		  {
+			var email = $('#modalEmail').val();
+			if(email == 0)
+			{
+				bootbox.dialog({
+				  message: "<input type='text' name='email_user' id='email_user' class='form-control' placeholder='Email' required >",
+				  title: "Veuillez entrer votre email",
+				  buttons: {
+					main: {
+					  label: "ok",
+					  className: "btn-primary",
+					  callback: function() {
+						var emailUser = $('#email_user').val();
+						window.location = "/insertEmailUser?email_user="+emailUser;
+					  }
+					}
+				  }
+				});
+			}
+		  };
+		</script>
+		
+		<script>
+			/*alert($("#valideStat").val())*/
+			var valide = $("#valide").val();
+			var nonValide = $("#nonValide").val();
+			var attente = $("#attente").val();
+
+		   var barDossier = Morris.Donut({
+			 element: 'bar-dossier',
+			 data: [
+				{label: "validées", value: valide},
+				{label: "non validées", value: nonValide},
+				{label: "en attente de validation", value: attente}
+			 ],
+         labels: ['Series A', 'Series B', 'Series B'],
+		  });
+		</script>
+
+
+		<script src="js/base.min.js"></script>
+		<script src="js/project.min.js"></script>
+		<script src="js/jquery-1.9.1.min.js"></script>
+
+		<script src="js/bootstrap.min.js"></script>
+
+		<script src="js/scripts.js"></script>
+
+		<!-- DOSSIER ETAPE APPLICATION -->
+		<script src="js/dossierEtapeApp.js"></script>
+	</body>
+</html>

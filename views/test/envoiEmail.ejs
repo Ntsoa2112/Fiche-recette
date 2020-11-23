@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<!-- Debut session-->
+<!-- // ra ts mis session-->
+<%
+if (!req.session.user)
+{
+  res.redirect('/login'); // d redirigena vers login
+}
+%>
+<!-- fin session-->
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<title>Recette - Accueil</title>
+		<meta name="generator" content="Bootply" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/styles.css" rel="stylesheet">
+    <link href="fonts/css/font-awesome.css" rel="stylesheet">
+    <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+	</head>
+	<body>
+		<!-- HEADER -->
+		<% include ../header.ejs %>
+		<!-- /HEADER -->
+		<!-- Menu GAUCHE -->
+		<% var disable = "";
+		if(req.session.droit == 0){
+			disable = "hidden";}
+		%>
+		<!-- Main -->
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-sm-9">
+					<!-- avant container -->
+         
+          </br>
+          <hr>    <!-- include menu à gauche -->
+					<!-- /avant container-->
+
+					<div class="row">
+						<div class="">
+							<div class="page-title">
+							  <div class="title_left">
+								<h2>
+								  Fiche recette
+								  <small>
+									Envoi mail
+								  </small>
+								</h2>
+							  </div>
+							</div>
+							</br>
+							<div class="clearfix"></div>
+
+							<div class="row">
+								<div class="col-md-12 col-sm-12 col-xs-12">
+									<div class="x_panel">
+										<div class="x_content">
+											<div class="x_panel">
+												<div class="x_title">
+													<div class="clearfix"></div>
+												</div>
+												<div class="x_content">
+													<!-- FORMULAIRE -->
+													<form id="demo-form" data-parsley-validate>
+															<p>
+															<br/>
+															<label for="heard">Adresse mail du destinataire:</label>
+															<select id="heard" class="form-control" required>
+																<option value=""></option>
+																<option value="press">blabla@email.com</option>
+																<option value="net">blabla@email.com</option>
+																<option value="mouth">blabla@email.com</option>
+															</select>
+															<br/>
+															<label for="message">Message à envoyer:</label>
+															<textarea id="message" required="required" class="form-control" name="message" data-parsley-trigger="keyup" data-parsley-minlength="20" data-parsley-maxlength="100" data-parsley-minlength-message="Come on! You need to enter at least a 20 caracters long comment.." data-parsley-validation-threshold="10"></textarea>
+
+															<br/>
+															<span class="btn btn-primary">Envoyer</span><span class="btn btn-info">Annuler</span>
+
+													</form>
+													<!-- /FORMULAIRE -->
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<br />
+									<br />
+									<br />
+
+								</div>
+					</div>
+						</div>
+					</div>
+					<!--/row-->
+
+
+					<!-- Notifications -->
+					<% include ../notifications.ejs %>   <!-- include menu à gauche -->
+					<!-- /Notifications -->
+				</div>
+				<!--/col-span-9-->
+			</div>
+		</div>
+		<!-- /Main -->
+		<!-- Footer -->
+		<center><% include ../footer.ejs %></center>
+		<!-- /Footer -->
+
+		<!-- script references -->
+		<script src="/js/base.min.js"></script>
+		<script src="/js/project.min.js"></script>
+
+		<script src="js/jquery.min.js"></script>
+
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/scripts.js"></script>
+	</body>
+</html>

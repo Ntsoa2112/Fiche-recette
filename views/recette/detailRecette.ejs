@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <title>Recette - Detail recette</title>
+  <meta name="generator" content="Bootply" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/styles.css" rel="stylesheet">
+  <link href="fonts/css/font-awesome.css" rel="stylesheet">
+  <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body>
+<!-- HEADER -->
+<% include ../header.ejs %>
+<!-- /HEADER -->
+<!-- Menu GAUCHE -->
+<% var disable = "";
+		if(req.session.droit == 0){
+			disable = "hidden";}
+		%>
+
+<!-- CONTAINER -->
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-9">
+      <!-- avant container -->
+      
+      </br>
+      <hr>    <!-- include menu à gauche -->
+      <!-- /avant container-->
+
+      <div class="row"> <!-- CONTAINER -->
+        <div class="">
+          <div class="page-title">
+            <div class="title_left">
+              <h2>
+                Fiche recette
+                <small>
+                  Détails <%= recettes.titre_recette %>
+                </small>
+              </h2>
+            </div>
+          </div>
+          <div class="clearfix"></div>
+
+          <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="x_panel">
+                <div class="x_title">
+                  <div class="clearfix"></div>
+                </div>
+                </br>
+                <div class="x_content">
+                  <h4>Titre:</h4></u>
+                  <p> <%= recettes.titre_recette %> .</p>
+                  </br>
+
+                  <h4>Etape:</h4></u>
+                  <p> <%= recettes.etape_recette %> .</p>
+                  </br>
+
+				          <h4>Resultat attendu:</h4></u>
+                  <p> <%= recettes.recultat_attendu %> .</p>
+                  </br>
+
+				          <h4>Resultat obtenu:</h4></u>
+                  <p> <%= recettes.resultat_obtenu %> .</p>
+                  </br>
+
+                  <h4>Status:</h4></u>
+                  <p> <%= recettes.status_recette %> .</p>
+                  </br>
+                  </br>
+                </div>
+                </br>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <% include ../notifications.ejs %>
+      <!-- /Notifications -->
+    </div>
+    <!--/col-span-9-->
+  </div>
+</div>
+<!-- /CONTAINER -->
+<!-- Footer -->
+		<center><% include ../footer.ejs %></center>
+		<!-- /Footer -->
+
+<!-- script -->
+<script src="/js/base.min.js"></script>
+<script src="/js/project.min.js"></script>
+
+<script src="js/jquery.min.js"></script>
+
+<script src="js/bootstrap.min.js"></script>
+<script src="js/scripts.js"></script>
+</body>
+</html>

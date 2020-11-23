@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+ 
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <title>Fiche Recette</title>
+  <meta name="generator" content="Bootply" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/styles.css" rel="stylesheet">
+  <link href="fonts/css/font-awesome.css" rel="stylesheet">
+  <link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+  <script type="text/javascript" src="js/paging.js"></script>
+  <link rel="stylesheet" href="css/bootstrap-duration-picker.css">
+ 
+  <style>
+    a.disabled {
+      color: gray;
+      pointer-events: none;
+    }
+	
+	.loader {
+	  border: 16px solid #f3f3f3; /* Light grey */
+	  border-top: 16px solid #3498db; /* Blue */
+	  border-radius: 50%;
+	  width: 60px;
+	  height: 60px;
+	  animation: spin 2s linear infinite;
+	}
+
+	@keyframes spin {
+	  0% { transform: rotate(0deg); }
+	  100% { transform: rotate(360deg); }
+	}
+	
+  </style>
+</head>
+<body onload="loadAllDemande();">
+<!-- HEADER -->
+<% include ../header.ejs %>
+<!-- /HEADER -->
+<% var disable = "";
+if(req.session.droit == 0){
+  disable = "hidden";}
+ var disableDev = ""; 
+ if(req.session.user == 177 || req.session.user == 487 || req.session.user == 1020 || req.session.user == 1311){
+  disableDev = "";
+  }
+  var showTable = "hidden";
+  var showTableGlobale = "hidden";
+  if(req.session.user == 177){
+	showTableGlobale = "";
+  }else{
+	showTable = " ";
+  }
+  var disableExport = "";
+%>
+
+<% 
+	var onChangeTab = "onChange();";
+%>
+
+<!-- Main -->
+<div class="container-fluid">
+  <div class="row">
+    <div id="menuCenter">
+    <%
+      function CalculeDate(seconde)
+      {
+        var totalSeconds = parseInt(seconde, 10);
+        var hours = Math.floor(totalSeconds / 3600);
+        var h = "";
+        if(hours.toString().length == 1)
+          h = "0"+hours.toString();
+        else
+          h = hours.toString();
+ 
+        totalSeconds %= 3600;
+        var minutes = Math.floor(totalSeconds / 60);
+        var mn = "";
+        if(minutes.toString().length == 1)
+          mn = "0"+minutes.toString();
+        else
+          mn = minutes.toString();
+ 
+        var seconds = totalSeconds % 60;
+        var s = "";
+        if(seconds.toString().length == 1)
+          s = "0"+seconds.toString();
+        else
+          s = seconds.toString();
+        return h+":"+mn+":"+s;
+      }
+    %>
+      <div class="row"> <!-- CONTAINER -->
+        <div class="">
+          <div class="page-title">
+            <div class="title_left">
+              <h2>
+                Fiche recette
+                <small>
+					Liste tache 
+                </small>
+              </h2>
+            </div>
+          </div>
+ 
+          <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="x_panel">
+                <div class="x_content <%= disable %>">
+					</br>
+				  <button type="button" class="btn btn-primary collapse-link <%= disableDev %> " onclick="exportTable();" >Export liste tache</button>
+				  </br>
+				  </br>
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+				  
+					<!--div de selection --->
+					<div class="">
+					  <div class="form-group col-md-2">
+						<label for="date_ecoute">Etat demande</label>
+						<select class="form-control" id="etat_demande_select" name="etat_demande_select" onchange="<%= onChangeTab %>">
+						  <option value="">-</option>
+						</select>
+					  </div>
+					</div>
+					<div class="">
+					  <div class="form-group col-md-2  <%= disableDev %>">
+						<label for="date_ecoute">Dev</label>
+						<select class="form-control" id="dev_select" name="dev_select" onchange="<%= onChangeTab %>">
+						  <option value="">-</option>
+						</select>
+					  </div>
+					</div>
+					
+					<div class="">
+					  <div class="form-group col-md-2 ">
+						<label for="date_ecoute">Demandeur</label>
+						<select class="form-control" id="demandeur_select" name="demandeur_select" onchange="<%= onChangeTab %>">
+						  <option value="">-</option>
+						</select>
+					  </div>
+					</div>
+					
+					<% include ../dossierAppDemande.ejs %>
+					
+					<div class="form-group col-md-2">
+						<label for="tc_select">Dead line</label>
+						<input type="date" class="form-control" id="dead_line_select" name="dead_line_select" onchange="<%= onChangeTab %>" oninput="<%= onChangeTab %>"></input>
+					</div>
+					<div class="form-group col-md-2">
+						<label for="tc_select">Type demande</label>
+						<select class="form-control" id="type_select" name="type_select" onchange="<%= onChangeTab %>">
+						  <option value="">-</option>
+						</select>
+					</div>
+					<div class="form-group col-md-2">
+						<label for="tc_select">Priorité</label>
+						<select class="form-control" id="priorite_select" name="priorite_select" onchange="<%= onChangeTab %>">
+						  <option value="">-</option>
+						</select>
+					</div>
+					<div class="form-group col-md-2 ">
+						<label for="tc_select">Début</label>
+						<input type="date" class="form-control" id="debut_select" name="debut_select" onchange="<%= onChangeTab %>" oninput="<%= onChangeTab %>"></input>
+					</div>
+					
+					<div class="form-group col-md-2 ">
+						<label for="tc_select">Fin</label>
+						<input type="date" class="form-control" id="fin_select" name="fin_select" onchange="<%= onChangeTab %>" oninput="<%= onChangeTab %>"></input>
+					</div>
+					<div class="form-group col-md-2 ">
+						<div class="loader hidden" id="loading_image"></div>
+					</div>
+					<!--fin div de selection --->
+						<br/>
+						<br/>
+						
+						<div class="form-group col-md-10 hidden" id = "totalHeure">
+							<div class="form-group col-md-2">
+								<label for="tc_select">Total heures : </label>
+								<input type="text" min="0" class="form-control" id="total_input" name="total_input" disabled></input>
+							</div>
+						</div>
+						<br/>
+						<br/>
+						<br/>
+						
+					<% var disable = "";
+						if(req.session.droit == 0){
+						  disable = "hidden";}
+					%>
+
+					<%
+					  function CalculeDate(seconde)
+					  {
+						var totalSeconds = parseInt(seconde, 10);
+						var hours = Math.floor(totalSeconds / 3600);
+						var h = "";
+						if(hours.toString().length == 1)
+						  h = "0"+hours.toString();
+						else
+						  h = hours.toString();
+
+						totalSeconds %= 3600;
+						var minutes = Math.floor(totalSeconds / 60);
+						var mn = "";
+						if(minutes.toString().length == 1)
+						  mn = "0"+minutes.toString();
+						else
+						  mn = minutes.toString();
+
+						var seconds = totalSeconds % 60;
+						var s = "";
+						if(seconds.toString().length == 1)
+						  s = "0"+seconds.toString();
+						else
+						  s = seconds.toString();
+
+						return h+":"+mn+":"+s;
+					  }
+					%>
+					
+					<div id="lstTache" class = ""> 
+		
+					</div>
+					<!------------------------------------------------ DEBUT TABLE GLOBALE TABLEAU ---------->
+							<div id ="lstTacheGlobale" class="col-md-12 hidden">
+							  <table class="table" id="table-globale">
+								<thead>
+								  <tr>
+									<th> ID </th>
+									<th><i class="fa fa-folder-open"></i> DEV </th>
+									<th><i class="fa fa-folder-open"></i> DEMANDEUR </th>
+									<th><i class="fa fa-paperclip"></i> PROJET </th>
+									<th><i class="fa fa-plus-circle"></i> APPLICATION </th>
+									<th><i class="fa fa-calendar"></i> DEMANDE </th>
+									<th><i class="fa fa-file-text"></i> TEMPS PASSE </th>
+									<th><i class="fa fa-cog"></i> TEMPS ESTIME</th>
+									<th><i class="fa fa-file-text"></i> AVANCEMENT(%) </th>
+									<th><i class="fa fa-cog"></i> DEAD LINE </th>
+									<th><i class="fa fa-cog"></i> TYPE </th>
+									<th><i class="fa fa-cog"></i> DELAI </th>
+									<th><i class="fa fa-cog"></i> QUALITE </th>
+									<th><i class="fa fa-cog"></i> TYPE APPLICATION </th>
+									<th><i class="fa fa-cog"></i> PRIORITE </th>
+									<th><i class="fa fa-cog"></i> ETAT </th>
+									<th><i class="fa fa-cog"></i> TAUX D'ATTEINTE </th>
+									
+									<!--<th><i class="fa fa-cog"></i> DATE FIN </th>-->
+									<!--<th><i class="fa fa-cog"></i> MODIFIER ETAT</th>-->
+								  </tr>
+								</thead>
+								<tbody id="glob_gs">
+								  <tr>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+								  </tr>
+								</tbody>
+							  </table>
+							</div>
+
+							<input type="hidden" id="applications" name="applications" value = "<%=applications%>">
+					<!------------------------------------------------  FIN DEBUT TABLE GLOBALE ---------->
+					
+                    <div id="pageNavPosition"></div>
+                  </div>
+				  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </br>
+        </br>
+        </br>
+        <% include ../notifications.ejs %>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<form>
+  <input type="hidden" id="bug" name="bug" value = "<%=bug%>">
+  <input type="hidden" id="dev" name="dev" value = "<%=dev%>">
+  <input type="hidden" id="assistance" name="assistance" value = "<%=assistance%>">
+  <input type="hidden" id="newApp" name="newApp" value = "<%=newApp%>">
+</form>
+ 
+<!-- /Main -->
+<center><% include ../footer.ejs %></center>
+<script src="/js/base.min.js"></script>
+<script src="/js/jquery-1.12.4.js"></script>
+<script src="/js/project.min.js"></script>
+<script src="/js/bootbox.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/scripts.js"></script>
+<script src="js/bootstrap-datepicker.js"></script>
+<script type="text/javascript" src="js/raphael-min.js"></script>
+<script type="text/javascript" src="js/morris-min.js"></script>
+<script type="text/javascript" src="js/bootstrap-duration-picker-debug.js"></script>
+<script src="js/dossierEtapeApp.js"></script>
+
+<!--DATATABLE-->
+		<script src="/vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+		<script src="/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+		<script src="/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/buttons.flash.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/buttons.html5.min.js"></script>
+		<script src="/vendors/datatables.net-buttons/js/buttons.print.min.js"></script>
+		<script src="/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+		<script src="/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+		<script src="/vendors/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+		<script src="/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
+		<script src="/vendors/datatables.net-scroller/js/datatables.scroller.min.js"></script>
+		<script src="/vendors/jszip/dist/jszip.min.js"></script>
+		<script src="/vendors/pdfmake/build/pdfmake.min.js"></script>
+		<script src="/vendors/pdfmake/build/vfs_fonts.js"></script>
+<!--FIN DATATABLE-->
+ 
+<!---------------------------------------FONCTION TABLE EXPORT ------------------------------->
+ 
+<script language="javascript">
+	function onChange(){
+		loader();
+		getAjaxFiltreTachePris();
+		getGestionSousTache();
+	}
+
+	function exportTable(){
+		$("#lstTacheGlobale").removeClass("hidden");
+		$("#lstTache").addClass("hidden");
+		$("#totalHeure").removeClass("hidden");
+	}
+
+	function loadAllDemande(){
+		loadDataTableG();
+		getLsDossier();
+		loadDev();
+		loadDemandeur();
+		loadPriorite();
+		loadEtatDemande();
+		loadTypeDemande();
+		getAjaxFiltreTachePris();
+		getGestionSousTache();
+	}
+	
+	function loader(){
+		$("#loading_image").removeClass("hidden");
+	}
+ 
+	function getAjaxFiltreTachePris()
+    {
+		//param
+		var id_etat_demande = $("#etat_demande_select").val();
+		var id_dev = $("#dev_select").val();
+		var id_demandeur = $("#demandeur_select").val();
+		var id_dossier = $("#dossierDash").val();
+		var id_application = "a";
+		if($("#applicationDash").val()){
+			id_application = $("#applicationDash").val();
+		}
+		var dead_line = $("#dead_line_select").val();
+		var id_type_intervention = $("#type_select").val();
+		var id_priorite = $("#priorite_select").val();
+	
+		//DEBUT + FIN DEMANDE
+		var debut = $("#debut_select").val();
+		var fin = $("#fin_select").val()
+		//--------------
+		
+		$.ajax({
+			type: "GET",
+			url: "/AfficherListeTachePrisTab?id_etat_demande="+id_etat_demande+"&id_dev="+id_dev+"&id_dossier="+id_dossier+"&id_application="+id_application+"&dead_line="+dead_line+"&id_type_intervention="+id_type_intervention+"&id_priorite="+id_priorite+"&date_debut="+debut+"&date_fin="+fin+"&id_demandeur="+id_demandeur,
+			dataType: "html",
+			success: function(msg, status){
+			  $("#loading_image").addClass("hidden");
+			  $("#lstTache").html(msg);
+			},
+			error: function (error, status) {
+			  alert("error; " +error);
+			},
+			complete: function(msg, status){
+				alert("complete");
+				$("#loading_image").addClass("hidden");
+			}
+		});
+    }
+	
+	function getAjaxFiltreTachePrisDossier(sel)
+    {
+		getval(sel);
+		$("#applicationDash").val("a");
+		
+		//param
+		var id_etat_demande = $("#etat_demande_select").val();
+		var id_dev = $("#dev_select").val();
+		var id_demandeur = $("#demandeur_select").val();
+		var id_dossier = $("#dossierDash").val();
+		var id_application = "a";
+		if($("#applicationDash").val()){
+			id_application = $("#applicationDash").val();
+		}
+		
+		var dead_line = $("#dead_line_select").val();
+		var id_type_intervention = $("#type_select").val();
+		var id_priorite = $("#priorite_select").val();
+	
+		//DEBUT + FIN DEMANDE
+		var debut = $("#debut_select").val();
+		var fin = $("#fin_select").val()
+		//--------------
+		
+		$.ajax({
+			type: "GET",
+			url: "/AfficherListeTachePrisTab?id_etat_demande="+id_etat_demande+"&id_dev="+id_dev+"&id_dossier="+id_dossier+"&id_application="+id_application+"&dead_line="+dead_line+"&id_type_intervention="+id_type_intervention+"&id_priorite="+id_priorite+"&date_debut="+debut+"&date_fin="+fin+"&id_demandeur="+id_demandeur,
+			success: function(msg){
+			  $("#lstTache").html(msg);
+			},           
+			error: function (error) {
+			  alert("error; " +error);
+			}
+		});
+    }
+	
+	//Load dev
+	function loadDev(){
+		$.ajax({
+		  type: "GET",
+		  url: "/getLsDevPers",
+		  success: function(msg){
+			var html = "<option value=''></option>";
+			var data = JSON.parse(msg);
+			for (var i = 0 ; i<data.length ; i++){
+			  html += "<option value='"+data[i].id_pers+"'>"+data[i].id_pers+" - "+data[i].appelation+"</option>";
+			}
+			$("#dev_select").html(html);
+		  },
+		  error: function (error) {
+			alert(error);
+		  }
+		});
+	}
+	
+	//DEMANDEUR
+	function loadDemandeur(){
+		$.ajax({
+		  type: "GET",
+		  url: "/getLsDemandeurPers",
+		  success: function(msg){
+			var html = "<option value=''></option>";
+			var data = JSON.parse(msg);
+			for (var i = 0 ; i<data.length ; i++){
+			  html += "<option value='"+data[i].id_personne_demande+"'>"+data[i].id_personne_demande+" - "+data[i].appelation+"</option>";
+			}
+			$("#demandeur_select").html(html);
+		  },
+		  error: function (error) {
+			alert(error);
+		  }
+		});
+	}
+	
+	/*function loadDemandeur_modal(){
+		alert("test");
+		$.ajax({
+			type: "GET",
+			url: "/getListeDemandeur",
+			success: function(msg){
+				var html = "<option value=''></option>";
+				html += "<option value='0' selected disabled></option>";
+				var data = JSON.parse(msg);
+				for (var i = 0 ; i<data.length ; i++){
+				   var temp = data[i].get_demandeurs_fr.toString().split(',');
+				   var matricule = temp[0].replace(/[()]/g,'');
+				   var appelation = temp[1].replace(/[()]/g,'');
+				   html += "<option value='"+matricule+"'> " +matricule+" - " +appelation+ "</option>";
+				}
+				$("#demandeur").html(html);
+				$("#demandeur_application").html(html);
+			},
+			error: function (error) {
+				alert("ERROR GET VEHICULE");
+			}
+		});
+	}*/
+	
+	//PRIORITE
+	function loadPriorite(){
+		$.ajax({
+		  type: "GET",
+		  url: "/getLsTypePriorite",
+		  success: function(msg){
+			var html = "<option value=''></option>";
+			var data = JSON.parse(msg);
+			for (var i = 0 ; i<data.length ; i++){
+			  html += "<option value='"+data[i].id_priorite+"'>"+data[i].libelle_priorite+"</option>";
+			}
+			$("#priorite_select").html(html);
+		  },
+		  error: function (error) {
+			alert(error);
+		  }
+		});
+	}
+	
+	//TYPE DEMANDE
+	function loadTypeDemande(){
+		$.ajax({
+		  type: "GET",
+		  url: "/getLsTypeDemande",
+		  success: function(msg){
+			var html = "<option value=''></option>";
+			var data = JSON.parse(msg);
+			for (var i = 0 ; i<data.length ; i++){
+			  html += "<option value='"+data[i].id_type_intervention+"'>"+data[i].libelle+"</option>";
+			}
+			$("#type_select").html(html);
+		  },
+		  error: function (error) {
+			alert(error);
+		  }
+		});
+	}
+	
+	//ETAT DEMANDE
+	function loadEtatDemande(){
+		$.ajax({
+		  type: "GET",
+		  url: "/getLsEtatDemande",
+		  success: function(msg){
+			var html = "<option value=''></option>";
+			var data = JSON.parse(msg);
+			for (var i = 0 ; i<data.length ; i++){
+			  html += "<option value='"+data[i].id_etat_demande+"'>"+data[i].libelle+"</option>";
+			}
+			$("#etat_demande_select").html(html);
+		  },
+		  error: function (error) {
+			alert(error);
+		  }
+		});
+	}
+</script>
+ 
+ <!------------------------------------------------  DEBUT TABLE GLOBALE ---------->
+<script type="text/javascript">
+	//LOAD TABLE GLOBALE
+	function loadDataTableG() {
+		var handleDataTableButtons_gl = function() {
+		  if ($("#table-globale").length) {
+			$("#table-globale").DataTable({
+			  dom: "Bfrtip",
+			  destroy: true,
+			  searching: false,
+			  paging: false,
+			  sort: false,
+			  "aLengthMenu": [[25, 50, 75, -1], [25, 50, 75, "All"]],
+			  "iDisplayLength": 25,
+			  buttons: [
+				{
+				  extend: "copy",
+				  className: "btn-sm"
+				},
+				{
+				  extend: "csv",
+				  className: "btn-sm"
+				},
+				{
+				  extend: "excel",
+				  className: "btn-sm"
+				},
+				{
+				  extend: "pdfHtml5",
+				  className: "btn-sm"
+				},
+				{
+				  extend: "print",
+				  className: "btn-sm"
+				},
+			  ],
+			  responsive: true
+			});
+		  }
+		};
+		TableManageButtons_gl= function() {
+		  "use strict";
+		  return {
+			init: function() {
+			  handleDataTableButtons_gl();
+			}
+		  };
+		}();
+		TableManageButtons_gl.init();
+	}
+	
+	//GET DELAI QUALITE
+	function getDelaiQualite(dateDemandeTermine1, delai){
+		var dateDemandeTermine = new Date(Number(Date.parse(dateDemandeTermine1)));
+		var dateDemandeTermineMonth = dateDemandeTermine.getMonth() + 1;
+		var monthDateDemandeTermine = dateDemandeTermineMonth;
+		if(dateDemandeTermine.getMonth() < 10){
+			monthDateDemandeTermine = "0"+dateDemandeTermineMonth;
+		}
+		var dayDateDemandeTermine = dateDemandeTermine.getDate();
+		if(dateDemandeTermine.getDate() < 10){
+			dayDateDemandeTermine = "0"+dateDemandeTermine.getDate();
+		}
+		var dateDemandeTermine = dateDemandeTermine.getFullYear()+"-"+monthDateDemandeTermine+"-"+dayDateDemandeTermine;
+		if(isNaN(monthDateDemandeTermine)){
+			dateDemandeTermine = "-";
+		}
+		var dateFirst = new Date(dateDemandeTermine);
+		var dateSecond = new Date(delai);
+		var timeDiff = dateFirst.getTime() - dateSecond.getTime();
+		var delaiAfficher = "1";
+		
+		if ( timeDiff > 0)
+		{
+			delaiAfficher = "0";
+		}
+		return delaiAfficher;
+	}
+	
+	//GET QUALITE
+	function getQualite(nbBug){
+		var qualiteAfficher = 1;
+		if(isNaN(nbBug)){
+			qualiteAfficher = "0";
+		}
+		if(nbBug > 0){
+			qualiteAfficher = "0";
+		} 
+		return qualiteAfficher;
+	}
+	
+	//CALCUL VALEUR
+	function CalculValeur(seconde)
+	{
+		var retourCalcul;
+		var h2=parseFloat(parseInt(seconde)/3600);
+		retourCalcul=h2;
+		return Number(retourCalcul.toFixed(2));
+	}
+	
+	// 1 -------------------------------------------------------------------------------
+	function getAjaxFiltreTachePrisDossierGlobale(sel)
+    {
+		$("#table-globale").dataTable().fnDestroy()
+		
+		//param
+		var id_etat_demande = $("#etat_demande_select").val();
+		var id_dev = $("#dev_select").val();
+		var id_demandeur = $("#demandeur_select").val();
+		var id_dossier = $("#dossierDash").val();
+		var id_application = "a";
+		
+		getval(sel);
+		$("#applicationDash").val("a");
+		
+		if($("#applicationDash").val()){
+			id_application = $("#applicationDash").val();
+		}
+		var dead_line = $("#dead_line_select").val();
+		var id_type_intervention = $("#type_select").val();
+		var id_priorite = $("#priorite_select").val();
+		
+		var debut = $("#debut_select").val();
+		var finVal = $("#fin_select").val();
+	
+		$("#glob_gs").html("");
+		$("#table-globale").dataTable().fnDestroy()
+		
+		$.ajax({
+			type: "GET",
+			url: "/AfficherListeTachePrisTabGlobale?id_etat_demande="+id_etat_demande+"&id_dev="+id_dev+"&id_dossier="+id_dossier+"&id_application="+id_application+"&dead_line="+dead_line+"&id_type_intervention="+id_type_intervention+"&id_priorite="+id_priorite+"&debut="+debut+"&fin="+finVal+"&id_demandeur="+id_demandeur,
+			success: function(msg){
+				var application = JSON.parse(msg);
+				var htmll = "";
+				var total_heure = 0;
+				var total_heure_dem = 0;
+				
+				for (var i = 0 ; i<application.length ; i++){
+					var hiddenClass="";
+					var dateDemande = new Date(Number(Date.parse(application[i].date_demande)));
+					var dateD = dateDemande.getFullYear()+"-"+dateDemande.getMonth()+"-"+dateDemande.getDate() + " , "+dateDemande.getHours()+":"+dateDemande.getMinutes()+":"+dateDemande.getSeconds();
+
+					var dateDemandeTerminer = new Date(Number(Date.parse(application[i].date_demande_termine)));
+					var dateT = dateDemandeTerminer.getFullYear()+"-"+dateDemandeTerminer.getMonth()+"-"+dateDemandeTerminer.getDate() + " , "+dateDemandeTerminer.getHours()+":"+dateDemandeTerminer.getMinutes()+":"+dateDemandeTerminer.getSeconds();
+					
+					if(isNaN(dateDemandeTerminer.getFullYear())){
+					  dateT = "-";
+					}
+					
+					var etat = "";
+					var modifEtat = "";
+					if(application[i].etat_demande != "Prise en main"){
+					  etat = application[i].etat_demande;
+					  modifEtat = "disabled";
+					}else{
+					  etat = application[i].etat_demande+" (en cours)";
+					}
+					var bgcolor_priorite="";
+					if(application[i].id_priorite==null)
+					{
+					  bgcolor_priorite='';
+					  application[i].priorite='';
+					}
+					if(application[i].id_priorite==1)
+					{
+					  bgcolor_priorite="bgcolor='#F78181'"; 
+					}
+					else if(application[i].id_priorite==2)
+					{
+					  bgcolor_priorite="bgcolor='#F5DA81'";
+					}
+					
+					else if(application[i].id_priorite==3)
+					{
+					  bgcolor_priorite="bgcolor='#9FF781'";
+					}
+					if(application[i].id_type_intervention > 4 && application[i].id_type_intervention !== 10)
+					{
+					  bgcolor_priorite="bgcolor=#A9E2F3";
+					}
+					
+					var start = new Date(Number(Date.parse(application[i].date_demande)));
+					var startMonth = start.getMonth() + 1;
+			
+					var month = startMonth;
+					if(startMonth < 10){
+						month = "0"+startMonth;
+					}
+					var day = start.getDate();
+					if(start.getDate() < 10){
+						day = "0"+start.getDate();
+					}
+					var dateDemande = start.getFullYear()+"-"+month+"-"+day;
+					
+					//date fin
+					var fin = new Date(Number(Date.parse(application[i].date_demande_termine)));
+					var finMonth = fin.getMonth() + 1;
+			
+					var monthFin = finMonth;
+					if(finMonth < 10){
+						monthFin = "0"+finMonth;
+					}
+					var dayFin = fin.getDate();
+					if(fin.getDate() < 10){
+						dayFin = "0"+fin.getDate();
+					}
+					var dateDemandeFin = fin.getFullYear()+"-"+monthFin+"-"+dayFin;
+					if(isNaN(monthFin)){
+						dateDemandeFin = "-";
+					}
+					
+					var delaiQual = application[i].qualite_dev;
+					
+					if(application[i].libelle_soustache)
+					{
+						var qualiteBugDev = "1";
+						if(application[i].type_intervention == "Bug"){
+							qualiteBugDev = "0";
+						}
+						
+						var afficher_delai_sous_tache = getDelaiQualite(application[i].date_fin_cr, application[i].delai);
+						if(application[i].num_dossier == "GESTIONS"){
+							afficher_delai_sous_tache = "1";
+						}
+						else{
+							var ii = i+1;
+							afficher_delai_sous_tache = "-";
+							if(ii !== application.length){
+								if(application[i].id_demande == application[ii].id_demande){
+									afficher_delai_sous_tache = "-";
+								}
+								else{
+									afficher_delai_sous_tache = getDelaiQualite(application[i].date_fin_cr, application[i].delai);
+								}
+							}else{
+								afficher_delai_sous_tache = getDelaiQualite(application[i].date_fin_cr, application[i].delai);
+							}
+						}
+						
+						//estimation
+						var tempsPasse_estimation = application[i].estimation_dev;
+						if(application[i].estimation_dev == null){
+						  tempsPasse_estimation = "-";
+						}else{
+						  tempsPasse_estimation = CalculeDate(application[i].estimation_dev);
+						}
+						
+						var afficher_estimation_sous_tache = tempsPasse_estimation;
+						var ii = i+1;
+						afficher_estimation_sous_tache = "-";
+						if(ii !== application.length){
+							if(application[i].id_demande == application[ii].id_demande){
+								afficher_estimation_sous_tache = "-";
+							}
+							else{
+								afficher_estimation_sous_tache = tempsPasse_estimation;
+							}
+						}else{
+							afficher_estimation_sous_tache = tempsPasse_estimation;
+						}
+					
+						//COMBINAISON SOUS TACHE
+						var tempsPasse = application[i].temps_passe;
+						if(application[i].temps_passe == null){
+						  tempsPasse = 0;
+						}else{
+						  var sec_num = parseInt(tempsPasse, 10);
+						  var hours   = Math.floor(sec_num / 3600);
+						  var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+						  var seconds = sec_num - (hours * 3600) - (minutes * 60);
+						  if (hours   < 10) {hours   = "0"+hours;}
+						  if (minutes < 10) {minutes = "0"+minutes;}
+						  if (seconds < 10) {seconds = "0"+seconds;}
+						  total_heure_dem = total_heure_dem + sec_num;
+						  tempsPasse=application[i].temps_passe;
+						}
+						
+						var ii_combinaison = i+1;
+						if(ii_combinaison !== application.length){
+							if(application[i].id_soustache == application[ii_combinaison].id_soustache){
+								array_total_temps.push(parseInt(tempsPasse, 10));
+							}
+							else{
+								var temp_total_temps = 0;
+								if(array_total_temps.length != 0){
+									var total_temps_passe_2 = 0;
+									for(var a = 0; a<array_total_temps.length; a++){
+										total_temps_passe_2 = total_temps_passe_2 + array_total_temps[a];
+									}
+									temp_total_temps = CalculeDate(total_temps_passe_2 + parseInt(tempsPasse, 10));
+									array_total_temps = [];
+								}
+								else{
+									temp_total_temps = CalculeDate(parseInt(tempsPasse, 10));
+								}
+								htmll += "<tr class='even pointer' data-toggle='collapse' data-target='#accordion-"+application[i].id_demande+"' class='clickable'>"+
+								"<td "+ bgcolor_priorite +" class=''>"+application[i].id_soustache +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+(application[i].num_dossier || "Gestion") +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+(application[i].nom_application || application[i].type_intervention) +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].libelle_soustache)) +" ("+ unescape(unescape(application[i].description)) +") </td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ afficher_estimation_sous_tache +"</td>"+
+								
+								"<td "+ bgcolor_priorite +" class=''>"+(application[i].avancement|| "-") +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ (application[i].delai || "-") +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ afficher_type_sous_tache +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+( afficher_delai_sous_tache || "-")+"</td> "+ <!-- delai -->
+								"<td "+ bgcolor_priorite +" class=''>"+ ( qualiteBugDev || "1")+"</td>"+
+								
+								"<td "+ bgcolor_priorite +" class=''></td>"+ //TYPE APPLICATION
+								
+								"<td "+ bgcolor_priorite +" class=''>"+ (application[i].libelle_priorite || "-")+"</td>"+
+								
+								"<td "+ bgcolor_priorite +" class=''>"+ (application[i].etat_demande || "-")+"</td>"+ //ETAT 
+								"<td "+ bgcolor_priorite +" class=''>-</td>";
+								
+								//"<td "+ bgcolor_priorite +" class=''>"+ (application[i].date_cr || "-")+"</td>";
+							}
+						}else{
+							var temp_total_temps = 0;
+							if(array_total_temps.length != 0){
+								var total_temps_passe_2 = 0;
+								for(var a = 0; a<array_total_temps.length; a++){
+									total_temps_passe_2 = total_temps_passe_2 + array_total_temps[a];
+								}
+								temp_total_temps = CalculeDate(total_temps_passe_2 + parseInt(tempsPasse, 10));
+								array_total_temps = [];
+							}
+							else{
+								temp_total_temps = CalculeDate(parseInt(tempsPasse, 10));
+							}
+							htmll += "<tr class='even pointer' data-toggle='collapse' data-target='#accordion-"+application[i].id_demande+"' class='clickable'>"+
+							"<td "+ bgcolor_priorite +" class=''>"+application[i].id_soustache +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+(application[i].num_dossier || "Gestion") +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+(application[i].nom_application || application[i].type_intervention) +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].libelle_soustache)) +" ("+ unescape(unescape(application[i].description)) +") </td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+
+							
+							"<td "+ bgcolor_priorite +" class=''>"+ afficher_estimation_sous_tache +"</td>"+
+							
+							"<td "+ bgcolor_priorite +" class=''>"+(application[i].avancement|| "-") +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+ (application[i].delai || "-") +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+ afficher_type_sous_tache +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+( afficher_delai_sous_tache || "-")+"</td> "+ <!-- delai -->
+							"<td "+ bgcolor_priorite +" class=''>"+ ( qualiteBugDev || "1")+"</td>"+
+							
+							"<td "+ bgcolor_priorite +" class=''></td>"+ // TYPE APP
+							
+							"<td "+ bgcolor_priorite +" class=''>"+ (application[i].libelle_priorite || "-")+"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+ (application[i].etat_demande || "-")+"</td>"+ // ETAT
+							"<td "+ bgcolor_priorite +" class=''>-</td>";
+							
+							//"<td "+ bgcolor_priorite +" class=''>"+ (application[i].date_cr || "-")+"</td>";
+							
+						}
+					}
+					else
+					{
+						var qualiteBugDev = "1";
+						if(application[i].type_intervention == "Bug"){
+							qualiteBugDev = "0";
+						}
+						
+						var delaiQual = getDelaiQualite(application[i].date_fin_cr, application[i].delai);
+						if(application[i].num_dossier == "GESTIONS"){
+							delaiQual = "1";
+						}
+						
+						//estimation
+						var tempsPasse_estimation = application[i].estimation_dev;
+						if(application[i].estimation_dev == null){
+						  tempsPasse_estimation = "-";
+						}else{
+						  tempsPasse_estimation = CalculeDate(application[i].estimation_dev);
+						}
+						
+						var afficher_estimation_tache = tempsPasse_estimation;
+						var ii = i+1;
+						afficher_estimation_tache = "-";
+						if(ii !== application.length){
+							if(application[i].id_demande == application[ii].id_demande){
+								afficher_estimation_tache = "-";
+							}
+							else{
+								afficher_estimation_tache = tempsPasse_estimation;
+							}
+						}else{
+							afficher_estimation_tache = tempsPasse_estimation;
+						}
+						
+						//TAUX RETARD
+						var nb_jrs_retard = 0;
+						var nb_jrs_prevus = 1;
+						var tauxRetard = "-";
+						if(application[i].id_etat_demande == 3)
+						{
+							if(application[i].date_fin_cr)
+							{
+								var date_debut = new Date(application[i].date_demande.substring(0,10));
+								var date_delai = new Date(application[i].delai);
+								var date_fin = new Date(Number(Date.parse(application[i].date_fin_cr)));
+								
+								if(date_delai.getTime() < date_fin.getTime()){
+									var diffTimeRetard = Math.abs(date_fin.getTime() - date_delai.getTime());
+									var diffDaysRetard = Math.ceil(diffTimeRetard / (1000 * 60 * 60 * 24)); 
+									nb_jrs_retard = diffDaysRetard;
+								}
+								var diffTimePrevus = Math.abs(date_delai.getTime() - date_debut.getTime());
+								var diffDaysPrevus = Math.ceil(diffTimePrevus / (1000 * 60 * 60 * 24));
+								nb_jrs_prevus = diffDaysPrevus;
+								if(diffDaysPrevus == 0){
+									nb_jrs_prevus = 1;
+								}
+								tauxRetard = (100 - ((nb_jrs_retard * 100) / nb_jrs_prevus)).toFixed(2);
+								if(tauxRetard < 0 ){
+									tauxRetard = 0;
+								}
+							}
+						}
+						
+						//COMBINAISON DEMANDE
+						var tempsPasse = application[i].temps_passe;
+						if(application[i].temps_passe == null){
+						  tempsPasse = 0;
+						}else{
+						  var sec_num = parseInt(tempsPasse, 10);
+						  var hours   = Math.floor(sec_num / 3600);
+						  var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+						  var seconds = sec_num - (hours * 3600) - (minutes * 60);
+						  if (hours   < 10) {hours   = "0"+hours;}
+						  if (minutes < 10) {minutes = "0"+minutes;}
+						  if (seconds < 10) {seconds = "0"+seconds;}
+						  total_heure_dem = total_heure_dem + sec_num;
+						  tempsPasse=application[i].temps_passe;
+						}
+						
+						var ii_combinaison = i+1;
+						if(ii_combinaison !== application.length){
+							if(application[i].id_demande == application[ii_combinaison].id_demande){
+								array_total_temps.push(parseInt(tempsPasse, 10));
+							}
+							else{
+								var temp_total_temps = 0;
+								if(array_total_temps.length != 0){
+									var total_temps_passe_2 = 0;
+									for(var a = 0; a<array_total_temps.length; a++){
+										total_temps_passe_2 = total_temps_passe_2 + array_total_temps[a];
+									}
+									temp_total_temps = CalculeDate(total_temps_passe_2 + parseInt(tempsPasse, 10));
+									array_total_temps = [];
+								}
+								else{
+									temp_total_temps = CalculeDate(parseInt(tempsPasse, 10));
+								}
+								htmll += "<tr class='even pointer' data-toggle='collapse' data-target='#accordion-"+application[i].id_demande+"' class='clickable'>"+
+								"<td "+ bgcolor_priorite +" class=''>"+application[i].id_demande +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+(application[i].num_dossier || "Gestion") +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+(application[i].nom_application || application[i].type_intervention) +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].description)) +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+ // 
+								
+								"<td "+ bgcolor_priorite +" class=''>"+ afficher_estimation_tache +"</td>"+
+								
+								"<td "+ bgcolor_priorite +" class=''>"+(application[i].avancement_dev|| "-") +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ (application[i].delai || "-") +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ application[i].type_intervention +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+( delaiQual || "1")+"</td> "+ <!-- delai -->
+								"<td "+ bgcolor_priorite +" class=''>"+ ( qualiteBugDev || "1")+"</td>"+
+								
+								"<td "+ bgcolor_priorite +" class=''></td>"+ // TYPE APP
+								
+								"<td "+ bgcolor_priorite +" class=''>"+ (application[i].libelle_priorite || "-")+"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ (application[i].etat_demande || "-")+"</td>"+ // ETAT
+								"<td "+ bgcolor_priorite +" class=''>"+ (tauxRetard)+"</td>";
+								
+								//"<td "+ bgcolor_priorite +" class=''>"+ (application[i].date_fin_cr || "-")+"</td>";
+								
+							}
+						}else{
+							var temp_total_temps = 0;
+							if(array_total_temps.length != 0){
+								var total_temps_passe_2 = 0;
+								for(var a = 0; a<array_total_temps.length; a++){
+									total_temps_passe_2 = total_temps_passe_2 + array_total_temps[a];
+								}
+								temp_total_temps = CalculeDate(total_temps_passe_2 + parseInt(tempsPasse, 10));
+								array_total_temps = [];
+							}
+							else{
+								temp_total_temps = CalculeDate(parseInt(tempsPasse, 10));
+							}
+							htmll += "<tr class='even pointer' data-toggle='collapse' data-target='#accordion-"+application[i].id_demande+"' class='clickable'>"+
+								"<td "+ bgcolor_priorite +" class=''>"+application[i].id_demande +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+(application[i].num_dossier || "Gestion") +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+(application[i].nom_application || application[i].type_intervention) +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].description)) +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+ // 
+								
+								"<td "+ bgcolor_priorite +" class=''>"+ afficher_estimation_tache +"</td>"+
+								
+								"<td "+ bgcolor_priorite +" class=''>"+(application[i].avancement_dev|| "-") +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ (application[i].delai || "-") +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ application[i].type_intervention +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+( delaiQual || "1")+"</td> "+ <!-- delai -->
+								"<td "+ bgcolor_priorite +" class=''>"+ ( qualiteBugDev || "1")+"</td>"+
+								
+								"<td "+ bgcolor_priorite +" class=''></td>"+ // TYPE APP
+								
+								"<td "+ bgcolor_priorite +" class=''>"+ (application[i].libelle_priorite || "-")+"</td>"+
+								
+								"<td "+ bgcolor_priorite +" class=''>"+ (application[i].etat_demande || "-")+"</td>"+ // ETAT
+								
+								"<td "+ bgcolor_priorite +" class=''>"+ (tauxRetard)+"</td>";
+								
+								//"<td "+ bgcolor_priorite +" class=''>"+ (application[i].date_fin_cr || "-")+"</td>";
+								
+						}
+					}
+					$("#glob_gs").html(htmll);
+				}
+				
+				var total = total_heure + total_heure_dem;
+				var sec_num = parseInt(total, 10); // don't forget the second param
+				var hours   = Math.floor(sec_num / 3600);
+				var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+				var seconds = sec_num - (hours * 3600) - (minutes * 60);
+				if (hours   < 10) {hours   = "0"+hours;}
+				if (minutes < 10) {minutes = "0"+minutes;}
+				if (seconds < 10) {seconds = "0"+seconds;}
+				var res_total =  hours+":"+minutes+":"+seconds;
+				$("#total_input").val(res_total);
+				
+				loadDataTableG();
+			},           
+			error: function (error) {
+			  alert("error; " +error);
+			}
+		});
+    }
+	
+	// CALCUL DATE
+	function CalculeDate(seconde)
+	{
+		var retourCalcul;
+		var h2=parseFloat(parseInt(seconde)/3600);
+		retourCalcul=h2;
+		var res_number = Number(retourCalcul.toFixed(2));
+		var res_string = res_number.toString();
+		var res = res_string.replace(".", ",");
+		return res;
+	}
+	
+	// 2 -------------------------------------------------------------------------------
+	function getGestionSousTache() 
+	{
+		$("#table-globale").dataTable().fnDestroy()
+		
+		//param
+		var id_etat_demande = $("#etat_demande_select").val();
+		var id_dev = $("#dev_select").val();
+		var id_demandeur = $("#demandeur_select").val();
+		var id_dossier = $("#dossierDash").val();
+		var id_application = "a";
+		if($("#applicationDash").val()){
+			id_application = $("#applicationDash").val();
+		}
+		
+		var dead_line = $("#dead_line_select").val();
+		var id_type_intervention = $("#type_select").val();
+		var id_priorite = $("#priorite_select").val();
+		
+		var debut = $("#debut_select").val();
+		var finVal = $("#fin_select").val();
+	
+		$("#glob_gs").html("");
+		$("#table-globale").dataTable().fnDestroy()
+		
+		$.ajax({
+			type: "GET",
+			url: "/AfficherListeTachePrisTabGlobale?id_etat_demande="+id_etat_demande+"&id_dev="+id_dev+"&id_dossier="+id_dossier+"&id_application="+id_application+"&dead_line="+dead_line+"&id_type_intervention="+id_type_intervention+"&id_priorite="+id_priorite+"&debut="+debut+"&fin="+finVal+"&id_demandeur="+id_demandeur,
+			success: function(msg){
+				var application = JSON.parse(msg);
+				var htmll = "";
+				var total_heure = 0;
+				var total_heure_dem = 0;
+				
+				var total_temps_passe = 0;
+				var array_total_temps = [];
+				for (var i = 0 ; i<application.length ; i++){
+					var hiddenClass="";
+					var dateDemande = new Date(Number(Date.parse(application[i].date_demande)));
+					var dateD = dateDemande.getFullYear()+"-"+dateDemande.getMonth()+"-"+dateDemande.getDate() + " , "+dateDemande.getHours()+":"+dateDemande.getMinutes()+":"+dateDemande.getSeconds();
+
+					var dateDemandeTerminer = new Date(Number(Date.parse(application[i].date_demande_termine)));
+					var dateT = dateDemandeTerminer.getFullYear()+"-"+dateDemandeTerminer.getMonth()+"-"+dateDemandeTerminer.getDate() + " , "+dateDemandeTerminer.getHours()+":"+dateDemandeTerminer.getMinutes()+":"+dateDemandeTerminer.getSeconds();
+					
+					if(isNaN(dateDemandeTerminer.getFullYear())){
+					  dateT = "-";
+					}
+					
+					var etat = "";
+					var modifEtat = "";
+					if(application[i].etat_demande != "Prise en main"){
+					  etat = application[i].etat_demande;
+					  modifEtat = "disabled";
+					}else{
+					  etat = application[i].etat_demande+" (en cours)";
+					}
+					var bgcolor_priorite="";
+					if(application[i].id_priorite==null)
+					{
+					  bgcolor_priorite='';
+					  application[i].priorite='';
+					}
+					if(application[i].id_priorite==1)
+					{
+					  bgcolor_priorite="bgcolor='#F78181'"; 
+					}
+					else if(application[i].id_priorite==2)
+					{
+					  bgcolor_priorite="bgcolor='#F5DA81'";
+					}
+					
+					else if(application[i].id_priorite==3)
+					{
+					  bgcolor_priorite="bgcolor='#9FF781'";
+					}
+					if(application[i].id_type_intervention > 4 && application[i].id_type_intervention !== 10)
+					{
+					  bgcolor_priorite="bgcolor=#A9E2F3";
+					}
+					
+					var start = new Date(Number(Date.parse(application[i].date_demande)));
+					var startMonth = start.getMonth() + 1;
+			
+					var month = startMonth;
+					if(startMonth < 10){
+						month = "0"+startMonth;
+					}
+					var day = start.getDate();
+					if(start.getDate() < 10){
+						day = "0"+start.getDate();
+					}
+					var dateDemande = start.getFullYear()+"-"+month+"-"+day;
+					
+					//date fin
+					var fin = new Date(Number(Date.parse(application[i].date_demande_termine)));
+					var finMonth = fin.getMonth() + 1;
+			
+					var monthFin = finMonth;
+					if(finMonth < 10){
+						monthFin = "0"+finMonth;
+					}
+					var dayFin = fin.getDate();
+					if(fin.getDate() < 10){
+						dayFin = "0"+fin.getDate();
+					}
+					var dateDemandeFin = fin.getFullYear()+"-"+monthFin+"-"+dayFin;
+					if(isNaN(monthFin)){
+						dateDemandeFin = "-";
+					}
+					
+					if(application[i].libelle_soustache)
+					{
+						var afficher_type_sous_tache = application[i].type_intervention;
+						if(application[i].type_intervention == "Bug"){
+							var ii = i+1;
+							afficher_type_sous_tache = "Developpement";
+							if(ii !== application.length){
+								if(application[i].id_demande == application[ii].id_demande){
+									afficher_type_sous_tache = "Developpement";
+								}
+								else{
+									afficher_type_sous_tache = application[i].type_intervention;
+								}
+							}else{
+								afficher_type_sous_tache = application[i].type_intervention;
+							}
+						}
+						
+						var qualiteBugDev = "1";
+						if(application[i].type_intervention == "Bug"){
+							qualiteBugDev = "0";
+						}
+						
+						var afficher_delai_sous_tache = getDelaiQualite(application[i].date_fin_cr, application[i].delai);
+						if(application[i].num_dossier == "GESTIONS"){
+							afficher_delai_sous_tache = "1";
+						}
+						else{
+							var ii = i+1;
+							afficher_delai_sous_tache = "-";
+							if(ii !== application.length){
+								if(application[i].id_demande == application[ii].id_demande){
+									afficher_delai_sous_tache = "-";
+								}
+								else{
+									afficher_delai_sous_tache = getDelaiQualite(application[i].date_fin_cr, application[i].delai);
+								}
+							}else{
+								afficher_delai_sous_tache = getDelaiQualite(application[i].date_fin_cr, application[i].delai);
+							}
+						}
+						
+						//estimation
+						var tempsPasse_estimation = application[i].estimation_dev;
+						if(application[i].estimation_dev == null){
+						  tempsPasse_estimation = "-";
+						}else{
+						  tempsPasse_estimation = CalculeDate(application[i].estimation_dev);
+						}
+						
+						var afficher_estimation_sous_tache = tempsPasse_estimation;
+						var ii = i+1;
+						afficher_estimation_sous_tache = "-";
+						if(ii !== application.length){
+							if(application[i].id_demande == application[ii].id_demande){
+								afficher_estimation_sous_tache = "-";
+							}
+							else{
+								afficher_estimation_sous_tache = tempsPasse_estimation;
+							}
+						}else{
+							afficher_estimation_sous_tache = tempsPasse_estimation;
+						}
+					
+						//COMBINAISON SOUS TACHE
+						var tempsPasse = application[i].temps_passe;
+						if(application[i].temps_passe == null){
+						  tempsPasse = 0;
+						}else{
+						  var sec_num = parseInt(tempsPasse, 10);
+						  var hours   = Math.floor(sec_num / 3600);
+						  var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+						  var seconds = sec_num - (hours * 3600) - (minutes * 60);
+						  if (hours   < 10) {hours   = "0"+hours;}
+						  if (minutes < 10) {minutes = "0"+minutes;}
+						  if (seconds < 10) {seconds = "0"+seconds;}
+						  total_heure_dem = total_heure_dem + sec_num;
+						  tempsPasse=application[i].temps_passe;
+						}
+						
+						var ii_combinaison = i+1;
+						if(ii_combinaison !== application.length){
+							if(application[i].id_soustache == application[ii_combinaison].id_soustache){
+								array_total_temps.push(parseInt(tempsPasse, 10));
+							}
+							else{
+								var temp_total_temps = 0;
+								if(array_total_temps.length != 0){
+									var total_temps_passe_2 = 0;
+									for(var a = 0; a<array_total_temps.length; a++){
+										total_temps_passe_2 = total_temps_passe_2 + array_total_temps[a];
+									}
+									temp_total_temps = CalculeDate(total_temps_passe_2 + parseInt(tempsPasse, 10));
+									array_total_temps = [];
+								}
+								else{
+									temp_total_temps = CalculeDate(parseInt(tempsPasse, 10));
+								}
+								htmll += "<tr class='even pointer' data-toggle='collapse' data-target='#accordion-"+application[i].id_demande+"' class='clickable'>"+
+								"<td "+ bgcolor_priorite +" class=''>"+application[i].id_soustache +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+(application[i].num_dossier || "Gestion") +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+(application[i].nom_application || application[i].type_intervention) +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].libelle_soustache)) +" ("+ unescape(unescape(application[i].description)) +") </td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+
+								
+								"<td "+ bgcolor_priorite +" class=''>"+ afficher_estimation_sous_tache +"</td>"+
+								
+								"<td "+ bgcolor_priorite +" class=''>"+(application[i].avancement|| "-") +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ (application[i].delai || "-") +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ afficher_type_sous_tache +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+( afficher_delai_sous_tache || "-")+"</td> "+ <!-- delai -->
+								"<td "+ bgcolor_priorite +" class=''>"+ ( qualiteBugDev || "1")+"</td>"+
+								
+								"<td "+ bgcolor_priorite +" class=''></td>"+ //TYPE APP
+								
+								"<td "+ bgcolor_priorite +" class=''>"+ (application[i].libelle_priorite || "-")+"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ (application[i].etat_demande || "-")+"</td>"+ //ETAT
+								"<td "+ bgcolor_priorite +" class=''>-</td>";
+								
+								//"<td "+ bgcolor_priorite +" class=''>"+ (application[i].date_cr || "-")+"</td>";
+								
+							}
+						}else{
+							var temp_total_temps = 0;
+							if(array_total_temps.length != 0){
+								var total_temps_passe_2 = 0;
+								for(var a = 0; a<array_total_temps.length; a++){
+									total_temps_passe_2 = total_temps_passe_2 + array_total_temps[a];
+								}
+								temp_total_temps = CalculeDate(total_temps_passe_2 + parseInt(tempsPasse, 10));
+								array_total_temps = [];
+							}
+							else{
+								temp_total_temps = CalculeDate(parseInt(tempsPasse, 10));
+							}
+							htmll += "<tr class='even pointer' data-toggle='collapse' data-target='#accordion-"+application[i].id_demande+"' class='clickable'>"+
+							"<td "+ bgcolor_priorite +" class=''>"+application[i].id_soustache +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+(application[i].num_dossier || "Gestion") +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+(application[i].nom_application || application[i].type_intervention) +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].libelle_soustache)) +" ("+ unescape(unescape(application[i].description)) +") </td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+
+							
+							"<td "+ bgcolor_priorite +" class=''>"+ afficher_estimation_sous_tache +"</td>"+
+							
+							"<td "+ bgcolor_priorite +" class=''>"+(application[i].avancement|| "-") +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+ (application[i].delai || "-") +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+ afficher_type_sous_tache +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+( afficher_delai_sous_tache || "-")+"</td> "+ <!-- delai -->
+							"<td "+ bgcolor_priorite +" class=''>"+ ( qualiteBugDev || "1")+"</td>"+
+							
+							"<td "+ bgcolor_priorite +" class=''></td>"+ // TYPE APP
+							
+							"<td "+ bgcolor_priorite +" class=''>"+ (application[i].libelle_priorite || "-")+"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+ (application[i].etat_demande || "-")+"</td>"+ //ETAT
+							"<td "+ bgcolor_priorite +" class=''>-</td>";
+							
+							//"<td "+ bgcolor_priorite +" class=''>"+ (application[i].date_cr || "-")+"</td>";
+							
+						}
+					}
+					else
+					{
+						var qualiteBugDev = "1";
+						if(application[i].type_intervention == "Bug"){
+							qualiteBugDev = "0";
+						}
+						
+						var delaiQual = getDelaiQualite(application[i].date_fin_cr, application[i].delai);
+						if(application[i].num_dossier == "GESTIONS"){
+							delaiQual = "1";
+						}
+						
+						//estimation
+						var tempsPasse_estimation = application[i].estimation_dev;
+						if(application[i].estimation_dev == null){
+						  tempsPasse_estimation = "-";
+						}else{
+						  tempsPasse_estimation = CalculeDate(application[i].estimation_dev);
+						}
+						
+						var afficher_estimation_tache = tempsPasse_estimation;
+						
+						var ii = i+1;
+						afficher_estimation_tache = "-";
+						if(ii !== application.length){
+							if(application[i].id_demande == application[ii].id_demande){
+								afficher_estimation_tache = "-";
+							}
+							else{
+								afficher_estimation_tache = tempsPasse_estimation;
+							}
+						}else{
+							afficher_estimation_tache = tempsPasse_estimation;
+						}
+						
+						//TAUX RETARD
+						var nb_jrs_retard = 0;
+						var nb_jrs_prevus = 1;
+						var tauxRetard = "-";
+						if(application[i].id_etat_demande == 3)
+						{
+							if(application[i].date_fin_cr)
+							{
+								var date_debut = new Date(application[i].date_demande.substring(0,10));
+								var date_delai = new Date(application[i].delai);
+								var date_fin = new Date(Number(Date.parse(application[i].date_fin_cr)));
+								
+								if(date_delai.getTime() < date_fin.getTime()){
+									var diffTimeRetard = Math.abs(date_fin.getTime() - date_delai.getTime());
+									var diffDaysRetard = Math.ceil(diffTimeRetard / (1000 * 60 * 60 * 24)); 
+									nb_jrs_retard = diffDaysRetard;
+								}
+								
+								var diffTimePrevus = Math.abs(date_delai.getTime() - date_debut.getTime());
+								var diffDaysPrevus = Math.ceil(diffTimePrevus / (1000 * 60 * 60 * 24));
+								
+								nb_jrs_prevus = diffDaysPrevus; // delai - date_debut
+								if(diffDaysPrevus == 0){
+									nb_jrs_prevus = 1;
+								}
+								var tauxRetardtemp = 100 - ((nb_jrs_retard * 100) / nb_jrs_prevus);
+								
+								tauxRetard = (100 - ((nb_jrs_retard * 100) / nb_jrs_prevus)).toFixed(2);
+								if(tauxRetard < 0 ){
+									tauxRetard = 0;
+								}
+							}
+						}
+						
+						//COMBINAISON DEMANDE
+						var tempsPasse = application[i].temps_passe;
+						if(application[i].temps_passe == null){
+						  tempsPasse = 0;
+						}else{
+						  var sec_num = parseInt(tempsPasse, 10);
+						  var hours   = Math.floor(sec_num / 3600);
+						  var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+						  var seconds = sec_num - (hours * 3600) - (minutes * 60);
+						  if (hours   < 10) {hours   = "0"+hours;}
+						  if (minutes < 10) {minutes = "0"+minutes;}
+						  if (seconds < 10) {seconds = "0"+seconds;}
+						  total_heure_dem = total_heure_dem + sec_num;
+						  tempsPasse=application[i].temps_passe;
+						}
+						
+						var ii_combinaison = i+1;
+						
+						if(ii_combinaison !== application.length){
+							if(application[i].id_demande == application[ii_combinaison].id_demande){
+								array_total_temps.push(parseInt(tempsPasse, 10));
+							}
+							else{
+								var temp_total_temps = 0;
+								if(array_total_temps.length != 0){
+									var total_temps_passe_2 = 0;
+									for(var a = 0; a<array_total_temps.length; a++){
+										total_temps_passe_2 = total_temps_passe_2 + array_total_temps[a];
+									}
+									temp_total_temps = CalculeDate(total_temps_passe_2 + parseInt(tempsPasse, 10));
+									array_total_temps = [];
+								}
+								else{
+									temp_total_temps = CalculeDate(parseInt(tempsPasse, 10));
+								}
+								htmll += "<tr class='even pointer' data-toggle='collapse' data-target='#accordion-"+application[i].id_demande+"' class='clickable'>"+
+								"<td "+ bgcolor_priorite +" class=''>"+application[i].id_demande +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+(application[i].num_dossier || "Gestion") +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+(application[i].nom_application || application[i].type_intervention) +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].description)) +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+ // 
+								
+								"<td "+ bgcolor_priorite +" class=''>"+ afficher_estimation_tache +"</td>"+
+								
+								"<td "+ bgcolor_priorite +" class=''>"+(application[i].avancement_dev|| "-") +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ (application[i].delai || "-") +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ application[i].type_intervention +"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+( delaiQual || "1")+"</td> "+ <!-- delai -->
+								"<td "+ bgcolor_priorite +" class=''>"+ ( qualiteBugDev || "1")+"</td>"+
+								
+								"<td "+ bgcolor_priorite +" class=''></td>"+ // TYPE APP
+								
+								"<td "+ bgcolor_priorite +" class=''>"+ (application[i].libelle_priorite || "-")+"</td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+ (application[i].etat_demande || "-")+"</td>"+ // ETAT
+								"<td "+ bgcolor_priorite +" class=''>"+ (tauxRetard)+"</td>";
+								
+								//"<td "+ bgcolor_priorite +" class=''>"+ (application[i].date_fin_cr || "-")+"</td>";
+								
+							}
+						}else{
+							var temp_total_temps = 0;
+							if(array_total_temps.length != 0){
+								var total_temps_passe_2 = 0;
+								for(var a = 0; a<array_total_temps.length; a++){
+									total_temps_passe_2 = total_temps_passe_2 + array_total_temps[a];
+								}
+								temp_total_temps = CalculeDate(total_temps_passe_2 + parseInt(tempsPasse, 10));
+								array_total_temps = [];
+							}
+							else{
+								temp_total_temps = CalculeDate(parseInt(tempsPasse, 10));
+							}
+							htmll += "<tr class='even pointer' data-toggle='collapse' data-target='#accordion-"+application[i].id_demande+"' class='clickable'>"+
+							"<td "+ bgcolor_priorite +" class=''>"+application[i].id_demande +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+(application[i].num_dossier || "Gestion") +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+(application[i].nom_application || application[i].type_intervention) +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].description)) +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+ // 
+							
+							"<td "+ bgcolor_priorite +" class=''>"+ afficher_estimation_tache +"</td>"+
+							
+							"<td "+ bgcolor_priorite +" class=''>"+(application[i].avancement_dev|| "-") +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+ (application[i].delai || "-") +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+ application[i].type_intervention +"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+( delaiQual || "1")+"</td> "+ <!-- delai -->
+							"<td "+ bgcolor_priorite +" class=''>"+ ( qualiteBugDev || "1")+"</td>"+
+							
+							"<td "+ bgcolor_priorite +" class=''></td>"+ // TYPE APP
+							
+							"<td "+ bgcolor_priorite +" class=''>"+ (application[i].libelle_priorite || "-")+"</td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+ (application[i].etat_demande || "-")+"</td>"+ // ETAT
+							"<td "+ bgcolor_priorite +" class=''>"+ (tauxRetard)+"</td>";
+							
+							//"<td "+ bgcolor_priorite +" class=''>"+ (application[i].date_fin_cr || "-")+"</td>";
+							
+							/*<th><i class="fa fa-folder-open"></i> DEV </th>
+									<th><i class="fa fa-paperclip"></i> PROJET </th>
+									<th><i class="fa fa-plus-circle"></i> APPLICATION </th>
+									<th><i class="fa fa-calendar"></i> DEMANDE </th>
+									<th><i class="fa fa-file-text"></i> TEMPS PASSE </th>
+									
+									<th><i class="fa fa-cog"></i> TEMPS ESTIME</th>
+									
+									<th><i class="fa fa-file-text"></i> AVANCEMENT(%) </th>
+									<th><i class="fa fa-cog"></i> DEAD LINE </th>
+									<th><i class="fa fa-cog"></i> TYPE </th>
+									<th><i class="fa fa-cog"></i> DELAI </th>
+									<th><i class="fa fa-cog"></i> QUALITE </th>
+									
+									<th><i class="fa fa-cog"></i> TYPE APPLICATION </th>
+									
+									<th><i class="fa fa-cog"></i> PRIORITE </th>
+									<th><i class="fa fa-cog"></i> ETAT </th>
+									<th><i class="fa fa-cog"></i> TAUX D'ATTEINTE </th>*/
+						}
+					}
+					$("#glob_gs").html(htmll);
+				}
+				
+				var total = total_heure + total_heure_dem;
+				var sec_num = parseInt(total, 10); // don't forget the second param
+				var hours   = Math.floor(sec_num / 3600);
+				var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+				var seconds = sec_num - (hours * 3600) - (minutes * 60);
+				if (hours   < 10) {hours   = "0"+hours;}
+				if (minutes < 10) {minutes = "0"+minutes;}
+				if (seconds < 10) {seconds = "0"+seconds;}
+				var res_total =  hours+":"+minutes+":"+seconds;
+				$("#total_input").val(res_total);
+				
+				loadDataTableG();
+			},           
+			error: function (error) {
+			  alert("error; " +error);
+			}
+		});
+	}
+	
+	
+</script>
+</body>
+</html>

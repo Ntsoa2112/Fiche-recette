@@ -1,0 +1,43 @@
+<html>
+<head>
+<title>UserController.js</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: rgb(0,0,0); font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); font-style: italic; }
+.s1 { color: rgb(128,128,128); font-weight: bold; font-style: italic; }
+.s2 { }
+.s3 { color: rgb(0,0,128); font-weight: bold; }
+.s4 { color: rgb(0,128,0); font-weight: bold; }
+</style>
+</head>
+<BODY BGCOLOR="#ffffff">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#C0C0C0" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+UserController.js</FONT>
+</center></TD></TR></TABLE>
+<pre>
+
+<span class="s0">/** 
+ * UserController 
+ * 
+ * </span><span class="s1">@description </span><span class="s0">:: Server-side logic for managing users 
+ * </span><span class="s1">@help        </span><span class="s0">:: See http://sailsjs.org/#!/documentation/concepts/Controllerssdf 
+ */</span><span class="s2"> 
+ 
+module.exports = { 
+  </span><span class="s0">//fonction pour recuperer la liste des utilisateurs</span><span class="s2"> 
+  getUser: </span><span class="s3">function</span><span class="s2">(req, res) 
+  { 
+   </span><span class="s0">// if (!req.session.user) return res.redirect('/login');</span><span class="s2"> 
+      User.find({}, </span><span class="s3">function</span><span class="s2">(err, found){ 
+        console.log(</span><span class="s4">&quot;______________________________________________USER   &quot;</span><span class="s2">+ found); 
+        res.view( </span><span class="s4">'user/listeUser'</span><span class="s2">, {users: found} ); </span><span class="s0">//alefa any am view listeUser n liste an user ita</span><span class="s2"> 
+      }); 
+  } 
+}; 
+ 
+</span></pre>
+</body>
+</html>

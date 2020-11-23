@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+ 
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<title>Recette - Test</title>
+		<meta name="generator" content="Bootply" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/styles.css" rel="stylesheet">
+		<link href="fonts/css/font-awesome.css" rel="stylesheet">
+		<link href="fonts/css/font-awesome.min.css" rel="stylesheet">
+		<script type="text/javascript" src="js/paging.js"></script>
+		
+		
+		<script type="text/javascript">
+		//chrono
+			var centi=0
+			var secon=0
+			var minu=0
+			function chrono(){
+				centi++;
+				if (centi>9){centi=0;secon++}
+				if (secon>59){secon=0;minu++}
+				document.forsec.secc.value="  "+centi
+				document.forsec.seca.value="  "+secon
+				document.forsec.secb.value="  "+minu
+				compte=setTimeout('chrono()',100)
+			}
+			function rasee(){
+				clearTimeout(compte)
+				centi=0;
+				secon=0;
+				minu=0;
+				document.forsec.secc.value="  "+centi
+				document.forsec.seca.value="  "+secon
+				document.forsec.secb.value="  "+minu
+			}
+			//chrono
+		</script>
+		
+		
+		<script type="text/javascript">
+			var hoursLabel = document.getElementById("hours");
+			var minutesLabel = document.getElementById("minutes");
+			var secondsLabel = document.getElementById("seconds");
+			var totalSeconds = 0;
+			//setInterval(setTime, 1000);
+
+			function setTime()
+			{
+				++totalSeconds;
+				secondsLabel.innerHTML = pad(totalSeconds%60);
+				minutesLabel.innerHTML = pad(parseInt(totalSeconds/60));
+				var totalMinutes = parseInt(totalSeconds/60);
+				minutesLabel.innerHTML = pad(parseInt(totalMinutes%60));
+				hoursLabel.innerHTML = pad(parseInt(totalMinutes/60));
+			}
+
+			function pad(val)
+			{
+				var valString = val + "";
+				if(valString.length < 2)
+				{
+					return "0" + valString;
+				}
+				else
+				{
+					return valString;
+				}
+			}
+		</script>
+	
+	
+	</head>
+	<body>
+		<!-- HEADER -->
+		<% include ../header.ejs %>
+		<!-- /HEADER -->
+		<!-- Menu GAUCHE -->
+		<% var disable = "";
+		if(req.session.droit == 0){ 
+			disable = "hidden";}
+		%>
+		<!-- Container-->
+		<div class="container-fluid">
+			<div class="row">
+				<div id="menuCenter">
+					<!-- avant container -->
+          <!-- include menu à gauche -->
+					<!-- /avant container-->
+ 
+					<div class="row">
+						<div class="">
+							<div class="page-title">
+							  <div class="title_left">
+								<h2>
+								  Fiche recette
+								  <small>
+									Test <%= applications.nom_application %>
+								  </small>
+								</h2>
+							  </div>
+							  </br>
+							</div>
+							<div class="clearfix"></div>
+							
+						
+							<div class="row">
+							  <div class="col-md-12 col-sm-12 col-xs-12">
+								<div class="x_panel">
+									  <div class="x_title">
+										<div class="clearfix"></div>
+									  </div>
+										
+										
+											
+									<!-- TEST ===================================================================================================================================================== -->
+									<div class="col-lg-6  <%= display %>" id="test">
+										<div class="panel panel-primary">
+										<div class="panel-heading" id="testname"><h4 style="color:white;">TEST : <%= tests.nom_test %> <h4></div>
+										  <div class="panel-body">
+											<div class="row col-lg-12">
+												<div class="col-lg-6">
+													<div class="form-group">
+													  <label for="res">Resultat:</label>
+													  <div class="" id="res">
+															<label class="radio-inline"><input type="radio" checked="checked" name="optradiores" value="1">ok</label>
+															<label class="radio-inline"><input type="radio" name="optradiores" value="2">nok</label> 
+													  </div>
+													</div>
+ 
+													<!-- <div class="form-group">
+													  <label for="blocage">Blocage:</label>
+													  <div class="" id="blocage">
+															<label class="radio-inline"><input type="radio" name="optradiobl" checked="checked">non bloquant</label>
+															<label class="radio-inline"><input type="radio" name="optradiobl">bloquant</label> 
+													  </div>
+													</div>-->
+												</div>
+												<div class="col-lg-6">
+													<label>Statut : </label><a class="primary" id="status">en attente</a></Br>
+													<!--<label>Durée : </label><a class="primary" id="timer">00:00:00</a></Br> -->
+													
+													<!-- CHRONO -->
+														<label>Durée : </label>
+														<label id="hours" >00</label>:<label id="minutes">00</label>:<label id="seconds">00</label>
+														<!--<form name="forsec">
+															<input type="text" size="1" name="secb"> min&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+															<input type="text" size="1" name="seca"> sec&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+															<input type="text" size="1" name="secc"> dixièmes
+														</form>-->
+													<!-- FIN CHRONO -->
+												</div>
+											</div>
+											<div class="form-group desabled">
+											  <label for="comment">Commentaire:</label>
+											  <textarea class="form-control" name="comment" rows="5" id="comment" disabled></textarea>
+											</div>
+											
+												
+										  </div>
+										  
+										  <div class="panel-footer">
+										  <% 
+												if(req.param('status',null)==null){
+												%>
+													<button id="btnaction" type="button" class="btn btn-primary" onclick="debut()">Commencer</button>  <!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; debut -->
+												<%
+												}else{
+												%>
+													<script type="text/javascript">
+														//chrono();
+														
+														setInterval(setTime, 1000);
+														//alert("test set interval");
+													</script>
+													
+													<button id="btnsave" type="button" class="btn btn-info hidden" onclick="fin();">Terminer</button>
+													<button id="btnstop" type="button" class="btn btn-danger" onclick="stop();">stop</button>
+ 
+												<%
+ 
+												}
+										  %>
+										  </div>
+										</div>
+									</div>
+									<!-- FIN TEST ===================================================================================================================================================== -->
+									
+									
+											
+									<div id="tablecontent">
+										<div class="col-lg-12">
+											<h4>Tests:</h4>
+											
+											<div id="pageNavPosition2"></div>
+											
+											<table id="listeTest" class="table table-striped table-bordered table-hover table-condensed">
+											  <thead>
+												  <tr class="headings">
+													<th class="column-title">Titre test </th>
+													<th class="column-title">Type test </th>
+													<th class="column-title">Testeur </th>
+													<th class="column-title">Date debut</th>
+													<th class="column-title">Date fin</th>
+													<th class="column-title">Durée</th>
+													<th class="column-title">Status </th>
+													<th class="column-title">Commentaire </th>
+													<th class="column-title no-link last hidden">Recette</span>
+													</th>
+													<th class="column-title no-link last">Action</span>
+													</th>
+													<th class="column-title no-link last hidden">Mail</span>
+													</th>
+												  </tr>
+											  </thead>
+ 
+											  <tbody>
+											  <tr class="even pointer">
+ 
+												<% list_tests.forEach(function(test){ %>
+												
+												<%
+													var debut = new Date(Number(Date.parse(test.date_debut)));
+													var fin = new Date(Number(Date.parse(test.date_fin)));
+													var month = new Array();
+													month[0] = "Janvier";
+													month[1] = "Février";
+													month[2] = "Mars";
+													month[3] = "Avril";
+													month[4] = "Mai";
+													month[5] = "Juin";
+													month[6] = "Juillet";
+													month[7] = "Aout";
+													month[8] = "Septembre";
+													month[9] = "Octobre";
+													month[10] = "Novembre";
+													month[11] = "Décembre";
+													var nDebut = month[debut.getMonth()];
+													var nFin = month[fin.getMonth()];
+ 
+													var deb = debut.getDate()+" "+nDebut+" "+debut.getFullYear()+" à "+debut.getHours()+":"+debut.getMinutes()+":"+debut.getSeconds();
+													var fn = fin.getDate()+" "+nFin+" "+fin.getFullYear()+" à "+fin.getHours()+":"+fin.getMinutes()+":"+fin.getSeconds();
+													
+													var nomTesteur = test.matricule+" - "+test.prenom;
+													
+													var comentaireTest = test.commentaire;
+													
+													if(typeof nomTesteur == "undefined"){
+														nomTesteur = " - ";
+													}
+													
+													if(comentaireTest == null){
+														comentaireTest = " - ";
+													}
+													
+													if(typeof comentaireTest == "undefined"){
+														comentaireTest = " - ";
+													}
+													
+													if(typeof nDebut == "undefined"){
+														deb = " - ";
+													}
+													if(typeof nFin == "undefined"){
+														fn = " - ";
+													}
+													
+													var minutes;
+													var hours;
+													var seconds;
+													if (fin.getMinutes() < debut.getMinutes())
+													{
+														minutes = debut.getMinutes() - fin.getMinutes();
+														hours = fin.getHours() - debut.getHours() - 1;
+													}else
+													{
+														minutes = fin.getMinutes() - debut.getMinutes();
+														hours = fin.getHours() - debut.getHours();
+													}
+													
+													if(isNaN(minutes)){
+														minutes = " - ";
+													}
+													if(isNaN(hours)){
+														hours = " - ";
+													}
+													
+													var duree = hours+" h "+minutes+" min  //1146";
+													
+													var departement = "par DEV";
+													if(test.id_departement != 12)
+													{
+														departement = "par PROD";
+													}
+													if(test.libelle_type_resultat == "non testé")
+													{
+														test.libelle_type_resultat = " - ";
+														departement = "";
+													}
+													
+													var comms = unescape(comentaireTest);
+												%>
+												
+												<tr class="even pointer">
+													<td class=" "><%= test.nom_test %></td>
+													<td class=" "><%= test.nom_type_test %></td>
+													<td class=" "><%= nomTesteur %></td>
+													<td class=" "><%= deb %></td>
+													<td class=" "><%= fn %></td>
+													<td class=" "><%= duree %></td>
+													<td class=" ">
+														<%= test.libelle_type_resultat %> <%= departement %>
+													</td>
+													<td class=" ">
+														<%= comms %>
+													</td>
+													<% var disableTest = "";
+													if(test.libelle_type_resultat == "validé" || test.libelle_type_resultat == "non validé"){
+														disableTest = "disabled";}
+													%>
+												
+													<td class="last"><a href="appByIdTest?id=<%= req.param('id',null) %>&test=<%= test.id_test %>" class="btn btn-primary btn-sm <%= disableTest %>">Tester</a><input type="hidden" name="idTest" value="<%= test.id_test %>" >
+													</td>
+													<td class="last hidden"><a href="#contact" data-toggle="modal" class="btn btn-primary btn-sm">Mail</a><input type="hidden" name="idTest" value="<%= test.id_test %>" >
+													</td>
+												</tr>
+												<% }); %>
+											  </tr>
+											  </tbody>
+											</table>
+											<div id="pageNavPosition"></div>
+										</div>
+									</div>
+									
+									
+									
+									<div class="col-lg-6">
+										<div class="x_content">
+											<div class="col-lg-8">
+												<h4>Description de l'application:</h4>
+												<p><b>Nom:</b> <%= applications.nom_application %></p>
+												<p><b>Dossier:</b> <%= numeroDossier[0].num_dossier %></p>
+												<p><b>Description:</b> <%= applications.description_application %></p>
+												<%
+													var start = new Date(Number(Date.parse(applications.date_ajout)));
+													var month = new Array();
+													month[0] = "Janvier";
+													month[1] = "Février";
+													month[2] = "Mars";
+													month[3] = "Avril";
+													month[4] = "Mai";
+													month[5] = "Juin";
+													month[6] = "Juillet";
+													month[7] = "Aout";
+													month[8] = "Septembre";
+													month[9] = "Octobre";
+													month[10] = "Novembre";
+													month[11] = "Décembre";
+													var n = month[start.getMonth()];
+											  
+												%>
+												<p> <b>Ajouté le </b> <%= start.getDate() %>  <%= n %>  <%= start.getFullYear() %> <b>par</b> <%= persAjout[0].nom %> <%= persAjout[0].prenom %> (<b>matricule</b>: <%= persAjout[0].matricule %>).</p>
+												<p><b>Chemin:</b> <%= applications.chemin %></p>
+												</br>
+												
+												<p><h4>Les fonctionnalités:</h4></p>
+												<ul> 
+													<% fonctionnalites.forEach(function(fonctionnalite){ %>
+														<!--<li><a href="#" id="fonctionnalite" name="fonctionnalite" onclick="fonctionnaliteModal(addslashes(<%= fonctionnalite.libelle %>), addslashes(<%= fonctionnalite.entree %>), addslashes<%= fonctionnalite.sortie %>), addslashes(<%= fonctionnalite.delai %>))"> <%= fonctionnalite.libelle %> </a></li>-->
+														<li><%= fonctionnalite.libelle %></li>
+													<% }); %>
+												</ul>
+												
+												</br>
+											</div>
+											</br>
+										</div>
+									</div>	
+											
+											
+									<!-- MAIL MODAL -->
+										<div class="modal" id="contact" role="dialog">
+												<div class="modal-dialog">
+													<div class="modal-content">
+													
+														<form id="contact-form" class="form-horizontal ajax" role="form" method="post" action="/envoiEmail"> <!-- action="/envoiEmail" -->
+															
+															<div class="modal-header">
+																<h4>Envoie mail <a class="close" data-dismiss="modal">x</a></h4>
+																
+															</div>
+															<div class="modal-body" id="modal-body-id">
+																
+																<div class="form-group">
+																	<label for="contact-email" class="col-sm-2 control-label">À : </label>
+																	<div class="col-sm-10">
+																		<input type="email" name="destinataire" class="form-control" id="destinataire" placeholder="destinataire@exemple.com">
+																		<input type="hidden" name="idApplication" class="form-control" id="idApplication" value = "<%= applications.id_application %>"> <!-- id application -->
+																	</div>
+																</div>
+																<div class="form-group">
+																	<label for="contact-msg" class="col-sm-2 control-label">Objet :</label>
+																	<div class="col-sm-10">
+																		<input name="objet" placeholder="Objet" id="objet" class="form-control" rows="6">
+																	</div>
+																</div>
+																<div class="form-group">
+																	<label for="contact-msg" class="col-sm-2 control-label">Message :</label>
+																	<div class="col-sm-10">
+																		<textarea name="message" placeholder="Votre message..." id="message" class="form-control" rows="6"></textarea>
+																	</div>
+																</div>
+															</div>
+															<div class="modal-footer">
+																<a class="btn btn-primary" data-dismiss="modal">Annuler</a>
+																<!--<a class="btn btn-primary" data-dismiss="modal">Envoyer message</a> -->
+																<button class="btn btn-primary" value="1" name="submit" type="submit"  id="submit">Envoyer message</button>
+															</div>
+														</form>
+														
+													</div>
+												</div>    
+										</div>
+									<!-- FIN MAIL MODAL -->
+											
+										</br>
+										<div class="form-group">
+										  <div class="">
+											<!-- <button type="submit" class="btn btn-primary waves-attach">Sauvegarder</button> -->
+											<!-- <button type="submit" class="btn btn-info">Annuler</button> -->
+										  </div>
+										</div>
+									 <!-- FIN TABLE CONTENT ****************************************************************************************************************************************************** -->
+									 
+								</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Notifications -->
+				<% include ../notifications.ejs %>
+				<!-- /Notifications -->
+			</div>
+		</div> 
+		<!-- /container -->
+		<!-- Footer -->
+		<br/>
+		  <br/>
+		  <br/>
+		  <br/>
+		<center><% include ../footer.ejs %></center>
+		<!-- /Footer -->
+		
+		<input type="text"  class="hidden" id="id_dossier" value="<%=numeroDossier[0].id_dossier%>" />
+		
+		
+		<script type="text/javascript">
+			var hoursLabel = document.getElementById("hours");
+			var minutesLabel = document.getElementById("minutes");
+			var secondsLabel = document.getElementById("seconds");
+			var totalSeconds = 0;
+			//setInterval(setTime, 1000);
+
+			function setTime()
+			{
+				++totalSeconds;
+				secondsLabel.innerHTML = pad(totalSeconds%60);
+				minutesLabel.innerHTML = pad(parseInt(totalSeconds/60));
+				var totalMinutes = parseInt(totalSeconds/60);
+				minutesLabel.innerHTML = pad(parseInt(totalMinutes%60));
+				hoursLabel.innerHTML = pad(parseInt(totalMinutes/60));
+			}
+
+			function pad(val)
+			{
+				var valString = val + "";
+				if(valString.length < 2)
+				{
+					return "0" + valString;
+				}
+				else
+				{
+					return valString;
+				}
+			}
+		</script>
+		
+		<script>
+			function getTester(idtest,nom_test)
+			{
+				$("#test").removeClass("hidden");
+				//$("testname").text(nom_test);
+				$("#testname").text("nom_test");
+					
+			}
+			
+			function debut()
+			{
+			//alert("test");
+				location.href="commencerTest?id=<%= req.param('id',null) %>&test=<%= req.param('test',null) %>";
+				//setInterval(setTime, 1000);
+				$("#tablecontent").find("[class^='btn']").addClass("disabled").attr('disabled', true);
+				 
+				 /*$('#comment').prop("disabled", false);
+				 $( "#btnaction" ).click(function() {
+				  	
+				});*/
+				//$('#btnaction').attr("onclick", fin());
+			}
+ 
+			
+			function stop()
+			{
+				
+				$("#btnsave").removeClass("hidden");
+				//$("testname").text(nom_test);
+				
+				//clearTimeout(setTime);
+				
+				$("#status").html('Terminer');
+				
+				//$('#btnresume').addClass('hidden');
+				//$('#btnpause').addClass('hidden');
+				
+				$('#btnstop').addClass('hidden');
+				$('#comment').prop("disabled", false);
+				$('#btnaction').removeClass('hidden');
+					
+			}
+ 
+			function fin()
+			{
+					//$("#test").removeClass("hidden");
+					//$("testname").text(nom_test);
+				var idResultat;
+				var Resultat = $("input[name=optradiores]:checked").val() ;
+				var status;
+				
+				var commentaire = escape($("textarea[name=comment]").val());  
+				
+					//alert("ftrft"+$("textarea[name=comment]").val());
+					//timer.stop();
+					
+					/*$("#btnaction").html('Recommencer');
+					
+					$("#status").html('Terminée');
+ 
+					$('#btnaction').removeClass('btn-success');
+					$('#btnaction').addClass('btn-primary');
+					$('#comment').prop("disabled", true);*/
+					
+				
+				location.href="finTest?id=<%= req.param('id',null) %>&test=<%= req.param('test',null) %>&idDossier= <%= numeroDossier[0].id_dossier %>&com="+commentaire+"&res="+Resultat+"&idres=<%= req.param('idres',null) %>";
+				$("#tablecontent").find("[class^='btn']").addClass("disabled").attr('disabled', true);
+					
+				clearTimeout(compte);
+			}
+ 
+ 
+		</script>
+		<!-- script -->
+		<script src="/js/base.min.js"></script>
+		<script src="/js/project.min.js"></script>
+ 
+		<!--<script src="js/jquery.min.js"></script>-->
+		<script src="js/jquery-1.9.1.min.js"></script>
+ 
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/scripts.js"></script>
+		
+		<script type="text/javascript"><!--
+			var pager = new Pager('listeTest', 10);
+			pager.init();
+			pager.showPageNav('pager', 'pageNavPosition');
+			pager.showPageNav('pager', 'pageNavPosition2');
+			pager.showPage(1);
+			
+			
+			
+    //--></script>
+	</body>
+</html>
