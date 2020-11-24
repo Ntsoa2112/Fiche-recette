@@ -74,7 +74,7 @@ module.exports.connections = {
   *                                                                          *
   *                                                                          *
   ***************************************************************************/
- /*
+ 
   ConnexionPostgresql: {
     adapter: 'sails-postgresql',
    host: 'db1.easytech.mg',
@@ -92,27 +92,6 @@ module.exports.connections = {
     user: 'admin',
     password: 'easy$$',
     database: 'easygpao'
-  }
-  */
-  ConnexionPostgresql: {
-    adapter: 'sails-postgresql',
-    host: 'localhost',
-    //host: '10.128.130.253',
-    user: 'postgres',
-    password: 'root',
-    database: 'easy',
-    poolSize: 10,
-    port: 5434
-  },
-
-  
-  EasyGpaoConnexion: {
-    adapter: 'sails-postgresql',
-    host: 'localhost',
-    //host: '10.128.130.253',
-    user: 'postgres',
-    password: 'root',
-    database: 'easy'
   }
 
   /*EasyGpaoConnexion: {

@@ -139,7 +139,7 @@ module.exports = {
   /*
 
   */
-  demandeIntervention: function (req, res) // creation application avec ou sans les fonctionnalités
+  demandeIntervention: async function (req, res) // creation application avec ou sans les fonctionnalités
   {
       if (!req.session.user) return res.redirect('/login');
 
@@ -164,10 +164,12 @@ module.exports = {
       var cTest = " ";
 
       if(req.file("abaque")){
-        abaque = fileService.uploadFile(req.file("abaque"));
+        console.log("///////////////////////0");
+        abaque = fileService.uploadFile(req.file("abaque")).then(req.file("abaque"));
+        console.log("///////////////////////0000000000000000");
       };
       if(req.file("cTest")){
-        cTest = fileService.uploadFile(req.file("cTest"));
+        cTest = fileService.uploadFile(req.file("cTest")).then(req.file("cTest"));
       };
       console.log("abaqueZZZZZZZ : " + abaque + " ;  cahier test ZZZZZZZZZZZZZZ: " + cTest + " *********************************0");
 
