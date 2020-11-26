@@ -1619,13 +1619,9 @@ connection: 'ConnexionPostgresql', // connexion à la base, nom du base:"Connexi
   },
 
   getOneDemande: function(option, callback){
-    //var req = sails.sendNativeQuery("SELECT * FROM Demande WHERE id_demande = $1", [id_demande]);
     var req = "SELECT * FROM fr_demande WHERE id_demande = " + option;
-    console.log(req);
     Demande.query(req, function(err, res){
       if(err) return callback(err);
-      console.log("atooooooooooooooooooo");
-     // console.log(demande);
       return callback(null, res.rows);
     });
   },

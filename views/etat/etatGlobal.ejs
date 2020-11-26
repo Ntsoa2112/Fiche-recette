@@ -239,8 +239,8 @@ if(req.session.droit == 0){
 								</div>
 								<div style="margin-left:15px;">
                                     <form action="/uploadFileDemande" method="POST" enctype="multipart/form-data" id="formFile">
-									<label>Abaque:</label><input type="file" id="abaque" name="abaque" "><br>
-                                    <label>Cahier de test:</label><input type="file" id="cTest" name="cTest" "><br>
+									<label>Abaque:</label><input type="file" id="abaque" name="abaque" required><br>
+                                    <label>Cahier de test:</label><input type="file" id="cTest" name="cTest" required><br>
                                     <div id="cache"></div>
 								</div>
 								<div class="modal-footer">
@@ -840,7 +840,7 @@ if(req.session.droit == 0){
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''><a href='#' onclick='ShowModalFiles(\""+application[i].id_demande+"\")'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
-								"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].nom_application || application[i].type_intervention) +"</a></td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+(application[i].nom_application || application[i].type_intervention) +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].libelle_soustache)) +" ("+ unescape(unescape(application[i].description)) +") </td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+ afficher_estimation_sous_tache +"</td>"+
@@ -870,7 +870,7 @@ if(req.session.droit == 0){
 							"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
 							"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
 							"<td "+ bgcolor_priorite +" class=''><a href='#' onclick='ShowModalFiles(\""+application[i].id_demande+"\")'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
-							"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].nom_application || application[i].type_intervention) +"</a></td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+(application[i].nom_application || application[i].type_intervention) +"</td>"+
 							"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].libelle_soustache)) +" ("+ unescape(unescape(application[i].description)) +") </td>"+
 							"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+
 							
@@ -988,7 +988,7 @@ if(req.session.droit == 0){
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''><a href='#' onclick='ShowModalFiles(\""+application[i].id_demande+"\")'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
-								"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].nom_application || application[i].type_intervention) +"</a></td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+(application[i].nom_application || application[i].type_intervention) +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].description)) +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+ // 
 								
@@ -1020,7 +1020,7 @@ if(req.session.droit == 0){
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''><a href='#' onclick='ShowModalFiles(\""+application[i].id_demande+"\")'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
-								"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].nom_application || application[i].type_intervention) +"</a></td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+(application[i].nom_application || application[i].type_intervention) +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].description)) +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+ // 
 								
@@ -1139,7 +1139,6 @@ if(req.session.droit == 0){
 
 	//Affichage fichier abaque ou/et cahier de test
 	function ShowModalFiles(id){
-
 		Global_Id_file = id;
 		$.ajax({
 			url:'/verifierFiles',
@@ -1149,7 +1148,8 @@ if(req.session.droit == 0){
 			"id_demande": Global_Id_file,
 			},
 			async: true,
-        })
+        });
+
 	}
 	
 	// Modifier commentaire
@@ -1397,7 +1397,7 @@ if(req.session.droit == 0){
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''><a href='#' onclick='ShowModalFiles(\""+application[i].id_demande+"\")'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
-								"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].nom_application || application[i].type_intervention) +"</a></td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+(application[i].nom_application || application[i].type_intervention) +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].libelle_soustache)) +" ("+ unescape(unescape(application[i].description)) +") </td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+
 								
@@ -1431,7 +1431,7 @@ if(req.session.droit == 0){
 							"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
 							"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
 							"<td "+ bgcolor_priorite +" class=''><a href='#' onclick='ShowModalFiles(\""+application[i].id_demande+"\")'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
-							"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].nom_application || application[i].type_intervention) +"</a></td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+(application[i].nom_application || application[i].type_intervention) +"</td>"+
 							"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].libelle_soustache)) +" ("+ unescape(unescape(application[i].description)) +") </td>"+
 							"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+
 							
@@ -1556,7 +1556,7 @@ if(req.session.droit == 0){
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''><a href='#' onclick='ShowModalFiles(\""+application[i].id_demande+"\")'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
-								"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].nom_application || application[i].type_intervention) +"</a></td>"+
+								"<td "+ bgcolor_priorite +" class=''>"+(application[i].nom_application || application[i].type_intervention) +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].description)) +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+ // 
 								
@@ -1590,7 +1590,7 @@ if(req.session.droit == 0){
 							"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
 							"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
 							"<td "+ bgcolor_priorite +" class=''><a href='#' onclick='ShowModalFiles(\""+application[i].id_demande+"\")'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
-							"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].nom_application || application[i].type_intervention) +"</a></td>"+
+							"<td "+ bgcolor_priorite +" class=''>"+(application[i].nom_application || application[i].type_intervention) +"</td>"+
 							"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].description)) +"</td>"+
 							"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+ // 
 							
@@ -1632,8 +1632,8 @@ if(req.session.droit == 0){
 </script>
 <script type="text/javascript" src="/dependencies/sails.io.js"></script>
 <script type="text/javascript">
-    io.sails.url = "http://localhost:1337/";
-    io.socket.on("test", function(data){
+		io.sails.url = "http://localhost:1337/";
+    io.socket.on(<%= req.session.user %>, function(data){
         var abaqueFile = data.abaqueFile;
         var cTestFile = data.cTestfile;
         var nameAbaque = abaqueFile.substr(13);
@@ -1656,6 +1656,18 @@ if(req.session.droit == 0){
         ),
         $("#myModalFiles").modal('show');
 	});
+
+	io.socket.on(<%= req.session.user%>+"ev" , function(data){
+        if($("#valid").length){
+            $("#valid").remove();
+        }
+        $("#cache").append(
+            $(
+                "<input hidden type='number' name='iddem' value='"+ data.id_demande +"' id='valid'>"
+            )
+        )
+		$("#myModalAjouter").modal('show');
+	})
 </script>
 
 </body>

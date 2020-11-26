@@ -73,10 +73,7 @@ module.exports = {
       var delai = req.param('delaiRecherche',null);
 
       var typeIntervention = req.param('typeIntervention',null);
-      var abaque = req.file('abaque');
-      var cTest = req.file('cTest');
-      console.log(abaque);
-      console.log(cTest);
+
       /*var idDossier = req.param('dossier_num2',null);
       var idApplication = req.param('idApplication',null);
       var delai = req.param('delai',null);*/
@@ -2809,7 +2806,6 @@ module.exports = {
   //verifier l'existences des fichiers abaques et teste
 
   verifierFiles: function(req, res){
-    console.log("cc------------------------------------");
     var id_demande = parseInt(req.param('id_demande') , 10);
     async.series([
       function(callback){
@@ -2821,7 +2817,15 @@ module.exports = {
       var demande = result[0];
       var abaqueFile = demande[0].abaque;
       var cTestfile = demande[0].file_test;
-      sails.sockets.blast("test", {abaqueFile, cTestfile});
+      if(abaqueFile || cTestfile){
+        sails.sockets.blast(req.session.user, {abaqueFile, cTestfile});
+      }
+      else{
+        var ev = String(req.session.user)+"ev";
+        console.log("eeeeeeeeeeeeeeeeee" + id_demande);
+        sails.sockets.blast(ev, {id_demande});       
+      }
+      
     })
 
   },
