@@ -725,6 +725,15 @@ module.exports.routes = {
   action: 'createCompetenceDevApp'
 },
 
+'post /verifierFiles': {
+  controller: 'DemandeController',
+  action: 'verifierFiles'
+},
+
+'post /uploadFileDemande': {
+  controller: 'DemandeController',
+  action: 'uploadFileDemande'
+},
 
 'get /getListeDemandeur':'DemandeController.getListeDemandeur',
 

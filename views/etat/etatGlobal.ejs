@@ -1,5 +1,4 @@
-<!DOCTYPE html>
- 
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -218,22 +217,68 @@ if(req.session.droit == 0){
 									<h4 class="modal-title">Modifier Commentaire</h4>
 								</div>
 								<div class="modal-body">
-									<label>Commentaire</label><input type="text" id="commentaire_new" class="form-control">
-								</div>
-								<div style="margin-left:15px;">
-									<label>Abaque:</label><input type="file" id="abaque" name="abaque" "><br>
-									<label>Cahier de test:</label><input type="file" id="cTest" name="cTest" "><br>
+                                    <label>Commentaire</label><input type="text" id="commentaire_new" class="form-control"><br>
+                                    <label id="ajout"><a data-toggle="modal" data-target="#myModalAjouter" data-dismiss="modal" >Ajouter des fichies abaque et test</a></label>
 								</div>
 								<div class="modal-footer">
-									<button class="btn" data-dismiss="modal" aria-hidden="true">Fermer</button>
-									<button class="btn btn-primary" onclick="ActionModifierCommentaire()">Modifier</button>
+                                    <button class="btn" data-dismiss="modal" aria-hidden="true">Fermer</button>
+                                    <input class="btn btn-primary" onclick="ActionModifierCommentaire()" value="Modifier">
+                                </form>
+                                </div>
+                                
+							</div>
+
+						</div>
+                    </div>
+                    
+                    <div class="modal fade" id="myModalAjouter" role="dialog">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h4 class="modal-title">Ajouter des fichies </h4>
+								</div>
+								<div style="margin-left:15px;">
+                                    <form action="/uploadFileDemande" method="POST" enctype="multipart/form-data" id="formFile">
+									<label>Abaque:</label><input type="file" id="abaque" name="abaque" "><br>
+                                    <label>Cahier de test:</label><input type="file" id="cTest" name="cTest" "><br>
+                                    <div id="cache"></div>
+								</div>
+								<div class="modal-footer">
+                                    <button class="btn" data-dismiss="modal" aria-hidden="true">Fermer</button>
+                                    <input type="submit" class="btn btn-primary"  value="Ajouter">
+                                </form>
+                                </div>
+                                
+							</div>
+
+						</div>
+                    </div>
+                    
+
+                   
+
+					
+                    <!------------------------------------------------ DEBUT TABLE GLOBALE TABLEAU ---------->
+                    
+                    <div class="modal fade" id="myModalFiles" role="dialog">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h4 class="modal-title">Fichier</h4>
+								</div>
+								<div style="margin-left:15px;">
+									<label>Abaque :</label><span id="abaqueFile"></span><br>
+									<label>Cahier de test :</label><span id="cTestFile"></span><br>
+								</div>
+								<div class="modal-footer">
+									<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Fermer</button>
 								</div>
 							</div>
 
 						</div>
 					</div>
-					
-					<!------------------------------------------------ DEBUT TABLE GLOBALE TABLEAU ---------->
+
+
 							<div id ="lstTacheGlobale" class="col-md-12">
 							  <table class="table" id="table-globale">
 								<thead>
@@ -794,7 +839,7 @@ if(req.session.droit == 0){
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].id_soustache +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
-								"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
+								"<td "+ bgcolor_priorite +" class=''><a href='#' onclick='ShowModalFiles(\""+application[i].id_demande+"\")'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
 								"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].nom_application || application[i].type_intervention) +"</a></td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].libelle_soustache)) +" ("+ unescape(unescape(application[i].description)) +") </td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+
@@ -824,7 +869,7 @@ if(req.session.droit == 0){
 							"<td "+ bgcolor_priorite +" class=''>"+application[i].id_soustache +"</td>"+
 							"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
 							"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
-							"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
+							"<td "+ bgcolor_priorite +" class=''><a href='#' onclick='ShowModalFiles(\""+application[i].id_demande+"\")'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
 							"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].nom_application || application[i].type_intervention) +"</a></td>"+
 							"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].libelle_soustache)) +" ("+ unescape(unescape(application[i].description)) +") </td>"+
 							"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+
@@ -942,7 +987,7 @@ if(req.session.droit == 0){
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].id_demande +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
-								"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
+								"<td "+ bgcolor_priorite +" class=''><a href='#' onclick='ShowModalFiles(\""+application[i].id_demande+"\")'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
 								"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].nom_application || application[i].type_intervention) +"</a></td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].description)) +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+ // 
@@ -974,7 +1019,7 @@ if(req.session.droit == 0){
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].id_demande +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
-								"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
+								"<td "+ bgcolor_priorite +" class=''><a href='#' onclick='ShowModalFiles(\""+application[i].id_demande+"\")'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
 								"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].nom_application || application[i].type_intervention) +"</a></td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].description)) +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+ // 
@@ -1080,13 +1125,36 @@ if(req.session.droit == 0){
 	function ShowModalCommentaire(commentaire,id){
 		Global_Commentaire=commentaire;
 		$("#commentaire_new").val(commentaire);
-		Global_Id_Commentaire = id;
+        Global_Id_Commentaire = id;
+        if($("#valid").length){
+            $("#valid").remove();
+        }
+        $("#cache").append(
+            $(
+                "<input hidden type='number' name='iddem' value='"+ Global_Id_Commentaire +"' id='valid'>"
+            )
+        )
 		$("#myModalModifierCommentaire").modal('show');
+	}
+
+	//Affichage fichier abaque ou/et cahier de test
+	function ShowModalFiles(id){
+
+		Global_Id_file = id;
+		$.ajax({
+			url:'/verifierFiles',
+			type: "POST",
+		  dataType: "json",
+		  data: {
+			"id_demande": Global_Id_file,
+			},
+			async: true,
+        })
 	}
 	
 	// Modifier commentaire
 	  function ActionModifierCommentaire(){
-		var commentaire_nouveau = $("#commentaire_new").val();
+        var commentaire_nouveau = $("#commentaire_new").val();
 		$.ajax({
 		  url:'/modifierCommentaireDemande',
 		  type: "POST",
@@ -1099,8 +1167,8 @@ if(req.session.droit == 0){
 		  success: function (data)
 		  {
 			//loadDataTableG();
-			//getGestionSousTache();
-			$("#myModalModifierCommentaire").modal('toggle');
+            //getGestionSousTache();
+            $("#myModalModifierCommentaire").modal('toggle');
 			location.reload();
 		  }
 		});
@@ -1328,7 +1396,7 @@ if(req.session.droit == 0){
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].id_soustache +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
-								"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
+								"<td "+ bgcolor_priorite +" class=''><a href='#' onclick='ShowModalFiles(\""+application[i].id_demande+"\")'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
 								"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].nom_application || application[i].type_intervention) +"</a></td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].libelle_soustache)) +" ("+ unescape(unescape(application[i].description)) +") </td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+
@@ -1362,7 +1430,7 @@ if(req.session.droit == 0){
 							"<td "+ bgcolor_priorite +" class=''>"+application[i].id_soustache +"</td>"+
 							"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
 							"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
-							"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
+							"<td "+ bgcolor_priorite +" class=''><a href='#' onclick='ShowModalFiles(\""+application[i].id_demande+"\")'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
 							"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].nom_application || application[i].type_intervention) +"</a></td>"+
 							"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].libelle_soustache)) +" ("+ unescape(unescape(application[i].description)) +") </td>"+
 							"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+
@@ -1487,7 +1555,7 @@ if(req.session.droit == 0){
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].id_demande +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
-								"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
+								"<td "+ bgcolor_priorite +" class=''><a href='#' onclick='ShowModalFiles(\""+application[i].id_demande+"\")'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
 								"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].nom_application || application[i].type_intervention) +"</a></td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].description)) +"</td>"+
 								"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+ // 
@@ -1521,7 +1589,7 @@ if(req.session.droit == 0){
 							"<td "+ bgcolor_priorite +" class=''>"+application[i].id_demande +"</td>"+
 							"<td "+ bgcolor_priorite +" class=''>"+application[i].appelation +"</td>"+
 							"<td "+ bgcolor_priorite +" class=''>"+application[i].demandeur +"</td>"+
-							"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
+							"<td "+ bgcolor_priorite +" class=''><a href='#' onclick='ShowModalFiles(\""+application[i].id_demande+"\")'>"+(application[i].num_dossier || "Gestion") +"</a></td>"+
 							"<td "+ bgcolor_priorite +" class=''><a href='#'>"+(application[i].nom_application || application[i].type_intervention) +"</a></td>"+
 							"<td "+ bgcolor_priorite +" class=''>"+ unescape(unescape(application[i].description)) +"</td>"+
 							"<td "+ bgcolor_priorite +" class=''>"+ temp_total_temps +"</td>"+ // 
@@ -1561,8 +1629,34 @@ if(req.session.droit == 0){
 		});
 	}
 	
-	
-	
 </script>
+<script type="text/javascript" src="/dependencies/sails.io.js"></script>
+<script type="text/javascript">
+    io.sails.url = "http://localhost:1337/";
+    io.socket.on("test", function(data){
+        var abaqueFile = data.abaqueFile;
+        var cTestFile = data.cTestfile;
+        var nameAbaque = abaqueFile.substr(13);
+        var namecTest = cTestFile.substr(13);
+        if($("#nameAbaque").length){
+            $("#nameAbaque").remove();
+        }
+        if($("#namecTest").length){
+            $("#namecTest").remove();
+        }
+        $("#abaqueFile").append(
+            $(
+                "<a id='nameAbaque' download='"+ nameAbaque+"' href='/files/"+abaqueFile+"'>" + nameAbaque +"</a>"
+            )
+        ),
+        $("#cTestFile").append(
+            $(
+                "<a id='namecTest' download='"+ namecTest+"' href='/files/"+cTestFile+"'>" + namecTest +"</a>"
+            )
+        ),
+        $("#myModalFiles").modal('show');
+	});
+</script>
+
 </body>
 </html>

@@ -6,6 +6,7 @@
  */
 var fileService = require('../services/FileService');
 
+
 module.exports = {
   indexDemande: function (req, res)
   {
@@ -72,6 +73,10 @@ module.exports = {
       var delai = req.param('delaiRecherche',null);
 
       var typeIntervention = req.param('typeIntervention',null);
+      var abaque = req.file('abaque');
+      var cTest = req.file('cTest');
+      console.log(abaque);
+      console.log(cTest);
       /*var idDossier = req.param('dossier_num2',null);
       var idApplication = req.param('idApplication',null);
       var delai = req.param('delai',null);*/
@@ -160,19 +165,30 @@ module.exports = {
 
       var delai_prod = req.param('delai_prod',null);
 
-      var abaque = " ";
-      var cTest = " ";
+      let abaque = " ";
+      let cTest = " ";
+      let fichier;
+      /*
 
       if(req.file("abaque")){
-        console.log("///////////////////////0");
-        abaque = fileService.uploadFile(req.file("abaque")).then(req.file("abaque"));
-        console.log("///////////////////////0000000000000000");
+        fichier = req.file("abaque");
+        async.series([
+          function (callback){
+            console.log("///////////////////////0000000000000000");
+            fileService.uploadFile(fichier, callback);
+          }
+        ], function(err, result){
+            if (err) return res.send(err);
+            console.log("___________________________________");
+            console.log(result[0]);
+        })        
       };
       if(req.file("cTest")){
-        cTest = fileService.uploadFile(req.file("cTest")).then(req.file("cTest"));
+        fichier = req.file("cTest");
+        cTest = await fileService.uploadFile(fichier);
       };
       console.log("abaqueZZZZZZZ : " + abaque + " ;  cahier test ZZZZZZZZZZZZZZ: " + cTest + " *********************************0");
-
+*/
       var priorite= 1;
       console.log("Type intervention ====> "+typeIntervention);
       console.log("Description demande ====> "+description);
@@ -181,11 +197,9 @@ module.exports = {
       console.log("ID App ====> "+delai);
       console.log("priorite===>"+priorite);
 
-
       console.log("DELAI PROD ===>"+delai_prod);
-
-
-      async.parallel(
+      
+      async.series(
       [
         function (callback){
             Application.findOne({id_application:idApplication}).exec(function (err, application) {
@@ -199,12 +213,32 @@ module.exports = {
             TypeDemande.findTypeDemandeById(typeIntervention, callback);
         },
         function (callback) {
-           Demande.create({id_type_intervention:typeIntervention, id_etat_demande:id_etat_demande, id_personne_demande:id_personne_demande, description:unescape(description), id_dossier:idDossier, id_application:idApplication, qualite_dev:1, id_priorite: priorite, delai_prod: delai_prod, abaque:abaque, file_test:cTest}).exec(function(err,model) { //, delai:delai
-              if (err) console.log(err);
-              console.log("3 - Create Demande");
-              console.log("abaque : " + abaque + " ;  cahier test : " + cTest + " *********************************0");
-              callback(null, model);
-            });
+            //Si il y a un fichier abaque ou fichier test envoyer, on upload les fichiers on les enregistre dans le 'assets/files' et ses noms dans la BDD
+            if(req.file("abaque") || req.file("cTest")){
+                async.series([
+                    function(callback){
+                          fichier = req.file("abaque");
+                          fileService.uploadFile(fichier, callback);                 
+                    },
+                    function(callback){
+                          fichier = req.file("cTest");
+                          fileService.uploadFile(fichier, callback);
+                    }
+                ], function(err, resultats){
+                    if(err) return res.send(err);
+                    abaque = resultats[0];
+                    cTest = resultats[1];
+
+                    console.log("abaque111 : " + abaque + " ;  cahier test111 : " + cTest + " *********************************0");
+                    Demande.create({id_type_intervention:typeIntervention, id_etat_demande:id_etat_demande, id_personne_demande:id_personne_demande, description:unescape(description), id_dossier:idDossier, id_application:idApplication, qualite_dev:1, id_priorite: priorite, delai_prod: delai_prod, abaque:abaque, file_test:cTest }).exec(function(err,model) { //, delai:delai
+                        if (err) console.log(err);
+                        console.log("3 - Create Demande");
+                        callback(null, model);
+                        });
+                })
+            }
+
+            
         },
         function (callback) {
             var option = [];
@@ -337,11 +371,30 @@ module.exports = {
                 async.parallel(
                 [
                     function (callback) {  //CREATE NEW DEMANDE
-                      Demande.create({id_type_intervention:typeIntervention, id_etat_demande:id_etat_demande, id_personne_demande:id_personne_demande, description:unescape(description), id_dossier:idDossier, id_application:id_app, delai:delai, qualite_dev:1, id_priorite: 1, delai_prod: delai_prod_app}).exec(function(err,demandeRes) {
-                          if (err) console.log(err);
-                          console.log("Create Demande");
-                          callback(null, demandeRes);
-                        });
+                      //Si il y a un fichier abaque ou fichier test envoyer, on upload les fichiers on les enregistre dans le 'assets/files' et ses noms dans la BDD
+                      if(req.file("abaque") || req.file("cTest")){
+                        async.series([
+                            function(callback){
+                                  fichier = req.file("abaque");
+                                  fileService.uploadFile(fichier, callback);                 
+                            },
+                            function(callback){
+                                  fichier = req.file("cTest");
+                                  fileService.uploadFile(fichier, callback);
+                            }
+                        ], function(err, resultats){
+                            if(err) return res.send(err);
+                            abaque = resultats[0];
+                            cTest = resultats[1];
+
+                            Demande.create({id_type_intervention:typeIntervention, id_etat_demande:id_etat_demande, id_personne_demande:id_personne_demande, description:unescape(description), id_dossier:idDossier, id_application:id_app, delai:delai, qualite_dev:1, id_priorite: 1, delai_prod: delai_prod_app, abaque:abaque, file_test:cTest}).exec(function(err,demandeRes) {
+                              if (err) console.log(err);
+                              console.log("Create Demande");
+                              callback(null, demandeRes);
+                            });  
+                        })
+                    }
+
                     }
 
                 ],function (err, results) {
@@ -538,7 +591,7 @@ module.exports = {
     var id_pers_dev= req.session.user;
 
     var delai_demande=req.param('delai');
-console.log(" =========================================================>   DELAI  "+delai_demande);
+    console.log(" =========================================================>   DELAI  "+delai_demande);
 
     var id_demande_application=req.param('id_demande');
 
@@ -2753,6 +2806,27 @@ console.log(" =========================================================>   DELAI
     })
   },
 
+  //verifier l'existences des fichiers abaques et teste
+
+  verifierFiles: function(req, res){
+    console.log("cc------------------------------------");
+    var id_demande = parseInt(req.param('id_demande') , 10);
+    async.series([
+      function(callback){
+        Demande.getOneDemande(id_demande, callback);
+      }
+    ],function(err, result){
+      if(err) return res.send(err);
+      console.log(result);
+      var demande = result[0];
+      var abaqueFile = demande[0].abaque;
+      var cTestfile = demande[0].file_test;
+      sails.sockets.blast("test", {abaqueFile, cTestfile});
+    })
+
+  },
+  
+
   //****************************      AJOUT SOUS TACHE
   AjouterSousTache: function (req,res) {
     if (!req.session.user) return res.redirect('/login');
@@ -4040,4 +4114,59 @@ console.log(" =========================================================>   DELAI
     })
   },
 
-};
+    uploadFileDemande: async function(req, res){
+        var id = parseInt( req.param("iddem") ,10);
+        var abaqueFile = req.file("abaque");
+        var cTestFile = req.file("cTest");
+
+        if(req.file("abaque") || req.file("cTest")){
+            async.series([
+                function(callback){
+                      fichier = req.file("abaque");
+                      fileService.uploadFile(fichier, callback);                 
+                },
+                function(callback){
+                      fichier = req.file("cTest");
+                      fileService.uploadFile(fichier, callback);
+                }
+            ], function(err, resultats){
+                if(err) return res.send(err);
+                var abaque = resultats[0];
+                var cTest = resultats[1];
+
+                console.log("abaque111 : " + abaque + " ;  cahier test111 : " + cTest + " *********************************0");
+                Demande.uploadOneDemande(id, abaque, cTest);
+                return res.redirect('/AfficherEtatGlobal');
+
+            })
+        }
+    }
+}
+
+    /*
+    if(abaqueFile || cTestFile){
+        async.series([
+            function(callback){
+                  fichier = abaqueFile;
+                  fileService.uploadFile(fichier, callback);                 
+            },
+            function(callback){
+                  fichier = cTestFile;
+                  fileService.uploadFile(fichier, callback);
+            }
+        ], function(err, resultats){
+            if(err) return res.send(err);
+            abaque = resultats[0];
+            cTest = resultats[1];
+
+            console.log("abaque111 : " + abaque + " ;  cahier test111 : " + cTest + " *********************************0");
+            Demande.updateOne({id_demande:id},{abaque:abaque, file_test:cTest}, function up(err){
+                if(err) return res.send(err);
+                console.log("Tafa");
+            })
+
+        })
+    }
+    */
+
+
